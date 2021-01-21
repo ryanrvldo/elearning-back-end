@@ -6,9 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 @Data
 @MappedSuperclass
@@ -27,7 +27,7 @@ public abstract class BaseEntity implements Serializable {
 
   @JsonIgnore
   @Column(name = "created_at")
-  private LocalDateTime createdAt;
+  private LocalDateTime createdAt = LocalDateTime.now();
 
   @JsonIgnore
   @Column(name = "updated_by")
