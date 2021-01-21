@@ -23,12 +23,16 @@ public class TeacherDaoImpl extends BaseDaoImpl<Teacher> implements TeacherDao, 
 
   @Override
   public void saveTeacher(Teacher data, Callback before) throws Exception {
-
     save(data, before, null, true, true);
   }
 
   @Override
   public Teacher findTeacherById(String id) throws Exception {
+    return getById(id);
+  }
+
+  @Override
+  public Teacher findTeacherByIdCustom(String id) throws Exception {
 
     String sql = bBuilder(
         "SELECT tmt.first_name , tmt.last_name , tmu.email , tmt.title_degree , tmt.created_at, tmt.gender ",
@@ -36,7 +40,8 @@ public class TeacherDaoImpl extends BaseDaoImpl<Teacher> implements TeacherDao, 
         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE id = ?1").toString();
 
     List<Teacher> listResult = new ArrayList<>();
-    List<?> listObj = em().createNativeQuery(sql).setParameter(1, id).getResultList();
+
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
@@ -59,6 +64,12 @@ public class TeacherDaoImpl extends BaseDaoImpl<Teacher> implements TeacherDao, 
 
     });
     return getResultModel(listResult);
+  }
+
+  @Override
+  public void softDelete(String id) throws Exception {
+    String sql = "UPDATE tb_m_teachers SET is_active = FALSE WHERE id =?1";
+    createNativeQuery(sql).setParameter(1, id).executeUpdate();
   }
 
 }
