@@ -2,21 +2,19 @@ package com.lawencon.base;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
-
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Repository;
-
 import com.lawencon.helper.InquiryTemplate;
 import com.lawencon.util.Callback;
 
@@ -232,15 +230,31 @@ public abstract class BaseDaoImpl<T extends Serializable> {
 		return count;
 	}
 
-	private List<Field> getAllBaseField(final T entity) {
+    // private List<Field> getAllBaseField(final T entity) {
+    // Class<?> base = entity.getClass().getSuperclass();
+    // List<Field> list = new ArrayList<Field>();
+    // list.addAll(Arrays.asList(base.getDeclaredFields()));
+    //
+    // while (true) {
+    // try {
+    // base = base.getSuperclass();
+    // list.addAll(Arrays.asList(base.getDeclaredFields()));
+    // } catch (Exception e) {
+    // break;
+    // }
+    // }
+    // return list;
+    // }
+
+    private List<Method> getAllBaseMethod(final T entity) {
 		Class<?> base = entity.getClass().getSuperclass();
-		List<Field> list = new ArrayList<Field>();
-		list.addAll(Arrays.asList(base.getDeclaredFields()));
+      List<Method> list = new ArrayList<>();
+      list.addAll(Arrays.asList(base.getDeclaredMethods()));
 
 		while (true) {
 			try {
 				base = base.getSuperclass();
-				list.addAll(Arrays.asList(base.getDeclaredFields()));
+                list.addAll(Arrays.asList(base.getDeclaredMethods()));
 			} catch (Exception e) {
 				break;
 			}
@@ -294,17 +308,22 @@ public abstract class BaseDaoImpl<T extends Serializable> {
 		if (before != null)
 			before.exec();
 
-		Field id = getBaseClass(entity).getDeclaredField("id");
-		id.setAccessible(true);
+          // Field id = getBaseClass(entity).getDeclaredField("id");
+          Method m = getBaseClass(entity).getDeclaredMethod("getId");
+          // id.setAccessible(true);
 
-		Object objId = id.get(entity);
+          // Object objId = id.get(entity);
+          Object objId = m.getDefaultValue();
 
 		if (objId != null) {
-			T data = getById(id.get(entity).toString());
-			setField(entity, data, false);
+            // T data = getById(id.get(entity).toString());
+            T data = getById(objId.toString());
+            // setField(entity, data, false);
+            setVersion(entity, data, false);
 			em().merge(entity);
 		} else {
-			setField(entity, null, true);
+          // setField(entity, null, true);
+          setVersion(entity, null, true);
 			em().persist(entity);
 		}
 		if (after != null)
@@ -332,16 +351,33 @@ public abstract class BaseDaoImpl<T extends Serializable> {
 		}
 	}
 	
-	private void setField(final T entity, T data, boolean isAdd) throws Exception {
-		List<Field> listField = getAllBaseField(entity);
-		for (Field field : listField) {
-			if (field.getName().equals("version")) {
+    // private void setField(final T entity, T data, boolean isAdd) throws Exception {
+    // List<Field> listField = getAllBaseField(entity);
+    // for (Field field : listField) {
+    // if (field.getName().equals("version")) {
+    // if (isAdd)
+    // field.set(entity, 0L);
+    // else {
+    // valVersion(entity, data);
+    // Object obj = field.get(data);
+    // field.set(entity, Long.parseLong(String.valueOf(obj)) + 1);
+    // }
+    //
+    // break;
+    // }
+    // }
+    // }
+
+    private void setVersion(final T entity, T data, boolean isAdd) throws Exception {
+      List<Method> listMethod = getAllBaseMethod(entity);
+      for (Method m : listMethod) {
+        if (m.getName().equals("setVersion")) {
 				if (isAdd)
-					field.set(entity, 0L);
+            m.invoke(entity, 0L);
 				else {
 					valVersion(entity, data);
-					Object obj = field.get(data);
-					field.set(entity, Long.parseLong(String.valueOf(obj)) + 1);
+                    Object obj = m.getClass();
+                    m.invoke(entity, Long.parseLong(String.valueOf(obj)) + 1);
 				}
 
 				break;
@@ -510,16 +546,25 @@ public abstract class BaseDaoImpl<T extends Serializable> {
 	}
 
 	protected void deleteById(final Object entityId) throws Exception {
-		T entity = null;
-		if (entityId != null && entityId instanceof String) {
-			entity = getById((String) entityId);
-		}
+      T entity = null;
+      if (entityId != null && entityId instanceof String) {
+        entity = getById((String) entityId);
+      }
 
-		if (entity != null)
-			delete(entity, null, null);
-		else
-			throw new Exception("ID Not Found");
-	}
+      try {
+        if (entity != null) {
+          begin();
+          delete(entity, null, null);
+          commit();
+        }
+        else {
+          throw new Exception("ID Not Found");
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        rollback();
+      }
+    }
 
 //	protected void deleteById(final String entityId) throws Exception {
 //		final T entity = getById(entityId);
@@ -646,19 +691,19 @@ public abstract class BaseDaoImpl<T extends Serializable> {
 		return ConnHandler.getManager();
 	}
 
-	protected void begin() {
+    private void begin() {
 		ConnHandler.begin();
 	}
 
-	protected void commit() {
+    private void commit() {
 		ConnHandler.commit();
 	}
 
-	protected void rollback() {
+    private void rollback() {
 		ConnHandler.rollback();
 	}
 
-	protected void clear() {
+    private void clear() {
 		ConnHandler.clear();
 	}
 
