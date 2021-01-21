@@ -1,0 +1,46 @@
+package com.lawencon.elearning.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import com.lawencon.model.BaseMaster;
+import lombok.Data;
+
+/**
+ * @author : Galih Dika Permana
+ *
+ **/
+@Data
+@Entity
+@Table(name = "tb_m_modules")
+public class Module extends BaseMaster {
+  private static final long serialVersionUID = 1L;
+
+  @Column(unique = true, nullable = false, length = 50)
+  private String code;
+
+  @Column(nullable = false)
+  private String title;
+
+  @Column(nullable = false)
+  private String description;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_schedule")
+  private Schedule schedule;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_course", nullable = false)
+  private Course course;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_subject", nullable = false)
+  private SubjectCategory subject;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_file")
+  private File lessonFile;
+}
