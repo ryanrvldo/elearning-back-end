@@ -8,12 +8,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import com.lawencon.model.BaseMaster;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author : Galih Dika Permana
  *
  **/
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_m_modules")
 public class Module extends BaseMaster {

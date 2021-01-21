@@ -82,7 +82,7 @@ error
 
 ```json
 {
-  "code": BAD_REQUEST,
+  "code": 400,
   "result": "message"
 }
 ```
@@ -96,7 +96,7 @@ error
 
 ### Response :
 
-successs
+success`
 
 ```json
 {
@@ -118,7 +118,7 @@ error
 
 ```json
 {
-  "code": BAD_REQUEST,
+  "code": 400,
   "result": "message"
 }
 ```
@@ -153,25 +153,25 @@ error
 
 ```json
 {
-    "code": 200,
-    "result":{
-       [
-           "id": "",
-           "courseCode": "",
-           "courseName": "",
-           "capacity" : "",
-           "periodeStart": "",
-           "periodeEnd":"",
-           "teacher":{
-               "id": "",
-               "code" : "",
-               "firstName" : "",
-               "lastName" : "",
-               "tittle" : ""
-           },
-           "courseCategory" : ""
-       ]
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "courseCode": "",
+      "courseName": "",
+      "capacity": "",
+      "periodStart": "",
+      "periodEnd": "",
+      "teacher": {
+        "id": "",
+        "code": "",
+        "firstName": "",
+        "lastName": "",
+        "tittle": ""
+      },
+      "courseCategory": ""
     }
+  ]
 }
 ```
 
@@ -188,22 +188,22 @@ success
 
 ```json
 {
-    "code": 200,
-    "result":{
-       [
-           "id":"",
-           "code": "",
-           "tittle": "",
-           "description": "",
-           "subjectName": "",
-           "schedule" : {
-               "id":"",
-               "date" : "",
-               "start_time" : "",
-               "end_time" : ""
-           }
-       ]
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "tittle": "",
+      "description": "",
+      "subjectName": "",
+      "schedule": {
+        "id": "",
+        "date": "",
+        "start_time": "",
+        "end_time": ""
+      }
     }
+  ]
 }
 ```
 
@@ -211,9 +211,8 @@ error
 
 ```json
 {
-    "code" : NOT FOUND,
-    "result" : "message"
-
+  "code": 400,
+  "result": "message"
 }
 ```
 
@@ -238,10 +237,8 @@ success
 
 ```json
 {
-    "code": 201,
-    "result":{
-       "message"
-    }
+  "code": 201,
+  "result": "message"
 }
 ```
 
@@ -249,7 +246,7 @@ error
 
 ```json
 {
-  "code": BAD_REQUEST,
+  "code": 400,
   "result": "message"
 }
 ```
@@ -267,22 +264,25 @@ success
 
 ```json
 {
-    [
-            "id":"",
-           "code": "",
-           "name": "",
-           "capacity" : "",
-           "periodStart": "",
-           "periodEnd":"",
-           "category" : "",
-           "teacher":{
-               "id": "",
-               "code" : "",
-               "firstName" : "",
-               "lastName" : "",
-               "tittle" : ""
-           }
-       ]
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "name": "",
+      "capacity": "",
+      "periodStart": "",
+      "periodEnd": "",
+      "category": "",
+      "teacher": {
+        "id": "",
+        "code": "",
+        "firstName": "",
+        "lastName": "",
+        "tittle": ""
+      }
+    }
+  ]
 }
 ```
 
@@ -290,19 +290,19 @@ error
 
 ```json
 {
-  "code": BAD_REQUEST,
+  "code": 400,
   "result": "message"
 }
 ```
 
-## ATTENDENCE
+## ATTENDANCE
 
-### Create attendence
+### Create attendance
 
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/api/student/attendence`
+- Endpoint : `/api/student/attendance`
 - Body:
 
 ```json
@@ -327,7 +327,7 @@ error
 
 ```json
 {
-  "code": BAD_REQUEST,
+  "code": 400,
   "result": "message"
 }
 ```
@@ -408,7 +408,7 @@ success
 }
 ```
 
-### Send student's exam
+### Send a student's exam
 
 #### Request:
 
@@ -431,7 +431,7 @@ success
 }
 ```
 
-### Send teacher's exam
+### Send a teacher's exam
 
 #### Request
 
@@ -506,14 +506,25 @@ success
 
 #### Response:
 
+success
+
 ```json
 {
-  "code": 201 || BAD_REQUEST(ERROR),
+  "code": 201,
   "result": "message"
 }
 ```
 
-# Teacher
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+## Teacher
 
 ### Dashboard
 
@@ -526,18 +537,17 @@ success
 
 ```json
 {
-    [
-        {
-            "id": "",
-            "code": "",
-            "name" :  "",
-            "description": "",
-            "capacity": "",
-            "student": 0,
-            "periodStart": "",
-            "periodEnd": "",
-        }
-    ]
+  "code": 200,
+  "result": {
+    "id": "",
+    "code": "",
+    "name": "",
+    "description": "",
+    "capacity": "",
+    "student": 0,
+    "periodStart": "",
+    "periodEnd": ""
+  }
 }
 ```
 
@@ -592,7 +602,7 @@ success
 #### Request
 
 - Method: `PATCH`
-- Endpoint: `api/exam/submission/`
+- Endpoint: `api/exam/submission`
 - Body:
 
 ```json
@@ -723,14 +733,17 @@ success
 
 ```json
 {
-  [
-    "id": "",
-    "code": "",
-    "first_name": "",
-    "last_name": "",
-    "phone": "",
-    "gender": "",
-    "username": ""
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "first_name": "",
+      "last_name": "",
+      "phone": "",
+      "gender": "",
+      "username": ""
+    }
   ]
 }
 ```
@@ -763,10 +776,8 @@ success
 
 ```json
 {
-    "code": 201,
-    "result":{
-       "message"
-    }
+  "code": 201,
+  "result": "message"
 }
 ```
 
@@ -774,10 +785,8 @@ error
 
 ```json
 {
-    "code": 400,
-    "result":{
-       "message"
-    }
+  "code": 400,
+  "result": "message"
 }
 ```
 
@@ -805,10 +814,8 @@ Response :
 
 ```json
 {
-    "code": 200,
-    "result":{
-       "message"
-    }
+  "code": 200,
+  "result": "message"
 }
 ```
 
@@ -816,10 +823,8 @@ error
 
 ```json
 {
-    "code": 400,
-    "result":{
-       "message"
-    }
+  "code": 400,
+  "result": "message"
 }
 ```
 
@@ -836,10 +841,8 @@ success
 
 ```json
 {
-    "code": 200,
-    "result":{
-       "message"
-    }
+  "code": 200,
+  "result": "message"
 }
 ```
 
@@ -847,10 +850,8 @@ error
 
 ```json
 {
-    "code": 404,
-    "result":{
-       "message"
-    }
+  "code": 404,
+  "result": "message"
 }
 ```
 
@@ -873,9 +874,9 @@ error
       "courseName": "",
       "typeName": "",
       "capacity": "",
-      "periodeStart": "",
+      "periodStart": "",
       "status": "",
-      "periodeEnd": "",
+      "periodEnd": "",
       "courseCategory": "",
       "description": ""
     }
@@ -897,9 +898,9 @@ error
   "courseName": "",
   "typeName": "",
   "capacity": "",
-  "periodeStart": "",
+  "periodStart": "",
   "status": "",
-  "periodeEnd": "",
+  "periodEnd": "",
   "courseCategory": "",
   "description": "",
   "teacherId": ""

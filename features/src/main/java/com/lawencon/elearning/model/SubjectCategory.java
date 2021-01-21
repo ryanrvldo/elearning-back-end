@@ -5,12 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import com.lawencon.model.BaseMaster;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author : Galih Dika Permana
  *
  **/
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_m_subject_categories")
 public class SubjectCategory extends BaseMaster {

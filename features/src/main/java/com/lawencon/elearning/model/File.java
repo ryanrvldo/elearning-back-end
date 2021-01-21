@@ -12,12 +12,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import com.lawencon.model.BaseTransaction;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author : Galih Dika Permana
  *
  **/
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_r_files")
 public class File extends BaseTransaction {

@@ -15,12 +15,14 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lawencon.model.BaseMaster;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author : Galih Dika Permana
  *
  **/
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tb_m_courses")
 public class Course extends BaseMaster {
