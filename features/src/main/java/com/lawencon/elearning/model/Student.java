@@ -1,5 +1,7 @@
 package com.lawencon.elearning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseMaster;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -13,8 +15,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -51,7 +51,7 @@ public class Student extends BaseMaster {
 
   @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinTable(name = "student_course", joinColumns = {@JoinColumn(name = "student_id")},
-      inverseJoinColumns = {@JoinColumn(name = "course_id")})
+  @JoinTable(name = "student_course", joinColumns = {@JoinColumn(name = "id_student")},
+      inverseJoinColumns = {@JoinColumn(name = "id_course")})
   private Set<Course> courses = new HashSet<>();
 }

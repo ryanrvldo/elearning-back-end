@@ -1,12 +1,17 @@
 package com.lawencon.elearning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseMaster;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -42,7 +47,17 @@ public class Module extends BaseMaster {
   @JoinColumn(name = "id_subject", nullable = false)
   private SubjectCategory subject;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "id_file")
-  private File lessonFile;
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @JoinTable(
+      name = "module_files",
+      joinColumns = {
+          @JoinColumn(name = "id_module")
+      },
+      inverseJoinColumns = {
+          @JoinColumn(name = "id_file")
+      }
+  )
+  private Set<File> files;
+
 }

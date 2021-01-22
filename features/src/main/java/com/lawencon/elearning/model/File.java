@@ -1,5 +1,8 @@
 package com.lawencon.elearning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseTransaction;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,9 +11,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import com.lawencon.model.BaseTransaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,26 +26,35 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "tb_r_files")
 public class File extends BaseTransaction {
+
   private static final long serialVersionUID = 1L;
 
-  @Lob
-  @Column(nullable = false, length = 100000)
-  private byte[] data;
-
   @Column(nullable = false)
-  private Double size;
+  private String name;
+
+  @Column(nullable = false, length = 20)
+  private String extension;
+
+  @Lob
+  @Column(nullable = false)
+  private byte[] data;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private FileType type;
 
-  @Column(nullable = false, length = 10)
-  private String extension;
-
   @Column(nullable = false, length = 50)
-  private String name;
+  private String contentType;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "id_user")
+  @Column(nullable = false)
+  private long size;
+
+  @OneToOne(mappedBy = "userPhoto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "id_photo")
   private User user;
+
+  @JsonIgnore
+  @ManyToMany(mappedBy = "files", fetch = FetchType.LAZY)
+  private Set<Module> modules;
+
 }

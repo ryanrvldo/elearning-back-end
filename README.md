@@ -4,6 +4,15 @@ Back end application for e-learning.
 
 # API Spec
 
+## Authentication
+
+All API request must be use this authentication
+
+Request:
+
+- Header:
+  - Authentication: "Bearer ```token```"
+
 ## STUDENT
 
 ### LOGIN
@@ -29,10 +38,10 @@ success
 {
   "code": 200,
   "result": {
-    "token": "xxx",
-    "userId": "user",
-    "username": "username",
-    "roleCode": "role"
+    "token": "",
+    "userId": "",
+    "username": "",
+    "roleCode": ""
   }
 }
 ```
@@ -130,13 +139,27 @@ error
 
 #### Response:
 
+success
+
 ```json
 {
-  "grade": "",
-  "code": "",
-  "title": "",
-  "startTime": "",
-  "endTime": ""
+  "code": 200,
+  "result": {
+    "grade": "",
+    "code": "",
+    "title": "",
+    "startTime": "",
+    "endTime": ""
+  }
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
 }
 ```
 
@@ -352,15 +375,11 @@ success
     "title": "",
     "code": "",
     "description": "",
-    "file": [
+    "files": [
       {
         "id": "",
-        "code": "",
-        "data": "",
         "name": "",
-        "extensions": "",
-        "size": "",
-        "type": ""
+        "extensions": ""
       }
     ],
     "schedule": {
@@ -383,6 +402,8 @@ success
 
 #### Response:
 
+success
+
 ```json
 {
   "code": 200,
@@ -394,17 +415,24 @@ success
       "type": "",
       "start_time": "",
       "end_time": "",
-      "file": {
-        "id": "",
-        "code": "",
-        "data": "",
-        "name": "",
-        "extensions": "",
-        "size": "",
-        "type": ""
-      }
+      "file": [
+        {
+          "id": "",
+          "name": "",
+          "extensions": ""
+        }
+      ]
     }
   ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
 }
 ```
 
@@ -413,21 +441,26 @@ success
 #### Request:
 
 - Method: `POST`
-- Endpoint: `api/exam/student/module/:id`
+- Endpoint: `api/exam/student/`
 - Body:
 
 ```json
 {
+  "examId": "",
   "studentId": "",
   "file": {
     "id": "",
-    "code": "",
-    "data": "",
-    "name": "",
-    "extensions": "",
-    "size": "",
-    "type": ""
+    "data": ""
   }
+}
+```
+
+#### Response
+
+```json
+{
+  "code": 200,
+  "result": "message"
 }
 ```
 
@@ -436,20 +469,20 @@ success
 #### Request
 
 - Method: `POST`
-- Endpoint: `api/exam/teacher/module/:id`
+- Endpoint: `api/exam/module/`
 
 ```json
 {
-  "teacherId": "",
-  "file": {
-    "id": "",
-    "code": "",
-    "data": "",
-    "name": "",
-    "extensions": "",
-    "size": "",
-    "type": ""
-  }
+  "moduleId": "",
+  "description": "",
+  "startTime": "",
+  "endTime": "",
+  "files": [
+    {
+      "id": "",
+      "data": ""
+    }
+  ]
 }
 ```
 
@@ -476,15 +509,7 @@ success
         "firstName": "",
         "lastName": "",
         "roleCode": "",
-        "photo": {
-          "id": "",
-          "code": "",
-          "data": "",
-          "name": "",
-          "extensions": "",
-          "size": "",
-          "type": ""
-        }
+        "photo_id": ""
       }
     }
   ]
@@ -551,7 +576,7 @@ error
 }
 ```
 
-### Student Course
+### Get Student Who Take The Course
 
 #### Request
 
@@ -562,17 +587,22 @@ error
 
 ```json
 {
-  "id": "",
   "code": "",
-  "firstName": "",
-  "lastName": "",
-  "email": "",
-  "phone": "",
-  "gender": ""
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "firstName": "",
+      "lastName": "",
+      "email": "",
+      "phone": "",
+      "gender": ""
+    }
+  ]
 }
 ```
 
-### Exam Submission
+### Get Exam Submission
 
 #### Request
 
@@ -630,23 +660,26 @@ error
 
 ```json
 {
-  "teacher": {
-    "firstName": "",
-    "lastName": "",
-    "email": "",
-    "title": "",
-    "createdAt": "",
-    "gender": "",
-    "address": ""
-  },
-  "experiences": [
-    {
+  "code": "",
+  "result": {
+    "teacher": {
+      "firstName": "",
+      "lastName": "",
+      "email": "",
       "title": "",
-      "description": "",
-      "startDate": "",
-      "endDate": ""
-    }
-  ]
+      "createdAt": "",
+      "gender": "",
+      "address": ""
+    },
+    "experiences": [
+      {
+        "title": "",
+        "description": "",
+        "startDate": "",
+        "endDate": ""
+      }
+    ]
+  }
 }
 ```
 
@@ -691,13 +724,16 @@ error
 
 ```json
 {
-  "firstName": "",
-  "lastName": "",
-  "email": "",
-  "title": "",
-  "createdAt": "",
-  "gender": "",
-  "address": ""
+  "code": "",
+  "result": {
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "title": "",
+    "createdAt": "",
+    "gender": "",
+    "address": ""
+  }
 }
 ```
 
@@ -712,13 +748,16 @@ error
 
 ```json
 {
-  "firstName": "",
-  "lastName": "",
-  "email": "",
-  "title": "",
-  "createdAt": "",
-  "gender": "",
-  "address": ""
+  "code": "",
+  "result": {
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "title": "",
+    "createdAt": "",
+    "gender": "",
+    "address": ""
+  }
 }
 ```
 

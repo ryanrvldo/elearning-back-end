@@ -1,5 +1,6 @@
 package com.lawencon.elearning.model;
 
+import com.lawencon.model.BaseMaster;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -36,7 +36,7 @@ public class User extends BaseMaster {
   @JoinColumn(name = "id_role", nullable = false)
   private Role role;
 
-  @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_photo")
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "id_user")
   private File userPhoto;
 }

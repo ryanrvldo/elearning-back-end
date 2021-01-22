@@ -13,7 +13,6 @@ public class ELearningApplication {
 
   public static void main(String[] args) {
     SpringApplication.run(ELearningApplication.class, args);
-
   }
 
 }
