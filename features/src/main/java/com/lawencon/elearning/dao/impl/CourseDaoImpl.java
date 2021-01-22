@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao.impl;
 
 import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.base.BaseDaoImpl;
 import com.lawencon.elearning.dao.BaseCustomDao;
 import com.lawencon.elearning.dao.CourseDao;
@@ -9,7 +10,7 @@ import com.lawencon.elearning.model.Course;
 /**
  * @author : Galih Dika Permana
  */
-
+@Repository
 public class CourseDaoImpl extends BaseDaoImpl<Course> implements CourseDao, BaseCustomDao {
 
   @Override

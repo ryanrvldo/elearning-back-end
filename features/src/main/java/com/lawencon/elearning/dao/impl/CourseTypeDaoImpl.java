@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao.impl;
 
 import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.base.BaseDaoImpl;
 import com.lawencon.elearning.dao.BaseCustomDao;
 import com.lawencon.elearning.dao.CourseTypeDao;
@@ -9,7 +10,7 @@ import com.lawencon.elearning.model.CourseType;
 /**
  * @author : Galih Dika Permana
  */
-
+@Repository
 public class CourseTypeDaoImpl extends BaseDaoImpl<CourseType>
     implements CourseTypeDao, BaseCustomDao {
 
@@ -32,7 +33,5 @@ public class CourseTypeDaoImpl extends BaseDaoImpl<CourseType>
   public void deleteCourseType(String id) throws Exception {
     deleteById(id);
   }
-
-
 
 }
