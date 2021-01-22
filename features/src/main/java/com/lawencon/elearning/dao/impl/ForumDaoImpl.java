@@ -5,10 +5,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
-import com.lawencon.elearning.dao.BaseCustomDao;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ForumDao;
 import com.lawencon.elearning.model.Forum;
+import com.lawencon.elearning.model.Role;
+import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
 
 /**
@@ -16,7 +17,7 @@ import com.lawencon.util.Callback;
  */
 
 @Repository
-public class ForumDaoImpl extends BaseDaoImpl<Forum> implements ForumDao, BaseCustomDao {
+public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
 
   @Override
   public List<Forum> getAllForums() throws Exception {
@@ -36,7 +37,11 @@ public class ForumDaoImpl extends BaseDaoImpl<Forum> implements ForumDao, BaseCu
   @Override
   public List<Forum> getByModuleId(String id) throws Exception {
     String sql = bBuilder(
-        "SELECT trx_number , \"content\" , created_at , FROM tb_r_forums WHERE id_module =?1")
+        "SELECT trf.trx_number ,  trf.\"content\" , trf.created_at,  ",
+        "tmu.id AS id_user, tmr.id AS id_role , tmr.code AS role_code FROM tb_r_forums trf ",
+        "INNER JOIN tb_m_users tmu ON trf.id_user = tmu.id  ",
+        "INNER JOIN tb_m_roles tmr ON tmr.id = tmu.id_role  ",
+        "WHERE id_module =?1")
             .toString();
 
     List<Forum> listResult = new ArrayList<>();
@@ -50,6 +55,16 @@ public class ForumDaoImpl extends BaseDaoImpl<Forum> implements ForumDao, BaseCu
       forum.setContent((String) objArr[1]);
       Timestamp inDate = (Timestamp) objArr[2];
       forum.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
+
+      User u = new User();
+      u.setId((String) objArr[3]);
+
+      Role r = new Role();
+      r.setId((String) objArr[4]);
+      r.setCode((String) objArr[5]);
+      u.setRole(r);
+
+      forum.setUser(u);
 
       listResult.add(forum);
     });

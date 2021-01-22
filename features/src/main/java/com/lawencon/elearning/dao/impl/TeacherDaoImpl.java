@@ -5,16 +5,19 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
-import com.lawencon.elearning.dao.BaseCustomDao;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
 
+/**
+ * @author Dzaky Fadhilla Guci
+ */
+
 @Repository
-public class TeacherDaoImpl extends BaseDaoImpl<Teacher> implements TeacherDao, BaseCustomDao {
+public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao {
 
   @Override
   public List<Teacher> getAllTeachers() throws Exception {

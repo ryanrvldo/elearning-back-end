@@ -1,12 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
-import com.lawencon.elearning.dao.BaseCustomDao;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ScheduleDao;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.util.Callback;
@@ -16,7 +17,7 @@ import com.lawencon.util.Callback;
  */
 
 @Repository
-public class ScheduleDaoImpl extends BaseDaoImpl<Schedule> implements ScheduleDao, BaseCustomDao {
+public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements ScheduleDao {
 
   @Override
   public List<Schedule> getAllSchedules() throws Exception {
@@ -67,9 +68,15 @@ public class ScheduleDaoImpl extends BaseDaoImpl<Schedule> implements ScheduleDa
       Object[] objArr = (Object[]) val;
       Schedule s = new Schedule();
       s.setCode((String) objArr[0]);
-      s.setDate((LocalDate) objArr[1]);
-      s.setStartTime((LocalTime) objArr[2]);
-      s.setEndTime((LocalTime) objArr[3]);
+
+      Date inDate = (Date) objArr[1];
+      s.setDate((LocalDate) inDate.toLocalDate());
+
+      Time inTime = (Time) objArr[2];
+      s.setStartTime((LocalTime) inTime.toLocalTime());
+
+      inTime = (Time) objArr[3];
+      s.setEndTime((LocalTime) inTime.toLocalTime());
 
       listResult.add(s);
     });
