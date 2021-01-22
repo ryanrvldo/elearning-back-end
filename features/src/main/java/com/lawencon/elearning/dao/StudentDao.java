@@ -16,6 +16,12 @@ public interface StudentDao {
 
   Student getStudentProfile(String id);
 
+  Student getStudentByIdUser(String id) throws Exception;
+
   void updateStudentProfile(Student data, Callback before) throws Exception;
+
+  void deleteStudentById(String id) throws Exception;
+
+  void softDeleteStudentById(String id) throws Exception;
 
 }

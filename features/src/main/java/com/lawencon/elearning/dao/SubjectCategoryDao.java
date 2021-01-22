@@ -17,4 +17,8 @@ public interface SubjectCategoryDao {
 
   void addSubject(SubjectCategory data, Callback before) throws Exception;
 
+  void deleteSubject(String id) throws Exception;
+
+  void softDeleteSubject(String id) throws Exception;
+
 }

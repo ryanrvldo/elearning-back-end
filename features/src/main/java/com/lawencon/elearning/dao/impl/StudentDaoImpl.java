@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +43,9 @@ public class StudentDaoImpl extends BaseDaoImpl<Student> implements StudentDao, 
       Student student = new Student();
       student.setFirstName((String) objArr[0]);
       student.setLastName((String) objArr[1]);
-      student.setGender((Gender) objArr[2]);
-      student.setCreatedAt((LocalDateTime) objArr[3]);
+      student.setGender((Gender.valueOf((String) objArr[2])));
+      Timestamp inDate = (Timestamp) objArr[3];
+      student.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
       User user = new User();
       user.setEmail((String) objArr[4]);
       student.setUser(user);
@@ -55,6 +57,32 @@ public class StudentDaoImpl extends BaseDaoImpl<Student> implements StudentDao, 
   @Override
   public void updateStudentProfile(Student data, Callback before) throws Exception {
     save(data, before, null, true, true);
+  }
+
+  @Override
+  public void deleteStudentById(String id) throws Exception {
+    deleteById(id);
+  }
+
+  @Override
+  public void softDeleteStudentById(String id) throws Exception {
+    String query = "UPDATE tb_m_students SET is_active = false WHERE id = ?";
+    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  }
+
+  @Override
+  public Student getStudentByIdUser(String id) throws Exception {
+    String query = "SELECT first_name, last_name FROM tb_m_students WHERE id_user=?";
+    List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
+    List<Student> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      Student student = new Student();
+      student.setFirstName((String) objArr[0]);
+      student.setLastName((String) objArr[1]);
+      listResult.add(student);
+    });
+    return listResult.get(0);
   }
 
 }

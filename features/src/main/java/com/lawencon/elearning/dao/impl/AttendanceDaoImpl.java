@@ -19,6 +19,10 @@ public class AttendanceDaoImpl extends BaseDaoImpl<Attendance> implements Attend
     save(data, before, null, true, true);
   }
 
-
+  @Override
+  public void verifAttendance(String id) throws Exception {
+    String query = "UPDATE tb_r_attendances SET is_verified = true WHERE id = ?";
+    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  }
 
 }

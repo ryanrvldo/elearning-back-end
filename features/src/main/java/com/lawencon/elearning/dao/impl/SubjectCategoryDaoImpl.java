@@ -31,4 +31,15 @@ public class SubjectCategoryDaoImpl extends BaseDaoImpl<SubjectCategory>
     save(data, before, null, true, true);
   }
 
+  @Override
+  public void deleteSubject(String id) throws Exception {
+    deleteById(id);
+  }
+
+  @Override
+  public void softDeleteSubject(String id) throws Exception {
+    String query = "UPDATE tb_m_subject_categories SET is_active = false WHERE id = ?";
+    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  }
+
 }
