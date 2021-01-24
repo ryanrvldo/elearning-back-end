@@ -34,6 +34,14 @@ public class CourseCategoryDaoImpl extends BaseDaoImpl<CourseCategory>
     deleteById(id);
   }
 
+  @Override
+  public void softDelete(String id) throws Exception {
+    String sql =
+        bBuilder("UPDATE tb_m_course_categories SET is_active = FALSE WHERE id =?1 ").toString();
+    createNativeQuery(sql).setParameter(1, id).executeUpdate();
+
+  }
+
 
 
 }

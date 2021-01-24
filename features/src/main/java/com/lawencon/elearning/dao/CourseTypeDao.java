@@ -15,4 +15,6 @@ public interface CourseTypeDao {
   void updateCourseType(CourseType courseType) throws Exception;
 
   void deleteCourseType(String id) throws Exception;
+
+  void softDelete(String id) throws Exception;
 }

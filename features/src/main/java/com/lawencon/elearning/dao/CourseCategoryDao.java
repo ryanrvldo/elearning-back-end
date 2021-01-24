@@ -16,4 +16,6 @@ public interface CourseCategoryDao {
   void updateCourseCategory(CourseCategory courseCategory) throws Exception;
 
   void deleteCourseCategory(String id) throws Exception;
+
+  void softDelete(String id) throws Exception;
 }

@@ -1,7 +1,5 @@
 package com.lawencon.elearning.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lawencon.model.BaseTransaction;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +12,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseTransaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

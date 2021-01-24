@@ -16,4 +16,14 @@ public interface CourseDao {
   void updateCourse(Course course) throws Exception;
 
   void deleteCourse(String id) throws Exception;
+
+  List<Course> getCurentAvailableCourse() throws Exception;
+
+  List<Course> getMyCourse() throws Exception;
+
+  List<Course> getCourseForAdmin() throws Exception;
+
+  void softDelete(String id) throws Exception;
+
+  void registerCourse(Course course) throws Exception;
 }
