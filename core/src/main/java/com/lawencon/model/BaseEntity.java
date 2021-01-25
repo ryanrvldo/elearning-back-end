@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.GenericGenerator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -26,6 +27,7 @@ public abstract class BaseEntity implements Serializable {
   private String createdBy;
 
   @JsonIgnore
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "created_at")
   private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -33,6 +35,7 @@ public abstract class BaseEntity implements Serializable {
   @Column(name = "updated_by")
   private String updatedBy;
 
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 

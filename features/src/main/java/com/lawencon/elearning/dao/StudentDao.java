@@ -14,7 +14,7 @@ public interface StudentDao {
 
   Student getStudentById(String id);
 
-  Student getStudentProfile(String id);
+  Student getStudentProfile(String id) throws Exception;
 
   Student getStudentByIdUser(String id) throws Exception;
 

@@ -120,7 +120,8 @@ public class HibernateUtils {
 
           Class<?> classVariable = p.getType();
 
-          if (classVariable.getPackageName().equals(newClass.getClass().getPackageName())) {
+          if (classVariable.getPackageName().equals(newClass.getClass().getPackageName())
+              && classVariable.isEnum() == false) {
             Object objVariable = classVariable.getDeclaredConstructor().newInstance();
             Object objMap = mapObject.get(p.getName());
 
@@ -175,6 +176,8 @@ public class HibernateUtils {
         m.invoke(newClass, value != null ? new BigDecimal(value.toString()) : null);
       } else if (clazz.equals(Long.class)) {
         m.invoke(newClass, value != null ? Long.valueOf(value.toString()) : null);
+      } else if (clazz.isEnum()) {
+        m.invoke(newClass, value != null ? Enum.valueOf((Class) clazz, value.toString()) : null);
       } else {
         m.invoke(newClass, value != null ? value : null);
       }

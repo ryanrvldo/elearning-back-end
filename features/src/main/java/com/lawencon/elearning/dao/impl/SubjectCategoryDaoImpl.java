@@ -2,7 +2,7 @@ package com.lawencon.elearning.dao.impl;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.util.Callback;
@@ -13,7 +13,7 @@ import com.lawencon.util.Callback;
  *
  */
 @Repository
-public class SubjectCategoryDaoImpl extends BaseDaoImpl<SubjectCategory>
+public class SubjectCategoryDaoImpl extends CustomBaseDao<SubjectCategory>
     implements SubjectCategoryDao {
 
   @Override
