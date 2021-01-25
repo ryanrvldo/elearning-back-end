@@ -1,5 +1,7 @@
 package com.lawencon.elearning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseTransaction;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,8 +14,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lawencon.model.BaseTransaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,9 +32,6 @@ public class File extends BaseTransaction {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false, length = 20)
-  private String extension;
-
   @Lob
   @Column(nullable = false)
   private byte[] data;
@@ -49,6 +46,7 @@ public class File extends BaseTransaction {
   @Column(nullable = false)
   private long size;
 
+  @JsonIgnore
   @OneToOne(mappedBy = "userPhoto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "id_photo")
   private User user;

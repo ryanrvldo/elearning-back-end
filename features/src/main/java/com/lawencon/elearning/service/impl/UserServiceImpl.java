@@ -1,21 +1,26 @@
 package com.lawencon.elearning.service.impl;
 
+import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.UserService;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
  */
-public class UserServiceImpl implements UserService {
+@Service
+public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
   @Autowired
   private UserDao userDao;
 
   @Override
   public void addUser(User user) throws Exception {
+    user.setCreatedAt(LocalDateTime.now());
     userDao.createUser(user);
   }
 
@@ -33,6 +38,23 @@ public class UserServiceImpl implements UserService {
       throw new IllegalRequestException("username", username);
     }
     return userDao.findByUsername(username);
+  }
+
+  @Override
+  public void updateUser(User user) throws Exception {
+    User prevUser = userDao.findById(user.getId());
+    user.setCreatedAt(prevUser.getCreatedAt());
+    user.setCreatedBy(prevUser.getCreatedBy());
+    user.setVersion(prevUser.getVersion());
+    user.setUpdatedAt(LocalDateTime.now());
+    userDao.updateUser(user);
+  }
+
+  @Override
+  public void updateActivateStatus(String id, boolean status) throws Exception {
+    begin();
+    userDao.updateActivateStatus(id, status);
+    commit();
   }
 
 }

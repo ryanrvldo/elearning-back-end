@@ -35,12 +35,6 @@ public class Student extends BaseMaster {
   @Column(nullable = false, length = 20)
   private String phone;
 
-  @Column(name = "first_name", nullable = false, length = 50)
-  private String firstName;
-
-  @Column(name = "last_name", nullable = false, length = 50)
-  private String lastName;
-
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Gender gender;

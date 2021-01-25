@@ -13,4 +13,8 @@ public interface UserService {
 
   User getByUsername(String username) throws Exception;
 
+  void updateUser(User user) throws Exception;
+
+  void updateActivateStatus(String id, boolean status) throws Exception;
+
 }

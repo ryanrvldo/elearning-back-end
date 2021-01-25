@@ -46,4 +46,17 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     return user;
   }
 
+  @Override
+  public void updateUser(User user) throws Exception {
+    save(user, null, null, true, true);
+  }
+
+  @Override
+  public void updateActivateStatus(String id, boolean status) throws Exception {
+    createQuery("UPDATE User SET isActive = ?1 WHERE id = ?2 ", clazz)
+        .setParameter(1, status)
+        .setParameter(2, id)
+        .executeUpdate();
+  }
+
 }

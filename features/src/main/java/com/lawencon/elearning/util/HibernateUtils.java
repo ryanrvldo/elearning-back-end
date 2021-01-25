@@ -18,7 +18,7 @@ import java.util.Map;
  * <li>Support for super class of model</li>
  * <li>Support 1 nest for variable type model</li>
  * </ul>
- * 
+ *
  * @author Galih Dika
  */
 public class HibernateUtils {
@@ -27,28 +27,29 @@ public class HibernateUtils {
    * Return list model
    * <p>
    * <b>Example 1 :</b><br/>
-   * 
+   * <p>
    * String sql = "select username, email from Users";
    * <p>
    * List<<code>?</code>> listUser = em.createQuery(sql).getResultList();
    * <p>
    * List<<code>Users</code>> listResult = HibernateUtils.bMapperList(listUser, Users.class,
    * "username", "email");
-   * 
+   *
    * <p>
    * <b>Example 2 :</b><br/>
-   * 
+   * <p>
    * String sql = "select username, email, r.id, r.name from Users as u LEFT JOIN u.role as r";
    * <p>
    * List<<code>?</code>> listUser = em.createQuery(sql).getResultList();
    * <p>
    * List<<code>Users</code>> listResult = HibernateUtils.bMapperList(listUser, Users.class,
    * "username", "email", "role.id", "role.name");
-   * 
+   *
    * @param listMapping result list of hibernate query
-   * @param clazz expected return model type
-   * @param columns must be same as the variable name in the model class, if column selected is a
-   *        foreign key then column parameter must be separated by dot (.) see example 2.
+   * @param clazz       expected return model type
+   * @param columns     must be same as the variable name in the model class, if column selected is
+   *                    a foreign key then column parameter must be separated by dot (.) see example
+   *                    2.
    */
   public static <T> List<T> bMapperList(List<?> listMapping, Class<T> clazz, String... columns)
       throws Exception {
@@ -65,10 +66,11 @@ public class HibernateUtils {
         getSuperMethod(clazz, methodList);
 
         if (val instanceof Object[]) {
-          if (((Object[]) val).length != columns.length)
+          if (((Object[]) val).length != columns.length) {
             throw new RuntimeException(
                 "The length of columns parameter and select not match : select -> "
                     + ((Object[]) val).length + " and columns parameter -> " + columns.length);
+          }
 
           Object[] valDb = (Object[]) val;
           for (int i = 0; i < valDb.length; i++) {
@@ -77,10 +79,11 @@ public class HibernateUtils {
 
             invokeMethod(newClass, methodList, value, mapping.toLowerCase(), mapObject);
           }
-        } else if (val instanceof Object) {
-          if (columns.length != 1)
+        } else if (val != null) {
+          if (columns.length != 1) {
             throw new RuntimeException(
                 "The columns parameter must be one because you only select one column");
+          }
 
           invokeMethod(newClass, methodList, val, columns[0].toLowerCase(), mapObject);
         }
@@ -107,9 +110,7 @@ public class HibernateUtils {
   private static <T> void invokeMethod(T newClass, List<Method> listMethod, Object value,
       String mapping, Map<String, Object> mapObject) throws Exception {
 
-    for (int j = 0; j < listMethod.size(); j++) {
-
-      Method m = listMethod.get(j);
+    for (Method m : listMethod) {
 
       if (m.getName().startsWith("set")) {
 
@@ -120,8 +121,9 @@ public class HibernateUtils {
 
           Class<?> classVariable = p.getType();
 
-          if (classVariable.getPackageName().equals(newClass.getClass().getPackageName())
-              && classVariable.isEnum() == false) {
+          if (classVariable.getPackage().getName()
+              .equals(newClass.getClass().getPackage().getName())
+              && !classVariable.isEnum()) {
             Object objVariable = classVariable.getDeclaredConstructor().newInstance();
             Object objMap = mapObject.get(p.getName());
 
@@ -160,29 +162,27 @@ public class HibernateUtils {
       throws Exception {
     if (value != null) {
       if (clazz.equals(java.time.LocalDate.class) && value instanceof java.sql.Date) {
-        m.invoke(newClass, value != null ? ((java.sql.Date) value).toLocalDate() : null);
+        m.invoke(newClass, ((java.sql.Date) value).toLocalDate());
       } else if (clazz.equals(java.time.LocalDateTime.class)
           && value instanceof java.sql.Timestamp) {
-        m.invoke(newClass, value != null ? ((java.sql.Timestamp) value).toLocalDateTime() : null);
+        m.invoke(newClass, ((java.sql.Timestamp) value).toLocalDateTime());
       } else if (clazz.equals(java.time.LocalTime.class) && value instanceof java.sql.Time) {
-        m.invoke(newClass, value != null ? ((java.sql.Time) value).toLocalTime() : null);
+        m.invoke(newClass, ((java.sql.Time) value).toLocalTime());
       } else if (clazz.equals(java.util.Date.class) && value instanceof java.sql.Date) {
-        m.invoke(newClass,
-            value != null ? new java.util.Date(((java.sql.Date) value).getTime()) : null);
+        m.invoke(newClass, new java.util.Date(((java.sql.Date) value).getTime()));
       } else if (clazz.equals(java.util.Date.class) && value instanceof java.sql.Timestamp) {
-        m.invoke(newClass,
-            value != null ? new java.util.Date(((java.sql.Timestamp) value).getTime()) : null);
+        m.invoke(newClass, new java.util.Date(((java.sql.Timestamp) value).getTime()));
       } else if (clazz.equals(BigDecimal.class)) {
-        m.invoke(newClass, value != null ? new BigDecimal(value.toString()) : null);
+        m.invoke(newClass, new BigDecimal(value.toString()));
       } else if (clazz.equals(Long.class)) {
-        m.invoke(newClass, value != null ? Long.valueOf(value.toString()) : null);
+        m.invoke(newClass, Long.valueOf(value.toString()));
       } else if (clazz.isEnum()) {
-        m.invoke(newClass, value != null ? Enum.valueOf((Class) clazz, value.toString()) : null);
+        m.invoke(newClass, Enum.valueOf((Class) clazz, value.toString()));
       } else {
-        m.invoke(newClass, value != null ? value : null);
+        m.invoke(newClass, value);
       }
     } else {
-      m.invoke(newClass, value != null ? value : null);
+      m.invoke(newClass, (Object) null);
     }
   }
 }

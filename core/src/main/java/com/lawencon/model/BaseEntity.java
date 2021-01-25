@@ -1,15 +1,15 @@
 package com.lawencon.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import org.hibernate.annotations.GenericGenerator;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @MappedSuperclass
@@ -29,7 +29,7 @@ public abstract class BaseEntity implements Serializable {
   @JsonIgnore
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "created_at")
-  private LocalDateTime createdAt = LocalDateTime.now();
+  private LocalDateTime createdAt;
 
   @JsonIgnore
   @Column(name = "updated_by")

@@ -1,6 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
-import com.lawencon.base.BaseDaoImpl;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.RoleDao;
 import com.lawencon.elearning.model.Role;
 import java.util.List;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @author Rian Rivaldo
  */
 @Repository
-public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
+public class RoleDaoImpl extends CustomBaseDao<Role> implements RoleDao {
 
   @Override
   public void create(Role role) throws Exception {
@@ -24,9 +24,10 @@ public class RoleDaoImpl extends BaseDaoImpl<Role> implements RoleDao {
 
   @Override
   public Role findByCode(String code) throws Exception {
-    return createQuery("FROM Role WHERE code = ?1 ", Role.class)
+    List<Role> roleList = createQuery("FROM Role WHERE code = ?1 ", Role.class)
         .setParameter(1, code)
-        .getSingleResult();
+        .getResultList();
+    return getResultModel(roleList);
   }
 
   @Override

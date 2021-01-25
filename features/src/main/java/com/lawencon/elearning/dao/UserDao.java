@@ -13,4 +13,8 @@ public interface UserDao {
 
   User findByUsername(String username) throws Exception;
 
+  void updateUser(User user) throws Exception;
+
+  void updateActivateStatus(String id, boolean status) throws Exception;
+
 }
