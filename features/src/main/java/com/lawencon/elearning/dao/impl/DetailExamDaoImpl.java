@@ -10,6 +10,7 @@ import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.util.HibernateUtils;
+import com.lawencon.util.Callback;
 
 /**
  * @author : Galih Dika Permana
@@ -55,13 +56,13 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public void insertDetailExam(DetailExam dtlExam) throws Exception {
-    save(dtlExam, null, null, true, true);
+  public void insertDetailExam(DetailExam dtlExam, Callback before) throws Exception {
+    save(dtlExam, before, null, true, true);
   }
 
   @Override
-  public void updateDetailExam(DetailExam dtlExam) throws Exception {
-    save(dtlExam, null, null, true, true);
+  public void updateDetailExam(DetailExam dtlExam, Callback before) throws Exception {
+    save(dtlExam, before, null, true, true);
   }
 
   @Override

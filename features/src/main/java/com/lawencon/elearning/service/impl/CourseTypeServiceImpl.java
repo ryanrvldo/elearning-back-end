@@ -1,9 +1,9 @@
 package com.lawencon.elearning.service.impl;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseTypeDao;
-import com.lawencon.elearning.dao.impl.CourseTypeDaoImpl;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.service.CourseTypeService;
 
@@ -13,36 +13,34 @@ import com.lawencon.elearning.service.CourseTypeService;
 
 public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseTypeService {
 
-  private CourseTypeDao courseType = new CourseTypeDaoImpl();
+  @Autowired
+  private CourseTypeDao courseTypeDao;
+
   @Override
   public List<CourseType> getListCourseType() throws Exception {
-    return courseType.getListCourseType();
+    return courseTypeDao.getListCourseType();
   }
 
   @Override
   public void insertCourseType(CourseType courseType) throws Exception {
-    this.courseType.insertCourseType(courseType, null);
+    this.courseTypeDao.insertCourseType(courseType, null);
   }
 
   @Override
   public void updateCourseType(CourseType courseType) throws Exception {
-    this.courseType.updateCourseType(courseType, null);
+    this.courseTypeDao.updateCourseType(courseType, null);
   }
 
   @Override
   public void deleteCourseType(String id) throws Exception {
-    courseType.deleteCourseType(id);
+    courseTypeDao.deleteCourseType(id);
   }
 
   @Override
   public void updateIsActived(String id) throws Exception {
-    try {
       begin();
-      courseType.updateIsActived(id);
+      courseTypeDao.updateIsActived(id);
       commit();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
 }

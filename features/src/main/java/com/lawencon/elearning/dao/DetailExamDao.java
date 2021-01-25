@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import com.lawencon.elearning.model.DetailExam;
+import com.lawencon.util.Callback;
 
 /**
  * @author : Galih Dika Permana
@@ -11,9 +12,9 @@ public interface DetailExamDao {
 
   void updateIsActived(String id) throws Exception;
 
-  void insertDetailExam(DetailExam dtlExam) throws Exception;
+  void insertDetailExam(DetailExam dtlExam, Callback before) throws Exception;
 
-  void updateDetailExam(DetailExam dtlExam) throws Exception;
+  void updateDetailExam(DetailExam dtlExam, Callback before) throws Exception;
 
   void deleteDetailExam(String id) throws Exception;
 
