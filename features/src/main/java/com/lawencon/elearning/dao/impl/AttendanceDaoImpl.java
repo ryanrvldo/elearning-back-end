@@ -22,9 +22,8 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
   }
 
   @Override
-  public void verifAttendance(String id) throws Exception {
-    String query = "UPDATE tb_r_attendances SET is_verified = true WHERE id = ?";
-    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  public void verifAttendance(Attendance data, Callback before) throws Exception {
+    save(data, before, null, true, true);
   }
 
   @Override
@@ -35,19 +34,6 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
     List<?> listObj = createNativeQuery(query).setParameter(1, idModule).getResultList();
     return HibernateUtils.bMapperList(listObj, Attendance.class, "createdAt", "isVerified",
         "student.firstName", "student.lastName");
-    // listObj.forEach(val -> {
-    // Object[] objArr = (Object[]) val;
-    // Attendance atd = new Attendance();
-    // Timestamp attTime = (Timestamp) objArr[0];
-    // atd.setCreatedAt((LocalDateTime) attTime.toLocalDateTime());
-    // atd.setIsVerified((boolean) objArr[1]);
-    // Student std = new Student();
-    // std.setFirstName((String) objArr[2]);
-    // std.setLastName((String) objArr[3]);
-    // atd.setStudent(std);
-    // listResult.add(atd);
-    // });
-    // return listResult;
   }
 
 }

@@ -20,6 +20,6 @@ public interface ModuleDao {
 
   void deleteModule(String id) throws Exception;
 
-  void softDeleteModule(String id) throws Exception;
+  void updateIsActive(String id) throws Exception;
 
 }

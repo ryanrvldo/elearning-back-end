@@ -37,19 +37,6 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
     List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
     listResult = HibernateUtils.bMapperList(listObj, Student.class, "firstName", "lastName",
         "gender", "createdAt", "user.email");
-    // listObj.forEach(val -> {
-    // Object[] objArr = (Object[]) val;
-    // Student student = new Student();
-    // student.setFirstName((String) objArr[0]);
-    // student.setLastName((String) objArr[1]);
-    // student.setGender((Gender.valueOf((String) objArr[2])));
-    // Timestamp inDate = (Timestamp) objArr[3];
-    // student.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
-    // User user = new User();
-    // user.setEmail((String) objArr[4]);
-    // student.setUser(user);
-    // listResult.add(student);
-    // });
     return getResultModel(listResult);
   }
 
@@ -64,9 +51,8 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   }
 
   @Override
-  public void softDeleteStudentById(String id) throws Exception {
-    String query = "UPDATE tb_m_students SET is_active = false WHERE id = ?";
-    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  public void updateIsActiveById(Student data, Callback before) throws Exception {
+    save(data, before, null, true, true);
   }
 
   @Override

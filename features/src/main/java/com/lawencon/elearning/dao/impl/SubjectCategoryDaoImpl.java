@@ -37,9 +37,8 @@ public class SubjectCategoryDaoImpl extends CustomBaseDao<SubjectCategory>
   }
 
   @Override
-  public void softDeleteSubject(String id) throws Exception {
-    String query = "UPDATE tb_m_subject_categories SET is_active = false WHERE id = ?";
-    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  public void updateIsActive(SubjectCategory data, Callback before) throws Exception {
+    save(data, before, null, true, true);
   }
 
 }

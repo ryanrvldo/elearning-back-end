@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dao;
+package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.model.SubjectCategory;
@@ -9,7 +9,7 @@ import com.lawencon.util.Callback;
  * @author WILLIAM
  *
  */
-public interface SubjectCategoryDao {
+public interface SubjectCategoryService {
 
   List<SubjectCategory> getAllSubject();
 
@@ -19,6 +19,6 @@ public interface SubjectCategoryDao {
 
   void deleteSubject(String id) throws Exception;
 
-  void updateIsActive(SubjectCategory data, Callback before) throws Exception;
+  void updateIsActive(SubjectCategory data) throws Exception;
 
 }
