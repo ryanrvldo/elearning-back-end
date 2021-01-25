@@ -267,6 +267,25 @@ public class BaseDaoImpl<T extends Serializable> {
       return em().createNativeQuery(sql);
     }
 
+    protected void updateNativeSQL(String sql, String whereCriteria, String updatedBy,
+        String... criterias) throws Exception {
+      StringBuilder sb = new StringBuilder(sql);
+      sb.append(", updated_at = now() ");
+      sb.append(", updated_by = ?" + (criterias.length + 1));
+      sb.append(", version = (version + 1) ");
+      sb.append(" WHERE id = ?" + (criterias.length + 2));
+
+      Query q = em().createNativeQuery(sb.toString());
+      for (int i = 0; i < criterias.length; i++) {
+        q.setParameter(i + 1, criterias[i]);
+      }
+
+      q.setParameter(criterias.length + 1, updatedBy);
+      q.setParameter(criterias.length + 2, whereCriteria);
+
+      q.executeUpdate();
+    }
+
     // private void clear() {
     // ConnHandler.clear();
     // }

@@ -41,10 +41,6 @@ public class CourseCategoryDaoImpl extends CustomBaseDao<CourseCategory>
     String sql =
         buildQueryOf("UPDATE tb_m_course_categories SET is_active = FALSE WHERE id =?1 ")
             .toString();
-    createNativeQuery(sql).setParameter(1, id).executeUpdate();
-
+    updateNativeSQL(sql, id, "1");
   }
-
-
-
 }
