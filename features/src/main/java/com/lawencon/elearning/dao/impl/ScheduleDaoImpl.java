@@ -1,16 +1,17 @@
 package com.lawencon.elearning.dao.impl;
 
-import com.lawencon.elearning.dao.CustomBaseDao;
-import com.lawencon.elearning.dao.ScheduleDao;
-import com.lawencon.elearning.model.Schedule;
-import com.lawencon.util.Callback;
-import java.sql.Date;
-import java.sql.Time;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dao.ScheduleDao;
+import com.lawencon.elearning.model.Schedule;
+import com.lawencon.elearning.util.HibernateUtils;
+import com.lawencon.util.Callback;
+
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -30,6 +31,11 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   }
 
   @Override
+  public void updateSchedule(Schedule data, Callback before) throws Exception {
+    save(data, before, null, true, true);
+  }
+
+  @Override
   public Schedule findScheduleById(String id) throws Exception {
     return getById(id);
   }
@@ -44,44 +50,51 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      Schedule s = new Schedule();
-      s.setDate((LocalDate) objArr[0]);
-      s.setStartTime((LocalTime) objArr[1]);
-      s.setEndTime((LocalTime) objArr[3]);
+    listResult =
+        HibernateUtils.bMapperList(listObj, Schedule.class, "date", "startTime", "endTime");
 
-      listResult.add(s);
-    });
+    // listObj.forEach(val -> {
+    // Object[] objArr = (Object[]) val;
+    // Schedule s = new Schedule();
+    // s.setDate((LocalDate) objArr[0]);
+    // s.setStartTime((LocalTime) objArr[1]);
+    // s.setEndTime((LocalTime) objArr[3]);
+    //
+    // listResult.add(s);
+    // });
     return getResultModel(listResult);
   }
   
   @Override
-  public List<Schedule> getByTeacherId(String id) throws Exception {
+
+  public List<Schedule> getByTeacherId(String teacherId) throws Exception {
     String sql = buildQueryOf("SELECT code, schedule_date, start_time, end_time ",
         "  FROM tb_m_schedules tms WHERE id_teacher=?").toString();
 
     List<Schedule> listResult = new ArrayList<>();
 
-    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, teacherId).getResultList();
 
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      Schedule s = new Schedule();
-      s.setCode((String) objArr[0]);
+    listResult =
+        HibernateUtils.bMapperList(listObj, Schedule.class, "code", "date", "startTime", "endTime");
 
-      Date inDate = (Date) objArr[1];
-      s.setDate((LocalDate) inDate.toLocalDate());
-
-      Time inTime = (Time) objArr[2];
-      s.setStartTime((LocalTime) inTime.toLocalTime());
-
-      inTime = (Time) objArr[3];
-      s.setEndTime((LocalTime) inTime.toLocalTime());
-
-      listResult.add(s);
-    });
-    return listResult;
+    // listObj.forEach(val -> {
+    // Object[] objArr = (Object[]) val;
+    // Schedule s = new Schedule();
+    // s.setCode((String) objArr[0]);
+    //
+    // Date inDate = (Date) objArr[1];
+    // s.setDate((LocalDate) inDate.toLocalDate());
+    //
+    // Time inTime = (Time) objArr[2];
+    // s.setStartTime((LocalTime) inTime.toLocalTime());
+    //
+    // inTime = (Time) objArr[3];
+    // s.setEndTime((LocalTime) inTime.toLocalTime());
+    //
+    // listResult.add(s);
+    // });
+    return listResult.size() > 0 ? listResult : null;
   }
 
   @Override

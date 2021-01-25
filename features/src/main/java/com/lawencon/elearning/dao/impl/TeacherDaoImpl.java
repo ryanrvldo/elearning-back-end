@@ -1,13 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -43,7 +43,6 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-
     listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "firstName", "lastName",
         "user.email", "titleDegree", "createdAt", "gender");
 
@@ -75,6 +74,12 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public void softDelete(String id) throws Exception {
     String sql = "UPDATE tb_m_teachers SET is_active = FALSE WHERE id =?1";
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
+  }
+
+  @Override
+  public void updateTeacher(Teacher data, Callback before) throws Exception {
+    save(data, before, null, true, true);
+
   }
 
 }

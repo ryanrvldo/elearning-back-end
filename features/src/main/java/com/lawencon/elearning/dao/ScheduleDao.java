@@ -16,11 +16,13 @@ public interface ScheduleDao {
 
   void saveSchedule(Schedule data, Callback before) throws Exception;
 
+  void updateSchedule(Schedule data, Callback before) throws Exception;
+
   Schedule findScheduleById(String id) throws Exception;
 
   Schedule getByIdCustom(String id) throws Exception;
 
-  List<Schedule> getByTeacherId(String id) throws Exception;
+  List<Schedule> getByTeacherId(String teacherId) throws Exception;
 
   Long checkScheduleTeacher(String id, LocalDate date, LocalTime startTime) throws Exception;
 

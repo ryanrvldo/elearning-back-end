@@ -22,5 +22,7 @@ public interface TeacherDao {
 
   void softDelete(String id) throws Exception;
 
+  void updateTeacher(Teacher data, Callback before) throws Exception;
+
 
 }
