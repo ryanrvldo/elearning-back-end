@@ -1,16 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.CourseCategory;
-import com.lawencon.elearning.model.CourseType;
-import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.util.HibernateUtils;
+import com.lawencon.util.Callback;
 
 /**
  * @author : Galih Dika Permana
@@ -24,13 +21,14 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public void insertCourse(Course course) throws Exception {
-    save(course, null, null, true, true);
+  public String insertCourse(Course course, Callback before) throws Exception {
+    save(course, before, null, true, true);
+    return course.getId();
   }
 
   @Override
-  public void updateCourse(Course course) throws Exception {
-    save(course, null, null, true, true);
+  public void updateCourse(Course course, Callback before) throws Exception {
+    save(course, before, null, true, true);
   }
 
   @Override
@@ -134,7 +132,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public void softDelete(String id) throws Exception {
+  public void updateIsActived(String id) throws Exception {
     String sql =
         buildQueryOf("UPDATE tb_m_courses SET is_active = FALSE WHERE id =?1 ").toString();
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
@@ -152,35 +150,39 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     List<Course> listResult = new ArrayList<>();
 
     List<?> listObj = createNativeQuery(sql).getResultList();
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      Course course = new Course();
-      course.setId((String) objArr[0]);
-      course.setCode((String) objArr[1]);
-
-      CourseType courseType = new CourseType();
-      courseType.setName((String) objArr[2]);
-      course.setCourseType(courseType);
-
-      course.setCapacity((Integer) objArr[3]);
-      course.setPeriodStart((LocalDateTime) objArr[4]);
-      course.setPeriodEnd((LocalDateTime) objArr[5]);
-
-      Teacher teacher = new Teacher();
-      teacher.setId((String) objArr[6]);
-      teacher.setCode((String) objArr[7]);
-      teacher.setFirstName((String) objArr[8]);
-      teacher.setLastName((String) objArr[9]);
-      teacher.setTitleDegree((String) objArr[10]);
-      course.setTeacher(teacher);
-
-      CourseCategory courseCategory = new CourseCategory();
-      courseCategory.setCode((String) objArr[11]);
-      courseCategory.setName((String) objArr[12]);
-      course.setCategory(courseCategory);
-
-      listResult.add(course);
-    });
+    listResult = HibernateUtils.bMapperList(listObj, Course.class, "id", "code", "courseType.name",
+        "capacity", "status", "description", "periodStart", "periodEnd", "teacher.id",
+        "teacher.code", "teacher.firstName", "teacher.lastName", "teacher.titleDegree",
+        "category.code", "category.name");
+    // listObj.forEach(val -> {
+    // Object[] objArr = (Object[]) val;
+    // Course course = new Course();
+    // course.setId((String) objArr[0]);
+    // course.setCode((String) objArr[1]);
+    //
+    // CourseType courseType = new CourseType();
+    // courseType.setName((String) objArr[2]);
+    // course.setCourseType(courseType);
+    //
+    // course.setCapacity((Integer) objArr[3]);
+    // course.setPeriodStart((LocalDateTime) objArr[4]);
+    // course.setPeriodEnd((LocalDateTime) objArr[5]);
+    //
+    // Teacher teacher = new Teacher();
+    // teacher.setId((String) objArr[6]);
+    // teacher.setCode((String) objArr[7]);
+    // teacher.setFirstName((String) objArr[8]);
+    // teacher.setLastName((String) objArr[9]);
+    // teacher.setTitleDegree((String) objArr[10]);
+    // course.setTeacher(teacher);
+    //
+    // CourseCategory courseCategory = new CourseCategory();
+    // courseCategory.setCode((String) objArr[11]);
+    // courseCategory.setName((String) objArr[12]);
+    // course.setCategory(courseCategory);
+    //
+    // listResult.add(course);
+    // });
     return listResult;
   }
 

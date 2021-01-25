@@ -311,21 +311,14 @@ public abstract class BaseDaoImpl<T extends Serializable> {
     if (before != null)
       before.exec();
 
-    // Field id = getBaseClass(entity).getDeclaredField("id");
     Method m = getBaseClass(entity).getDeclaredMethod("getId");
-    // id.setAccessible(true);
-
-    // Object objId = id.get(entity);
-    Object objId = m.getDefaultValue();
+    Object objId = m.invoke(entity);
 
     if (objId != null) {
-      // T data = getById(id.get(entity).toString());
       T data = getById(objId.toString());
-      // setField(entity, data, false);
       setVersion(entity, data, false);
       em().merge(entity);
     } else {
-      // setField(entity, null, true);
       setVersion(entity, null, true);
       em().persist(entity);
     }

@@ -9,7 +9,7 @@ import com.lawencon.elearning.model.DetailExam;
 public interface DetailExamDao {
   DetailExam getStudentScore(String id) throws Exception;
 
-  void softDelete(String id) throws Exception;
+  void updateIsActived(String id) throws Exception;
 
   void insertDetailExam(DetailExam dtlExam) throws Exception;
 

@@ -6,11 +6,6 @@ target/
 /.mvn
 mvnw
 mvnw.cmd
-<<<<<<< Updated upstream
-!**/resources/application.properties
-=======
-!**/resource/application.properties
->>>>>>> Stashed changes
 
 ### STS ###
 .apt_generated

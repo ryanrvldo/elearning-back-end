@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.model.CourseCategory;
+import com.lawencon.util.Callback;
 
 /**
  * @author : Galih Dika Permana
@@ -19,13 +20,15 @@ public class CourseCategoryDaoImpl extends CustomBaseDao<CourseCategory>
   }
 
   @Override
-  public void insertCourseCategory(CourseCategory courseCategory) throws Exception {
-    save(courseCategory, null, null, true, true);
+  public void insertCourseCategory(CourseCategory courseCategory, Callback before)
+      throws Exception {
+    save(courseCategory, before, null, true, true);
   }
 
   @Override
-  public void updateCourseCategory(CourseCategory courseCategory) throws Exception {
-    save(courseCategory, null, null, true, true);
+  public void updateCourseCategory(CourseCategory courseCategory, Callback before)
+      throws Exception {
+    save(courseCategory, before, null, true, true);
   }
 
   @Override
@@ -34,7 +37,7 @@ public class CourseCategoryDaoImpl extends CustomBaseDao<CourseCategory>
   }
 
   @Override
-  public void softDelete(String id) throws Exception {
+  public void updateIsActived(String id) throws Exception {
     String sql =
         buildQueryOf("UPDATE tb_m_course_categories SET is_active = FALSE WHERE id =?1 ")
             .toString();

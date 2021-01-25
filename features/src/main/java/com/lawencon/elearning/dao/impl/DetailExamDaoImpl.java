@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,7 @@ import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.Module;
-import com.lawencon.elearning.model.Student;
+import com.lawencon.elearning.util.HibernateUtils;
 
 /**
  * @author : Galih Dika Permana
@@ -24,7 +23,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
         "select AVG(de.grade), m.code, m.title, e.start_time, e.end_time ",
         "from tb_r_dtl_exams de",
         "inner join tb_r_exams e on e.id = de.id_exam ",
-        "inner join tb_m_modules m on m.id = e.id_module" + "where de.id_student = ?",
+        "inner join tb_m_modules m on m.id = e.id_module where de.id_student = ?",
         "group by m.code, m.title, e.start_time, e.end_time").toString();
     List<DetailExam> listResult = new ArrayList<>();
 
@@ -49,7 +48,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public void softDelete(String id) throws Exception {
+  public void updateIsActived(String id) throws Exception {
     String sql =
         buildQueryOf("UPDATE tb_r_dtl_exams SET is_active = FALSE WHERE id =?1 ").toString();
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
@@ -87,18 +86,21 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      DetailExam dtlExam = new DetailExam();
-      dtlExam.setId((String) objArr[0]);
-      dtlExam.setTrxNumber((String) objArr[1]);
-      Student student = new Student();
-      student.setFirstName((String) objArr[2]);
-      student.setLastName((String) objArr[3]);
-      dtlExam.setStudent(student);
-      dtlExam.setTrxDate((LocalDate) objArr[4]);
-      listResult.add(dtlExam);
-    });
+    listResult = HibernateUtils.bMapperList(listObj, DetailExam.class, "id", "trxNumber",
+        "student.firstName", "student.lastName", "trxDate");
+    //
+    // listObj.forEach(val -> {
+    // Object[] objArr = (Object[]) val;
+    // DetailExam dtlExam = new DetailExam();
+    // dtlExam.setId((String) objArr[0]);
+    // dtlExam.setTrxNumber((String) objArr[1]);
+    // Student student = new Student();
+    // student.setFirstName((String) objArr[2]);
+    // student.setLastName((String) objArr[3]);
+    // dtlExam.setStudent(student);
+    // dtlExam.setTrxDate((LocalDate) objArr[4]);
+    // listResult.add(dtlExam);
+    // });
     return getResultModel(listResult);
   }
 

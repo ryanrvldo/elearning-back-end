@@ -21,12 +21,12 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
 
   @Override
   public void insertCourseCategory(CourseCategory courseCategory) throws Exception {
-    courseDao.insertCourseCategory(courseCategory);
+    courseDao.insertCourseCategory(courseCategory, null);
   }
 
   @Override
   public void updateCourseCategory(CourseCategory courseCategory) throws Exception {
-    courseDao.updateCourseCategory(courseCategory);
+    courseDao.updateCourseCategory(courseCategory, null);
   }
 
   @Override
@@ -35,10 +35,10 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   }
 
   @Override
-  public void softDelete(String id) throws Exception {
+  public void updateIsActived(String id) throws Exception {
     try {
       begin();
-      courseDao.softDelete(id);
+      courseDao.updateIsActived(id);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
