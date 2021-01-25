@@ -1,15 +1,15 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.ExamType;
 import com.lawencon.util.Callback;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -35,7 +35,7 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
 
   @Override
   public List<Exam> getExamsByModule(String id) throws Exception {
-    String sql = bBuilder("SELECT id, trx_number , description , \"type\" ",
+    String sql = buildQueryOf("SELECT id, trx_number , description , \"type\" ",
         ", start_time , end_time FROM tb_r_exams WHERE id_module = ?1 ").toString();
     
     List<Exam> listResult = new ArrayList<>();
@@ -65,20 +65,21 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
 
   @Override
   public Long getCountData() throws Exception {
-    String sql = bBuilder("SELECT count(*) as total_data FROM tb_r_exams").toString();
+    String sql = buildQueryOf("SELECT count(*) as total_data FROM tb_r_exams").toString();
     return (Long) createNativeQuery(sql).getSingleResult();
   }
 
   @Override
   public Long getCountDataByModule(String id) throws Exception {
     String sql =
-        bBuilder("SELECT count(*) as total_data FROM tb_r_exams WHERE id_module = ?1 ").toString();
+        buildQueryOf("SELECT count(*) as total_data FROM tb_r_exams WHERE id_module = ?1 ")
+            .toString();
     return (Long) createNativeQuery(sql).setParameter(1, id).getSingleResult();
   }
 
   @Override
   public String getIdByCode(String code) throws Exception {
-    String sql = bBuilder("SELECT id FROM tb_r_exams WHERE trx_number = ?1 ").toString();
+    String sql = buildQueryOf("SELECT id FROM tb_r_exams WHERE trx_number = ?1 ").toString();
     return (String) createNativeQuery(sql).setParameter(1, code).getSingleResult();
   }
 

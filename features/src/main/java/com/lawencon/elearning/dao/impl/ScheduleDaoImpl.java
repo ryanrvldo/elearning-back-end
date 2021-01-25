@@ -1,5 +1,9 @@
 package com.lawencon.elearning.dao.impl;
 
+import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dao.ScheduleDao;
+import com.lawencon.elearning.model.Schedule;
+import com.lawencon.util.Callback;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -7,10 +11,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.elearning.dao.CustomBaseDao;
-import com.lawencon.elearning.dao.ScheduleDao;
-import com.lawencon.elearning.model.Schedule;
-import com.lawencon.util.Callback;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -36,7 +36,8 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
   @Override
   public Schedule getByIdCustom(String id) throws Exception {
-    String sql = bBuilder("SELECT schedule_date , start_time , end_time  FROM tb_m_schedules tms ",
+    String sql = buildQueryOf(
+        "SELECT schedule_date , start_time , end_time  FROM tb_m_schedules tms ",
         "WHERE id = ?1").toString();
 
     List<Schedule> listResult = new ArrayList<>();
@@ -57,7 +58,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   
   @Override
   public List<Schedule> getByTeacherId(String id) throws Exception {
-    String sql = bBuilder("SELECT code, schedule_date, start_time, end_time ",
+    String sql = buildQueryOf("SELECT code, schedule_date, start_time, end_time ",
         "  FROM tb_m_schedules tms WHERE id_teacher=?").toString();
 
     List<Schedule> listResult = new ArrayList<>();
@@ -86,9 +87,9 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   @Override
   public Long checkScheduleTeacher(String id, LocalDate date, LocalTime startTime)
       throws Exception {
-    String sql = bBuilder(
+    String sql = buildQueryOf(
         "SELECT count(*) FROM tb_m_schedules tms WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3")
-            .toString();
+        .toString();
 
     return (Long) createNativeQuery(sql).setParameter(1, id).setParameter(2, date)
         .setParameter(3, startTime).getSingleResult();

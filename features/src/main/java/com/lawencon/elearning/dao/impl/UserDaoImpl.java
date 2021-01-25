@@ -1,16 +1,16 @@
 package com.lawencon.elearning.dao.impl;
 
-import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
  */
 @Repository
-public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
+public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   @Override
   public void createUser(User user) throws Exception {
@@ -24,12 +24,13 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
 
   @Override
   public User findByUsername(String username) throws Exception {
-    String query = new StringBuilder().append(
-        "SELECT u.id, u.email, u.username, u.password, u.isActive, r.id AS roleId, u.role.code, u.role.name ")
-        .append("FROM User AS u INNER JOIN Role AS r ON r.id = u.role.id ")
-        .append("WHERE u.username = ?1 ").toString();
-    Object[] objArr =
-        createQuery(query, Object[].class).setParameter(1, username).getSingleResult();
+    String query = buildQueryOf(
+        "SELECT u.id, u.email, u.username, u.password, u.isActive, r.id AS roleId, u.role.code, u.role.name ",
+        "FROM User AS u INNER JOIN Role AS r ON r.id = u.role.id ",
+        "WHERE u.username = ?1 "
+    );
+    Object[] objArr = createQuery(query, Object[].class).setParameter(1, username)
+        .getSingleResult();
     User user = new User();
     user.setId((String) objArr[0]);
     user.setEmail((String) objArr[1]);

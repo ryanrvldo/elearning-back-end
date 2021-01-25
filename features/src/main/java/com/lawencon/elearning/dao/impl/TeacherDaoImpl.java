@@ -1,13 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -34,7 +34,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public Teacher findTeacherByIdCustom(String id) throws Exception {
 
-    String sql = bBuilder(
+    String sql = buildQueryOf(
         "SELECT tmt.first_name , tmt.last_name , tmu.email , tmt.title_degree , tmt.created_at, tmt.gender ",
         "FROM tb_m_teachers tmt ",
         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE id = ?1").toString();
