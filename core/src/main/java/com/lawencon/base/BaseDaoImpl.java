@@ -3,6 +3,7 @@ package com.lawencon.base;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,10 +63,10 @@ public class BaseDaoImpl<T extends Serializable> {
 
     if (objId != null) {
       T data = getById(objId.toString());
-      setVersion(entity, data, false);
+      setValues(entity, data, false);
       em().merge(entity);
     } else {
-      setVersion(entity, null, true);
+      setValues(entity, null, true);
       em().persist(entity);
     }
     if (after != null)
@@ -94,20 +95,32 @@ public class BaseDaoImpl<T extends Serializable> {
     }
     }
 
-  private void setVersion(final T entity, T data, boolean isAdd) throws Exception {
+  private void setValues(final T entity, T data, boolean isAdd) throws Exception {
     Method versionGet = getBaseClass(entity).getDeclaredMethod("getVersion");
     List<Method> listMethod = getAllBaseMethod(entity);
+
+    int isFound = 0;
     for (Method m : listMethod) {
-      if (m.getName().equals("setVersion")) {
-        if (isAdd)
-          m.invoke(entity, 0L);
-        else {
-          valVersion(entity, data);
-          Object obj = versionGet.invoke(entity);
-          m.invoke(entity, Long.parseLong(String.valueOf(obj)) + 1);
+      if (m.getName().startsWith("set")) {
+        if (m.getName().equals("setVersion")) {
+          isFound++;
+          if (isAdd)
+            m.invoke(entity, 0L);
+          else {
+            valVersion(entity, data);
+            Object obj = versionGet.invoke(entity);
+            m.invoke(entity, Long.parseLong(String.valueOf(obj)) + 1);
+          }
+        } else if (isAdd && m.getName().equals("setCreatedAt")) {
+          isFound++;
+          m.invoke(entity, LocalDateTime.now());
+        } else if (!isAdd && m.getName().equals("setUpdatedAt")) {
+          isFound++;
+          m.invoke(entity, LocalDateTime.now());
         }
 
-        break;
+        if (isFound == 2)
+          break;
       }
         }
     }
@@ -198,19 +211,19 @@ public class BaseDaoImpl<T extends Serializable> {
     private Class<?> getBaseClass(final T entity) {
       Class<?> base = entity.getClass();
         try {
-        base.getDeclaredField("id");
-        return base;
-      } catch (Exception e) {
-        base = base.getSuperclass();
-        while (true) {
-          try {
             base.getDeclaredField("id");
-            break;
-          } catch (NoSuchFieldException x) {
+            return base;
+          } catch (Exception e) {
             base = base.getSuperclass();
-          }
-        }
-        return base;
+            while (true) {
+              try {
+                base.getDeclaredField("id");
+                break;
+              } catch (NoSuchFieldException x) {
+                base = base.getSuperclass();
+              }
+            }
+            return base;
         }
     }
 
@@ -226,7 +239,7 @@ public class BaseDaoImpl<T extends Serializable> {
         } catch (Exception e) {
           break;
         }
-      }
+        }
       return list;
     }
 
