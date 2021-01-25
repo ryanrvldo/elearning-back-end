@@ -2,17 +2,16 @@ package com.lawencon.elearning.dao.impl;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
-import com.lawencon.elearning.dao.BaseCustomDao;
 import com.lawencon.elearning.dao.CourseCategoryDao;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.model.CourseCategory;
 
 /**
  * @author : Galih Dika Permana
  */
 @Repository
-public class CourseCategoryDaoImpl extends BaseDaoImpl<CourseCategory>
-    implements CourseCategoryDao, BaseCustomDao {
+public class CourseCategoryDaoImpl extends CustomBaseDao<CourseCategory>
+    implements CourseCategoryDao {
 
   @Override
   public List<CourseCategory> getListCourseCategory() throws Exception {
@@ -37,7 +36,8 @@ public class CourseCategoryDaoImpl extends BaseDaoImpl<CourseCategory>
   @Override
   public void softDelete(String id) throws Exception {
     String sql =
-        bBuilder("UPDATE tb_m_course_categories SET is_active = FALSE WHERE id =?1 ").toString();
+        buildQueryOf("UPDATE tb_m_course_categories SET is_active = FALSE WHERE id =?1 ")
+            .toString();
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
 
   }

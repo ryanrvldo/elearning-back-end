@@ -5,8 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import com.lawencon.base.BaseDaoImpl;
-import com.lawencon.elearning.dao.BaseCustomDao;
+import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
@@ -17,12 +16,11 @@ import com.lawencon.elearning.model.Student;
  * @author : Galih Dika Permana
  */
 @Repository
-public class DetailExamDaoImpl extends BaseDaoImpl<DetailExam>
-    implements DetailExamDao, BaseCustomDao {
+public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements DetailExamDao {
 
   @Override
   public DetailExam getStudentScore(String id) throws Exception {
-    String sql = bBuilder(
+    String sql = buildQueryOf(
         "select AVG(de.grade), m.code, m.title, e.start_time, e.end_time ",
         "from tb_r_dtl_exams de",
         "inner join tb_r_exams e on e.id = de.id_exam ",
@@ -52,7 +50,8 @@ public class DetailExamDaoImpl extends BaseDaoImpl<DetailExam>
 
   @Override
   public void softDelete(String id) throws Exception {
-    String sql = bBuilder("UPDATE tb_r_dtl_exams SET is_active = FALSE WHERE id =?1 ").toString();
+    String sql =
+        buildQueryOf("UPDATE tb_r_dtl_exams SET is_active = FALSE WHERE id =?1 ").toString();
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
   }
 
@@ -73,14 +72,15 @@ public class DetailExamDaoImpl extends BaseDaoImpl<DetailExam>
 
   @Override
   public void updateScoreStudent(String id, Double score) throws Exception {
-    String sql = bBuilder("UPDATE tb_r_dtl_exams SET grade = ?1 WHERE id = ?2").toString();
+    String sql = buildQueryOf("UPDATE tb_r_dtl_exams SET grade = ?1 WHERE id = ?2").toString();
     createNativeQuery(sql).setParameter(1, score).setParameter(2, id).executeUpdate();
   }
 
   @Override
   public DetailExam getExamSubmission(String id) throws Exception {
     String sql =
-        bBuilder("SELECT de.id , de.trx_number AS code ,s.first_name ,s.last_name ,de.trx_date ",
+        buildQueryOf(
+            "SELECT de.id , de.trx_number AS code ,s.first_name ,s.last_name ,de.trx_date ",
             "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student =s.id ",
             "INNER JOIN tb_r_exams e ON de.id_exam =e.id WHERE de.id_exam = e.id").toString();
     List<DetailExam> listResult = new ArrayList<>();
