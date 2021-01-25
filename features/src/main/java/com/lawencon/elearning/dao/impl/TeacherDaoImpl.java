@@ -1,15 +1,12 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
-import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
-import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
 
 /**
@@ -46,26 +43,31 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      Teacher teacher = new Teacher();
-      teacher.setFirstName((String) objArr[0]);
-      teacher.setLastName((String) objArr[1]);
-      
-      User user = new User();
-      user.setEmail((String) objArr[2]);
-     
-      
-      teacher.setTitleDegree((String) objArr[3]);
-      Timestamp inDate = (Timestamp) objArr[4];
-      teacher.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
-      
-      teacher.setGender(Gender.valueOf((String) objArr[5]));
-      
-      teacher.setUser(user);
-      listResult.add(teacher);
 
-    });
+    listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "firstName", "lastName",
+        "user.email", "titleDegree", "createdAt", "gender");
+
+
+    // listObj.forEach(val -> {
+    // Object[] objArr = (Object[]) val;
+    // Teacher teacher = new Teacher();
+    // teacher.setFirstName((String) objArr[0]);
+    // teacher.setLastName((String) objArr[1]);
+    //
+    // User user = new User();
+    // user.setEmail((String) objArr[2]);
+    //
+    //
+    // teacher.setTitleDegree((String) objArr[3]);
+    // Timestamp inDate = (Timestamp) objArr[4];
+    // teacher.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
+    //
+    // teacher.setGender(Gender.valueOf((String) objArr[5]));
+    //
+    // teacher.setUser(user);
+    // listResult.add(teacher);
+    //
+    // });
     return getResultModel(listResult);
   }
 
