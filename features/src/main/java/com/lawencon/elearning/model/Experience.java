@@ -28,7 +28,7 @@ public class Experience extends BaseMaster {
   @Column(nullable = false, length = 35)
   private String title;
 
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT", nullable = false)
   private String description;
 
   @Column(name = "start_date", nullable = false)

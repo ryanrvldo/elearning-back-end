@@ -1,15 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
-import com.lawencon.elearning.dao.CustomBaseDao;
-import com.lawencon.elearning.dao.ExamDao;
-import com.lawencon.elearning.model.Exam;
-import com.lawencon.elearning.model.ExamType;
-import com.lawencon.util.Callback;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dao.ExamDao;
+import com.lawencon.elearning.model.Exam;
+import com.lawencon.elearning.util.HibernateUtils;
+import com.lawencon.util.Callback;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -29,37 +27,27 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
   }
 
   @Override
+  public void updateExam(Exam data, Callback before) throws Exception {
+    save(data, before, null, true, true);
+  }
+
+  @Override
   public Exam findExamById(String id) throws Exception {
     return getById(id);
   }
 
   @Override
-  public List<Exam> getExamsByModule(String id) throws Exception {
-    String sql = buildQueryOf("SELECT id, trx_number , description , \"type\" ",
-        ", start_time , end_time FROM tb_r_exams WHERE id_module = ?1 ").toString();
+  public List<Exam> getExamsByModule(String moduleId) throws Exception {
+    String sql = buildQueryOf("SELECT id, trx_number , description , \"type\" , ",
+        "start_time , end_time FROM tb_r_exams WHERE id_module = ?1 ").toString();
     
     List<Exam> listResult = new ArrayList<>();
 
-    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
 
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      Exam exam = new Exam();
+    listResult = HibernateUtils.bMapperList(listObj, Exam.class, "id", "trxNumber", "description",
+        "type", "startTime", "endTime");
 
-      exam.setId((String) objArr[0]);
-      exam.setTrxNumber((String) objArr[1]);
-      exam.setDescription((String) objArr[2]);
-      exam.setType(ExamType.valueOf((String) objArr[3]));
-
-      Timestamp inDate = (Timestamp) objArr[4];
-      exam.setStartTime((LocalDateTime) inDate.toLocalDateTime());
-
-      inDate = (Timestamp) objArr[5];
-      exam.setEndTime((LocalDateTime) inDate.toLocalDateTime());
-
-      listResult.add(exam);
-
-    });
     return listResult;
   }
 

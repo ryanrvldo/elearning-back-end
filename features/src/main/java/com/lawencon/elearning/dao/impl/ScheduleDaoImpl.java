@@ -44,7 +44,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   public Schedule getByIdCustom(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT schedule_date , start_time , end_time  FROM tb_m_schedules tms ",
-        "WHERE id = ?1").toString();
+        "WHERE id = ?1 AND is_active = true").toString();
 
     List<Schedule> listResult = new ArrayList<>();
 
@@ -53,15 +53,6 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
     listResult =
         HibernateUtils.bMapperList(listObj, Schedule.class, "date", "startTime", "endTime");
 
-    // listObj.forEach(val -> {
-    // Object[] objArr = (Object[]) val;
-    // Schedule s = new Schedule();
-    // s.setDate((LocalDate) objArr[0]);
-    // s.setStartTime((LocalTime) objArr[1]);
-    // s.setEndTime((LocalTime) objArr[3]);
-    //
-    // listResult.add(s);
-    // });
     return getResultModel(listResult);
   }
   
@@ -69,7 +60,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
   public List<Schedule> getByTeacherId(String teacherId) throws Exception {
     String sql = buildQueryOf("SELECT code, schedule_date, start_time, end_time ",
-        "  FROM tb_m_schedules tms WHERE id_teacher=?").toString();
+        "  FROM tb_m_schedules tms WHERE id_teacher=?1  AND is_active = true").toString();
 
     List<Schedule> listResult = new ArrayList<>();
 
@@ -78,22 +69,6 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
     listResult =
         HibernateUtils.bMapperList(listObj, Schedule.class, "code", "date", "startTime", "endTime");
 
-    // listObj.forEach(val -> {
-    // Object[] objArr = (Object[]) val;
-    // Schedule s = new Schedule();
-    // s.setCode((String) objArr[0]);
-    //
-    // Date inDate = (Date) objArr[1];
-    // s.setDate((LocalDate) inDate.toLocalDate());
-    //
-    // Time inTime = (Time) objArr[2];
-    // s.setStartTime((LocalTime) inTime.toLocalTime());
-    //
-    // inTime = (Time) objArr[3];
-    // s.setEndTime((LocalTime) inTime.toLocalTime());
-    //
-    // listResult.add(s);
-    // });
     return listResult.size() > 0 ? listResult : null;
   }
 
@@ -101,7 +76,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   public Long checkScheduleTeacher(String id, LocalDate date, LocalTime startTime)
       throws Exception {
     String sql = buildQueryOf(
-        "SELECT count(*) FROM tb_m_schedules tms WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3")
+        "SELECT count(*) FROM tb_m_schedules tms WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3  AND is_active = true")
         .toString();
 
     return (Long) createNativeQuery(sql).setParameter(1, id).setParameter(2, date)

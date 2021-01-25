@@ -1,7 +1,5 @@
 package com.lawencon.elearning.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lawencon.model.BaseMaster;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +10,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,7 +32,7 @@ public class Module extends BaseMaster {
   @Column(nullable = false)
   private String title;
 
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT", nullable = false)
   private String description;
 
   @ManyToOne(fetch = FetchType.LAZY)

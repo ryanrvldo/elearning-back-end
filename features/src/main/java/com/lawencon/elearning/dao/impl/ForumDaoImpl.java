@@ -1,16 +1,16 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ForumDao;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -30,12 +30,17 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
   }
 
   @Override
+  public void updateForum(Forum data, Callback before) throws Exception {
+    save(data, before, null, true, true);
+  }
+
+  @Override
   public Forum findForumById(String id) throws Exception {
     return getById(id);
   }
 
   @Override
-  public List<Forum> getByModuleId(String id) throws Exception {
+  public List<Forum> getByModuleId(String moduleId) throws Exception {
     String sql = buildQueryOf(
         "SELECT trf.trx_number ,  trf.\"content\" , trf.created_at,  ",
         "tmu.id AS id_user, tmr.id AS id_role , tmr.code AS role_code FROM tb_r_forums trf ",
@@ -46,7 +51,7 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
 
     List<Forum> listResult = new ArrayList<>();
 
-    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
 
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;

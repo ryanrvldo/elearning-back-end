@@ -14,7 +14,9 @@ public interface ExamDao {
 
   void saveExam(Exam data, Callback before) throws Exception;
 
-  Exam findExamById(String id) throws Exception;
+  void updateExam(Exam data, Callback before) throws Exception;
+
+  Exam findExamById(String moduleId) throws Exception;
 
   List<Exam> getExamsByModule(String id) throws Exception;
 

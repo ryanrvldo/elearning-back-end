@@ -46,32 +46,11 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "firstName", "lastName",
         "user.email", "titleDegree", "createdAt", "gender");
 
-
-    // listObj.forEach(val -> {
-    // Object[] objArr = (Object[]) val;
-    // Teacher teacher = new Teacher();
-    // teacher.setFirstName((String) objArr[0]);
-    // teacher.setLastName((String) objArr[1]);
-    //
-    // User user = new User();
-    // user.setEmail((String) objArr[2]);
-    //
-    //
-    // teacher.setTitleDegree((String) objArr[3]);
-    // Timestamp inDate = (Timestamp) objArr[4];
-    // teacher.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
-    //
-    // teacher.setGender(Gender.valueOf((String) objArr[5]));
-    //
-    // teacher.setUser(user);
-    // listResult.add(teacher);
-    //
-    // });
     return getResultModel(listResult);
   }
 
   @Override
-  public void softDelete(String id) throws Exception {
+  public void updateIsActive(String id) throws Exception {
     String sql = "UPDATE tb_m_teachers SET is_active = FALSE WHERE id =?1";
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
   }
@@ -80,6 +59,27 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public void updateTeacher(Teacher data, Callback before) throws Exception {
     save(data, before, null, true, true);
 
+  }
+
+  @Override
+  public Teacher findByUserId(String userId) throws Exception {
+    String sql = buildQueryOf(
+        "SELECT tmt.first_name , tmt.last_name ",
+        "FROM tb_m_teachers tmt ",
+        "WHERE id_user = ?1").toString();
+
+    List<Teacher> listResult = new ArrayList<>();
+
+    List<?> listObj = createNativeQuery(sql).setParameter(1, userId).getResultList();
+
+    listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "firstName", "lastName");
+
+    return getResultModel(listResult);
+  }
+
+  @Override
+  public void deleteTeacherById(String id) throws Exception {
+    deleteById(id);
   }
 
 }

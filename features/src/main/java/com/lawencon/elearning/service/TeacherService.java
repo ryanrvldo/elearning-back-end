@@ -15,12 +15,15 @@ public interface TeacherService {
 
   Teacher findTeacherById(String id) throws Exception;
 
-  // Get Teacher By Id
   Teacher findTeacherByIdCustom(String id) throws Exception;
 
-  void softDelete(String id) throws Exception;
+  void updateInActive(String id) throws Exception;
 
   void updateTeacher(Teacher data) throws Exception;
+
+  Teacher getFullNameByUserId(String userId) throws Exception;
+
+  void deleteTeacherById(String id) throws Exception;
 
 
 

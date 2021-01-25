@@ -13,8 +13,10 @@ public interface ForumDao {
   List<Forum> getAllForums() throws Exception;
 
   void saveForum(Forum data, Callback before) throws Exception;
+  
+  void updateForum(Forum data, Callback before) throws Exception;
 
   Forum findForumById(String id) throws Exception;
 
-  List<Forum> getByModuleId(String id) throws Exception;
+  List<Forum> getByModuleId(String moduleId) throws Exception;
 }

@@ -25,7 +25,7 @@ public class Exam extends BaseTransaction {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(nullable = false)
+  @Column(columnDefinition = "TEXT", nullable = false)
   private String description;
 
   @Enumerated(EnumType.STRING)

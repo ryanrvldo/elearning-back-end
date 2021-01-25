@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ScheduleDao;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.service.ScheduleService;
 
@@ -39,12 +40,17 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
 
   @Override
   public void updateSchedule(Schedule data) throws Exception {
-    data.setUpdatedAt(LocalDateTime.now());
+    if (data.getId() == null || data.getId().trim().isEmpty()) {
+      throw new IllegalRequestException("id", data.getId());
+    }
     scheduleDao.saveSchedule(data, null);
   }
 
   @Override
   public Schedule findScheduleById(String id) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException("id", id);
+    }
     return scheduleDao.findScheduleById(id);
   }
 
@@ -60,12 +66,18 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
 
   @Override
   public List<Schedule> getByTeacherId(String teacherId) throws Exception {
+    if (teacherId == null || teacherId.trim().isEmpty()) {
+      throw new IllegalRequestException("Teacher Id", teacherId);
+    }
     return scheduleDao.getByTeacherId(teacherId);
   }
 
   @Override
   public Long checkScheduleTeacher(String teacherId, LocalDate date, LocalTime startTime)
       throws Exception {
+    if (teacherId == null || teacherId.trim().isEmpty()) {
+      throw new IllegalRequestException("Teacher Id", teacherId);
+    }
     return scheduleDao.checkScheduleTeacher(teacherId, date, startTime);
   }
 
