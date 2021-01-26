@@ -76,7 +76,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   public Long checkScheduleTeacher(String id, LocalDate date, LocalTime startTime)
       throws Exception {
     String sql = buildQueryOf(
-        "SELECT count(*) FROM tb_m_schedules tms WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3  AND is_active = true")
+        "SELECT count(*) FROM tb_m_schedules WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3  AND is_active = true")
         .toString();
 
     return (Long) createNativeQuery(sql).setParameter(1, id).setParameter(2, date)

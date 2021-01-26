@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.TeacherProfileDTO;
+import com.lawencon.elearning.dto.TeacherResponseDTO;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.TeacherService;
 
 /**
@@ -20,15 +24,15 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Autowired
   private TeacherDao teacherDao;
 
-  @Override
-  public void updateInActive(String id) throws Exception {
-    // check data dipake apa ngga
-    // kalo ngga deletebyId dao
-    // kalo iya => softdelete dao
+  @Autowired
+  private ExperienceService experienceService;
 
+
+  @Override
+  public void updateIsActive(String id, String userId) throws Exception {
     try {
       begin();
-      teacherDao.updateIsActive(id);
+      teacherDao.updateIsActive(id, userId);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -41,9 +45,18 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   public List<Teacher> getAllTeachers() throws Exception {
     List<Teacher> listTeachers = teacherDao.getAllTeachers();
     if (listTeachers == null) {
-      throw new Exception("Teacher data has not been registered");
+      throw new Exception("Teachers data have not been registered");
     }
-    return teacherDao.getAllTeachers();
+    return listTeachers;
+  }
+
+  @Override
+  public List<Teacher> allTeachersForAdmin() throws Exception {
+    List<Teacher> listTeachers = teacherDao.allTeachersForAdmin();
+    if (listTeachers == null) {
+      throw new Exception("Teachers data have not been registered");
+    }
+    return listTeachers;
   }
 
   @Override
@@ -57,46 +70,58 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public Teacher findTeacherById(String id) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
+    validateNullId(id, "Id");
     return teacherDao.findTeacherById(id);
   }
 
 
   @Override
-  public Teacher findTeacherByIdCustom(String id) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
-    return teacherDao.findTeacherByIdCustom(id);
+  public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
+    validateNullId(id, "Id");
+
+    Teacher teacher = teacherDao.findTeacherByIdCustom(id);
+    List<Experience> experiences = experienceService.getAllByTeacherId(id);
+    TeacherResponseDTO teacherResponse = new TeacherResponseDTO(teacher.getUser().getFirstName(),
+        teacher.getUser().getLastName(), teacher.getUser().getEmail(), teacher.getCreatedAt(),
+        teacher.getGender());
+    TeacherProfileDTO teacherProfile = new TeacherProfileDTO();
+    teacherProfile.setTeacher(teacherResponse);
+    teacherProfile.setExperiences(experiences);
+
+    return teacherProfile;
   }
 
   @Override
   public void updateTeacher(Teacher data) throws Exception {
-    if (data.getId() == null || data.getId().trim().isEmpty()) {
-      throw new IllegalRequestException("id", data.getId());
-    }
+    validateNullId(data.getId(), "Id");
     teacherDao.updateTeacher(data, null);
 
   }
 
   @Override
   public Teacher getFullNameByUserId(String userId) throws Exception {
-    if (userId == null || userId.trim().isEmpty()) {
-      throw new IllegalRequestException("User Id", userId);
-    }
+    validateNullId(userId, "User Id");
     return teacherDao.findByUserId(userId);
   }
 
   @Override
   public void deleteTeacherById(String id) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
+    validateNullId(id, "Id");
     commit();
     teacherDao.deleteTeacherById(id);
     begin();
+  }
+
+  @Override
+  public Teacher findByIdForCourse(String id) throws Exception {
+    validateNullId(id, "Id");
+    return teacherDao.findByIdForCourse(id);
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

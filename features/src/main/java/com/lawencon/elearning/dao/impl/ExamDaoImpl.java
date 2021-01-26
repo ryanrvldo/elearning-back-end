@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
@@ -38,15 +37,15 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
 
   @Override
   public List<Exam> getExamsByModule(String moduleId) throws Exception {
-    String sql = buildQueryOf("SELECT id, trx_number , description , \"type\" , ",
-        "start_time , end_time FROM tb_r_exams WHERE id_module = ?1 ").toString();
+    String sql = buildQueryOf("SELECT id AS exam_id, trx_number , description , \"type\" , ",
+        "start_time , end_time, id_file AS file_id FROM tb_r_exams WHERE id_module = ?1 ")
+            .toString();
     
-    List<Exam> listResult = new ArrayList<>();
-
     List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
 
-    listResult = HibernateUtils.bMapperList(listObj, Exam.class, "id", "trxNumber", "description",
-        "type", "startTime", "endTime");
+    List<Exam> listResult = HibernateUtils.bMapperList(listObj, Exam.class, "id", "trxNumber",
+        "description",
+        "type", "startTime", "endTime", "file.id");
 
     return listResult;
   }
@@ -67,7 +66,9 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
 
   @Override
   public String getIdByCode(String code) throws Exception {
-    String sql = buildQueryOf("SELECT id FROM tb_r_exams WHERE trx_number = ?1 ").toString();
+    String sql =
+        buildQueryOf("SELECT id FROM tb_r_exams WHERE trx_number = ?1 ")
+            .toString();
     return (String) createNativeQuery(sql).setParameter(1, code).getSingleResult();
   }
 

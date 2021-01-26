@@ -34,14 +34,13 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public void updateExam(Exam data) throws Exception {
-    if (data.getId() == null || data.getId().trim().isEmpty()) {
-      throw new IllegalRequestException("id", data.getId());
-    }
+    validateNullId(data.getId(), "Id");
     examDao.saveExam(data, null);
   }
 
   @Override
   public Exam findExamById(String id) throws Exception {
+    validateNullId(id, "Id");
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException("id", id);
     }
@@ -50,9 +49,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public List<Exam> getExamsByModule(String moduleId) throws Exception {
-    if (moduleId == null || moduleId.trim().isEmpty()) {
-      throw new IllegalRequestException("module id", moduleId);
-    }
+    validateNullId(moduleId, "Id Module");
     return examDao.getExamsByModule(moduleId);
   }
 
@@ -63,18 +60,20 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public Long getCountDataByModule(String id) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
+    validateNullId(id, "id");
     return examDao.getCountDataByModule(id);
   }
 
   @Override
   public String getIdByCode(String code) throws Exception {
-    if (code == null || code.trim().isEmpty()) {
-      throw new IllegalRequestException("code", code);
-    }
+    validateNullId(code, "code");
     return examDao.getIdByCode(code);
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

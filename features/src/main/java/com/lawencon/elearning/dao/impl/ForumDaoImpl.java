@@ -1,12 +1,12 @@
 package com.lawencon.elearning.dao.impl;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ForumDao;
+import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
@@ -43,10 +43,11 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
   public List<Forum> getByModuleId(String moduleId) throws Exception {
     String sql = buildQueryOf(
         "SELECT trf.trx_number ,  trf.\"content\" , trf.created_at,  ",
-        "tmu.id AS id_user, tmr.id AS id_role , tmr.code AS role_code FROM tb_r_forums trf ",
+        "tmu.id AS id_user, tmr.id AS id_role , tmr.code AS role_code, tmu.first_name , tmu.last_name , tmu.id_photo ",
+        "FROM tb_r_forums trf ",
         "INNER JOIN tb_m_users tmu ON trf.id_user = tmu.id  ",
         "INNER JOIN tb_m_roles tmr ON tmr.id = tmu.id_role  ",
-        "WHERE id_module =?1")
+        "WHERE id_module =?1 ")
         .toString();
 
     List<Forum> listResult = new ArrayList<>();
@@ -59,7 +60,7 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
       forum.setTrxNumber((String) objArr[0]);
       forum.setContent((String) objArr[1]);
       Timestamp inDate = (Timestamp) objArr[2];
-      forum.setCreatedAt((LocalDateTime) inDate.toLocalDateTime());
+      forum.setCreatedAt(inDate.toLocalDateTime());
 
       User u = new User();
       u.setId((String) objArr[3]);
@@ -69,6 +70,11 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
       r.setCode((String) objArr[5]);
       u.setRole(r);
 
+      u.setFirstName((String) objArr[6]);
+      u.setLastName((String) objArr[7]);
+      File userPhoto = new File();
+      userPhoto.setId((String) objArr[8]);
+      u.setUserPhoto(userPhoto);
       forum.setUser(u);
 
       listResult.add(forum);

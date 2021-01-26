@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ForumDao;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.service.ForumService;
 
@@ -30,27 +31,41 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
     LocalDateTime timeNow = LocalDateTime.now();
     data.setCreatedAt(timeNow);
     data.setTrxDate(LocalDate.now());
-    StringBuilder sb = new StringBuilder("FRM-");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyyHHmmss");
+    String trxNumber = generateTrxNumber(timeNow);
+    data.setTrxNumber(trxNumber);
+    forumDao.saveForum(data, null);
+  }
+
+  private String generateTrxNumber(LocalDateTime timeNow) {
+    StringBuilder sb = new StringBuilder("FRM");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyy-HHmmss");
     String formattedDateTime = timeNow.format(formatter);
     sb.append(formattedDateTime);
-
-    forumDao.saveForum(data, null);
+    return sb.toString();
   }
 
   @Override
   public void updateForum(Forum data) throws Exception {
+    validateNullId(data.getId(), "id");
     forumDao.saveForum(data, null);
   }
 
   @Override
   public Forum findForumById(String id) throws Exception {
+    validateNullId(id, "id");
     return forumDao.findForumById(id);
   }
 
   @Override
   public List<Forum> getByModuleId(String moduleId) throws Exception {
+    validateNullId(moduleId, "Id Module");
     return forumDao.getByModuleId(moduleId);
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

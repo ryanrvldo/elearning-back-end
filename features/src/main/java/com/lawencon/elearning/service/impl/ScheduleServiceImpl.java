@@ -31,54 +31,49 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   public void saveSchedule(Schedule data) throws Exception {
     if (checkScheduleTeacher(data.getTeacher().getId(), data.getDate(), data.getStartTime()) > 0) {
       throw new Exception("Teacher already has schedule on that time");
-    } else {
+    }
       data.setCreatedAt(LocalDateTime.now());
       scheduleDao.saveSchedule(data, null);
-    }
+
 
   }
 
   @Override
   public void updateSchedule(Schedule data) throws Exception {
-    if (data.getId() == null || data.getId().trim().isEmpty()) {
-      throw new IllegalRequestException("id", data.getId());
-    }
+    validateNullId(data.getId(), "Id");
     scheduleDao.saveSchedule(data, null);
   }
 
   @Override
   public Schedule findScheduleById(String id) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
+    validateNullId(id, "Id");
     return scheduleDao.findScheduleById(id);
   }
 
   @Override
   public Schedule getByIdCustom(String id) throws Exception {
-    try {
-      return scheduleDao.getByIdCustom(id);
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new Exception("Schedule not found");
-    }
+    validateNullId(id, "Id");
+    return scheduleDao.getByIdCustom(id);
+
   }
 
   @Override
   public List<Schedule> getByTeacherId(String teacherId) throws Exception {
-    if (teacherId == null || teacherId.trim().isEmpty()) {
-      throw new IllegalRequestException("Teacher Id", teacherId);
-    }
+    validateNullId(teacherId, "Teacher Id");
     return scheduleDao.getByTeacherId(teacherId);
   }
 
   @Override
   public Long checkScheduleTeacher(String teacherId, LocalDate date, LocalTime startTime)
       throws Exception {
-    if (teacherId == null || teacherId.trim().isEmpty()) {
-      throw new IllegalRequestException("Teacher Id", teacherId);
-    }
+    validateNullId(teacherId, "Teacher Id");
     return scheduleDao.checkScheduleTeacher(teacherId, date, startTime);
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 

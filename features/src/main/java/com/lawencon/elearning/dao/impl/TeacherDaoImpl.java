@@ -22,6 +22,22 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
+  public List<Teacher> allTeachersForAdmin() throws Exception {
+    String sql = buildQueryOf("SELECT tmt.id , tmt.code , tmu.first_name , tmu.last_name , ",
+        "tmt.phone , tmt.gender , tmu.username FROM tb_m_teachers tmt ",
+        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE is_active = true ");
+
+    List<Teacher> listResult = new ArrayList<>();
+
+    List<?> listObj = createNativeQuery(sql).getResultList();
+
+    listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "id", "code", "user.firstName",
+        "user.lastName", "phone", "gender", "user.username");
+
+    return listResult.size() > 0 ? listResult : null;
+  }
+
+  @Override
   public void saveTeacher(Teacher data, Callback before) throws Exception {
     save(data, before, null, true, true);
   }
@@ -35,24 +51,25 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public Teacher findTeacherByIdCustom(String id) throws Exception {
 
     String sql = buildQueryOf(
-        "SELECT tmt.first_name , tmt.last_name , tmu.email , tmt.title_degree , tmt.created_at, tmt.gender ",
+        "SELECT tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, tmt.gender ",
         "FROM tb_m_teachers tmt ",
-        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE id = ?1").toString();
+        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE id = ?1 AND is_active = true")
+            .toString();
 
-    List<Teacher> listResult = new ArrayList<>();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-    listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "firstName", "lastName",
-        "user.email", "titleDegree", "createdAt", "gender");
+    List<Teacher> listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "user.firstName",
+        "user.lastName", "user.email", "titleDegree", "createdAt", "gender");
 
     return getResultModel(listResult);
   }
 
   @Override
-  public void updateIsActive(String id) throws Exception {
-    String sql = "UPDATE tb_m_teachers SET is_active = FALSE WHERE id =?1";
+  public void updateIsActive(String id, String userId) throws Exception {
+    String sql = "UPDATE tb_m_teachers SET is_active = FALSE";
     createNativeQuery(sql).setParameter(1, id).executeUpdate();
+    updateNativeSQL(sql, id, "1");
   }
 
   @Override
@@ -64,15 +81,15 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public Teacher findByUserId(String userId) throws Exception {
     String sql = buildQueryOf(
-        "SELECT tmt.first_name , tmt.last_name ",
+        "SELECT tmt.phone , tmt.gender ",
         "FROM tb_m_teachers tmt ",
-        "WHERE id_user = ?1").toString();
+        "WHERE id_user = ?1 AND is_active = true").toString();
 
-    List<Teacher> listResult = new ArrayList<>();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, userId).getResultList();
 
-    listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "firstName", "lastName");
+    List<Teacher> listResult =
+        HibernateUtils.bMapperList(listObj, Teacher.class, "phone", "gender");
 
     return getResultModel(listResult);
   }
@@ -80,6 +97,21 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public void deleteTeacherById(String id) throws Exception {
     deleteById(id);
+  }
+
+  @Override
+  public Teacher findByIdForCourse(String id) throws Exception {
+    String sql = buildQueryOf("SELECT tmt.id AS teacher_id , tmu.first_name , ",
+        "tmu.last_name , tmt.title_degree FROM tb_m_teachers tmt ",
+        "INNER JOIN tb_m_users tmu ON tmu.id = tmt.id_user AND is_active = TRUE").toString();
+
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+
+    List<Teacher> listResult =
+        HibernateUtils.bMapperList(listObj, Teacher.class, "id", "user.firstName", "user.lastName",
+            "titleDegree");
+
+    return getResultModel(listResult);
   }
 
 }
