@@ -1,8 +1,8 @@
 package com.lawencon.base;
 
+import java.time.LocalDateTime;
 import com.lawencon.model.BaseEntity;
 import com.lawencon.util.ThrowableSupplier;
-import java.time.LocalDateTime;
 
 /**
  * @author lawencon05

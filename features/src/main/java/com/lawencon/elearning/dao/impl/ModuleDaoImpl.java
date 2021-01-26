@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
@@ -19,16 +18,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
 
   @Override
   public Module getModuleById(String id) throws Exception {
-    List<Module> listResult = new ArrayList<>();
-    String query = buildQueryOf(
-        "SELECT m.title, m.code, m.description, s.schedule_date, s.start_time, s.end_time ",
-        "FROM tb_m_modules m ",
-        "INNER JOIN tb_m_schedules s on s.id = m.id_schedule WHERE m.id = ?").toString();
-    List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
-    listResult = HibernateUtils.bMapperList(listObj, Module.class, "title", "code", "description",
-        "schedule.date",
-        "schedule.startTime", "schedule.endTime");
-    return getResultModel(listResult);
+    return getById(id);
   }
 
   @Override
@@ -62,6 +52,18 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   public void updateIsActive(String id) throws Exception {
     String query = "UPDATE from tb_m_modules SET is_active = false WHERE id = ?";
     createNativeQuery(query).setParameter(1, id).executeUpdate();
+  }
+
+  @Override
+  public Module getModuleByIdCustom(String id) throws Exception {
+    String query = buildQueryOf(
+        "SELECT m.title, m.code, m.description, s.schedule_date, s.start_time, s.end_time",
+        "FROM tb_m_modules as m", "INNER JOIN tb_m_schedules as s on s.id = m.id_schedule",
+        "WHERE m.id = ?").toString();
+    List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
+    List<Module> listResult = HibernateUtils.bMapperList(listObj, Module.class, "title", "code",
+        "description", "schedule.date", "schedule.startTime", "schedule.endTime");
+    return getResultModel(listResult);
   }
 
 }

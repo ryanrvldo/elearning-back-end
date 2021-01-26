@@ -1,14 +1,14 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author WILLIAM
@@ -49,8 +49,9 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   }
 
   @Override
-  public void updateIsActiveById(Student data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+  public void updateIsActive(String id, String userId) throws Exception {
+    String query = "UPDATE tb_m_students SET is_active = false";
+    updateNativeSQL(query, id, userId);
   }
 
   @Override

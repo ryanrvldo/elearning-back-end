@@ -9,4 +9,8 @@ public class TransactionNumberUtils {
     return String.format("FL-%s", System.currentTimeMillis());
   }
 
+  public static String generateAttendanceTrxNumber() {
+    return String.format("AT-%s", System.currentTimeMillis());
+  }
+
 }

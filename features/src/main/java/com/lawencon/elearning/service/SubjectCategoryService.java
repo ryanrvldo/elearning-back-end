@@ -19,6 +19,8 @@ public interface SubjectCategoryService {
 
   void deleteSubject(String id) throws Exception;
 
-  void updateIsActive(SubjectCategory data) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
+
+  SubjectCategory getById(String id) throws Exception;
 
 }

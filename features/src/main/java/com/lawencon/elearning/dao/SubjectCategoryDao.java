@@ -13,12 +13,14 @@ public interface SubjectCategoryDao {
 
   List<SubjectCategory> getAllSubject();
 
+  SubjectCategory getById(String id) throws Exception;
+
   void updateSubject(SubjectCategory data, Callback before) throws Exception;
 
   void addSubject(SubjectCategory data, Callback before) throws Exception;
 
   void deleteSubject(String id) throws Exception;
 
-  void updateIsActive(SubjectCategory data, Callback before) throws Exception;
+  void updateIsActive(String id, String idUser) throws Exception;
 
 }

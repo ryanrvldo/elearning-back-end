@@ -22,8 +22,9 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
   }
 
   @Override
-  public void verifAttendance(Attendance data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+  public void verifAttendance(String id, String userId) throws Exception {
+    String sql = "UPDATE tb_r_attendances SET is_verified = true";
+    updateNativeSQL(sql, id, userId);
   }
 
   @Override

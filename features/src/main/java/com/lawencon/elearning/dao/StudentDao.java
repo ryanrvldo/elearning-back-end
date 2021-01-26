@@ -22,6 +22,6 @@ public interface StudentDao {
 
   void deleteStudentById(String id) throws Exception;
 
-  void updateIsActiveById(Student data, Callback before) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
 
 }

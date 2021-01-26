@@ -15,6 +15,6 @@ public interface AttendanceDao {
 
   void createAttendance(Attendance data, Callback before) throws Exception;
 
-  void verifAttendance(Attendance data, Callback before) throws Exception;
+  void verifAttendance(String id, String userId) throws Exception;
 
 }

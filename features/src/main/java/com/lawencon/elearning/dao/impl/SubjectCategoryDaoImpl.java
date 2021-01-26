@@ -22,6 +22,11 @@ public class SubjectCategoryDaoImpl extends CustomBaseDao<SubjectCategory>
   }
 
   @Override
+  public SubjectCategory getById(String id) {
+    return super.getById(id);
+  }
+
+  @Override
   public void updateSubject(SubjectCategory data, Callback before) throws Exception {
     save(data, before, null, true, true);
   }
@@ -37,8 +42,9 @@ public class SubjectCategoryDaoImpl extends CustomBaseDao<SubjectCategory>
   }
 
   @Override
-  public void updateIsActive(SubjectCategory data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+  public void updateIsActive(String id, String userId) throws Exception {
+    String sql = "UPDATE tb_m_subject_categories SET is_active = false";
+    updateNativeSQL(sql, id, userId);
   }
 
 }

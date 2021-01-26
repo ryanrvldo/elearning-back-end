@@ -12,6 +12,8 @@ public interface ModuleService {
 
   Module getModuleById(String id) throws Exception;
 
+  Module getModuleByIdCustom(String id) throws Exception;
+
   List<Module> getDetailCourse(String idCourse) throws Exception;
 
   void insertModule(List<Module> data) throws Exception;

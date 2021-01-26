@@ -12,6 +12,8 @@ public interface ModuleDao {
 
   Module getModuleById(String id) throws Exception;
 
+  Module getModuleByIdCustom(String id) throws Exception;
+
   List<Module> getDetailCourse(String idCourse) throws Exception;
 
   void insertModule(Module data, Callback before) throws Exception;

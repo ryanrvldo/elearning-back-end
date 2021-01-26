@@ -355,6 +355,41 @@ error
 }
 ```
 
+### Verif attendance
+
+#### Request :
+
+- Method : `PATCH`
+- Endpoint : `/api/student/attendance`
+- Body:
+
+```json
+{
+  "attendanceId": "",
+  "userId": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
 ## MODULE
 
 ### Detail Module

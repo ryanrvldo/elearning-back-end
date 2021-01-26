@@ -14,5 +14,5 @@ public interface AttendanceService {
 
   void createAttendance(Attendance data) throws Exception;
 
-  void verifAttendance(Attendance data) throws Exception;
+  void verifAttendance(String id, String userId) throws Exception;
 }
