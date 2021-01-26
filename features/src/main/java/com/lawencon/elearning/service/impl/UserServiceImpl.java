@@ -42,11 +42,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
   @Override
   public void updateUser(User user) throws Exception {
-    User prevUser = userDao.findById(user.getId());
-    user.setCreatedAt(prevUser.getCreatedAt());
-    user.setCreatedBy(prevUser.getCreatedBy());
-    user.setVersion(prevUser.getVersion());
-    user.setUpdatedAt(LocalDateTime.now());
+    setupUpdatedValue(user, () -> userDao.findById(user.getId()));
     userDao.updateUser(user);
   }
 
