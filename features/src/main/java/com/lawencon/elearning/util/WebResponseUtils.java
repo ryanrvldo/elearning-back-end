@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
  */
 public class WebResponseUtils {
 
-  public static <R> ResponseEntity<WebResponseDTO<R>> createSuccessResponse(R result,
+  public static <R> ResponseEntity<WebResponseDTO<R>> createWebResponse(R result,
       HttpStatus status) {
     WebResponseDTO<R> webResponse = new WebResponseDTO<>(status.value(), result);
     return new ResponseEntity<>(webResponse, status);

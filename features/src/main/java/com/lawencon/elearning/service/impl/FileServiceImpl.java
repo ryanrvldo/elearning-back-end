@@ -55,7 +55,6 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     newFile.setCreatedAt(file.getCreatedAt());
     newFile.setCreatedBy(file.getCreatedBy());
     newFile.setUpdatedAt(LocalDateTime.now());
-    // TODO: 1/25/21 set updated by
     newFile.setVersion(file.getVersion());
     newFile.setTrxNumber(file.getTrxNumber());
     newFile.setTrxDate(file.getTrxDate());
