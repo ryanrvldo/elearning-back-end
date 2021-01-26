@@ -17,5 +17,5 @@ public interface CourseTypeService {
 
   void deleteCourseType(String id) throws Exception;
 
-  void updateIsActived(String id) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
 }

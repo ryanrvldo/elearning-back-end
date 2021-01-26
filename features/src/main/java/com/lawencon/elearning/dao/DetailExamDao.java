@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao;
 
+import java.util.List;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.util.Callback;
 
@@ -8,9 +9,11 @@ import com.lawencon.util.Callback;
  */
 
 public interface DetailExamDao {
-  DetailExam getStudentScore(String id) throws Exception;
+  List<DetailExam> getListScoreAvg(String id) throws Exception;
 
-  void updateIsActived(String id) throws Exception;
+  List<DetailExam> getListScoreReport(String id) throws Exception;
+
+  void updateIsActive(String id, String userId) throws Exception;
 
   void insertDetailExam(DetailExam dtlExam, Callback before) throws Exception;
 
@@ -23,4 +26,6 @@ public interface DetailExamDao {
   DetailExam getExamSubmission(String id) throws Exception;
 
   void sendStudentExam(DetailExam dtlExam) throws Exception;
+
+  DetailExam getDetailById(String id) throws Exception;
 }

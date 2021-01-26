@@ -1,5 +1,6 @@
 package com.lawencon.elearning.service;
 
+import java.util.List;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.util.Callback;
 
@@ -9,9 +10,9 @@ import com.lawencon.util.Callback;
 
 public interface DetailExamService {
 
-  DetailExam getStudentScore(String id) throws Exception;
+  List<DetailExam> getListScoreAvg(String id) throws Exception;
 
-  void updateIsActived(String id) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
 
   void insertDetailExam(DetailExam dtlExam, Callback before) throws Exception;
 

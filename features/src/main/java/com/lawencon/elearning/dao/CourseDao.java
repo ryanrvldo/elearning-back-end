@@ -12,7 +12,7 @@ public interface CourseDao {
 
   List<Course> getListCourse() throws Exception;
 
-  String insertCourse(Course course, Callback before) throws Exception;
+  void insertCourse(Course course, Callback before) throws Exception;
 
   void updateCourse(Course course, Callback before) throws Exception;
 
@@ -24,7 +24,9 @@ public interface CourseDao {
 
   List<Course> getCourseForAdmin() throws Exception;
 
-  void updateIsActived(String id) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
 
   void registerCourse(Course course) throws Exception;
+
+  Course getCourseById(String id) throws Exception;
 }

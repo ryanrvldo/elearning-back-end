@@ -2,6 +2,7 @@ package com.lawencon.elearning.service.impl;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.model.CourseCategory;
@@ -10,7 +11,7 @@ import com.lawencon.elearning.service.CourseCategoryService;
 /**
  * @author : Galih Dika Permana
  */
-
+@Service
 public class CourseCategoryServiceImpl extends BaseServiceImpl implements CourseCategoryService {
 
   @Autowired
@@ -28,6 +29,8 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
 
   @Override
   public void updateCourseCategory(CourseCategory courseCategory) throws Exception {
+    setupUpdatedValue(courseCategory,
+        () -> courseCategoryDao.getCategoryById(courseCategory.getId()));
     courseCategoryDao.updateCourseCategory(courseCategory, null);
   }
 
@@ -37,9 +40,9 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   }
 
   @Override
-  public void updateIsActived(String id) throws Exception {
+  public void updateIsActive(String id, String userId) throws Exception {
     begin();
-    courseCategoryDao.updateIsActived(id);
+    courseCategoryDao.updateIsActive(id, userId);
     commit();
   }
 

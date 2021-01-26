@@ -64,7 +64,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public DetailExam getStudentScores(String id) throws Exception {
-    return detailExamService.getStudentScore(id);
+    return null;
   }
 
 }

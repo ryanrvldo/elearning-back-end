@@ -2,6 +2,7 @@ package com.lawencon.elearning.service.impl;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseTypeDao;
 import com.lawencon.elearning.model.CourseType;
@@ -10,7 +11,7 @@ import com.lawencon.elearning.service.CourseTypeService;
 /**
  * @author : Galih Dika Permana
  */
-
+@Service
 public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseTypeService {
 
   @Autowired
@@ -23,12 +24,13 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
 
   @Override
   public void insertCourseType(CourseType courseType) throws Exception {
-    this.courseTypeDao.insertCourseType(courseType, null);
+    setupUpdatedValue(courseType, () -> courseTypeDao.getTypeById(courseType.getId()));
+    courseTypeDao.insertCourseType(courseType, null);
   }
 
   @Override
   public void updateCourseType(CourseType courseType) throws Exception {
-    this.courseTypeDao.updateCourseType(courseType, null);
+    courseTypeDao.updateCourseType(courseType, null);
   }
 
   @Override
@@ -37,9 +39,9 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   }
 
   @Override
-  public void updateIsActived(String id) throws Exception {
+  public void updateIsActive(String id, String userId) throws Exception {
       begin();
-      courseTypeDao.updateIsActived(id);
+    courseTypeDao.updateIsActive(id, userId);
       commit();
   }
 

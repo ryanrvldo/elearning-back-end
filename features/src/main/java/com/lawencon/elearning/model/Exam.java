@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import com.lawencon.model.BaseTransaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "tb_r_exams")
+@Table(name = "tb_r_exams",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "fk_module_file", columnNames = {"id_module", "id_file"})})
 public class Exam extends BaseTransaction {
 
   private static final long serialVersionUID = 1L;

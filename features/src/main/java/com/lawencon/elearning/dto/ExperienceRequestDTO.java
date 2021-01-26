@@ -1,6 +1,6 @@
 package com.lawencon.elearning.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Data;
 
 /**
@@ -12,8 +12,8 @@ public class ExperienceRequestDTO {
   private String id;
   private String title;
   private String description;
-  private LocalDateTime startDate;
-  private LocalDateTime endDate;
+  private LocalDate startDate;
+  private LocalDate endDate;
   private String teacherId;
   private String userId;
 

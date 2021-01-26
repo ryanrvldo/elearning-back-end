@@ -1,6 +1,8 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.model.DetailExam;
@@ -10,20 +12,20 @@ import com.lawencon.util.Callback;
 /**
  * @author : Galih Dika Permana
  */
-
+@Service
 public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExamService {
   @Autowired
   private DetailExamDao dtlExamDao;
 
   @Override
-  public DetailExam getStudentScore(String id) throws Exception {
-    return dtlExamDao.getStudentScore(id);
+  public List<DetailExam> getListScoreAvg(String id) throws Exception {
+    return dtlExamDao.getListScoreAvg(id);
   }
 
   @Override
-  public void updateIsActived(String id) throws Exception {
+  public void updateIsActive(String id, String userId) throws Exception {
     begin();
-    dtlExamDao.updateIsActived(id);
+    dtlExamDao.updateIsActive(id, userId);
     commit();
   }
 
@@ -34,6 +36,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void updateDetailExam(DetailExam dtlExam, Callback before) throws Exception {
+    setupUpdatedValue(dtlExam, () -> dtlExamDao.getDetailById(dtlExam.getId()));
     dtlExamDao.updateDetailExam(dtlExam, null);
   }
 

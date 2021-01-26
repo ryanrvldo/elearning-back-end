@@ -11,7 +11,7 @@ public interface CourseService {
 
   List<Course> getListCourse() throws Exception;
 
-  String insertCourse(Course course) throws Exception;
+  void insertCourse(Course course) throws Exception;
 
   void updateCourse(Course course) throws Exception;
 
@@ -23,7 +23,7 @@ public interface CourseService {
 
   List<Course> getCourseForAdmin() throws Exception;
 
-  void updateIsActived(String id) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
 
   void registerCourse(Course course) throws Exception;
 }

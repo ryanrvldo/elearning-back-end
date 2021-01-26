@@ -3,6 +3,7 @@ package com.lawencon.elearning.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,11 +15,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "tb_m_course_categories")
+@Table(name = "tb_m_course_categories",
+    uniqueConstraints = {@UniqueConstraint(name = "bk_category", columnNames = {"code"})})
 public class CourseCategory extends BaseMaster {
   private static final long serialVersionUID = 1L;
 
-  @Column(unique = true, nullable = false, length = 50)
+  @Column(nullable = false, length = 50)
   private String code;
 
   @Column(name = "category_name", nullable = false, length = 100)

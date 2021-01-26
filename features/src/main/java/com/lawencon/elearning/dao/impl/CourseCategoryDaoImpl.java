@@ -37,10 +37,15 @@ public class CourseCategoryDaoImpl extends CustomBaseDao<CourseCategory>
   }
 
   @Override
-  public void updateIsActived(String id) throws Exception {
+  public void updateIsActive(String id, String userId) throws Exception {
     String sql =
-        buildQueryOf("UPDATE tb_m_course_categories SET is_active = FALSE WHERE id =?1 ")
+        buildQueryOf("UPDATE tb_m_course_categories SET is_active = FALSE")
             .toString();
-    updateNativeSQL(sql, id, "1");
+    updateNativeSQL(sql, id, userId);
+  }
+
+  @Override
+  public CourseCategory getCategoryById(String id) throws Exception {
+    return getById(id);
   }
 }
