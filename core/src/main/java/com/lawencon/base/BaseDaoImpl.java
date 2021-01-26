@@ -3,9 +3,6 @@ package com.lawencon.base;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -62,11 +59,8 @@ public class BaseDaoImpl<T extends Serializable> {
     Object objId = m.invoke(entity);
 
     if (objId != null) {
-      T data = getById(objId.toString());
-      setValues(entity, data, false);
       em().merge(entity);
     } else {
-      setValues(entity, null, true);
       em().persist(entity);
     }
     if (after != null)
@@ -92,36 +86,6 @@ public class BaseDaoImpl<T extends Serializable> {
         rollback();
 
       throw new Exception(e);
-    }
-    }
-
-  private void setValues(final T entity, T data, boolean isAdd) throws Exception {
-    Method versionGet = getBaseClass(entity).getDeclaredMethod("getVersion");
-    List<Method> listMethod = getAllBaseMethod(entity);
-
-    int isFound = 0;
-    for (Method m : listMethod) {
-      if (m.getName().startsWith("set")) {
-        if (m.getName().equals("setVersion")) {
-          isFound++;
-          if (isAdd)
-            m.invoke(entity, 0L);
-          else {
-            valVersion(entity, data);
-            Object obj = versionGet.invoke(entity);
-            m.invoke(entity, Long.parseLong(String.valueOf(obj)) + 1);
-          }
-        } else if (isAdd && m.getName().equals("setCreatedAt")) {
-          isFound++;
-          m.invoke(entity, LocalDateTime.now());
-        } else if (!isAdd && m.getName().equals("setUpdatedAt")) {
-          isFound++;
-          m.invoke(entity, LocalDateTime.now());
-        }
-
-        if (isFound == 2)
-          break;
-      }
         }
     }
 
@@ -195,19 +159,6 @@ public class BaseDaoImpl<T extends Serializable> {
         }
     }
 
-    private void valVersion(T updatedEntity, T storedEntity) throws Exception {
-      Field upedEntityVer = getBaseClass(updatedEntity).getDeclaredField("version");
-      upedEntityVer.setAccessible(true);
-      Field storEntityVer = getBaseClass(storedEntity).getDeclaredField("version");
-      storEntityVer.setAccessible(true);
-      if (upedEntityVer.get(updatedEntity) == null) {
-        throw new Exception(" - Version is Required");
-      } else if ((long) upedEntityVer.get(updatedEntity) != (long) storEntityVer
-          .get(storedEntity)) {
-        throw new Exception(" - Data Not Up-to-date");
-      }
-    }
-
     private Class<?> getBaseClass(final T entity) {
       Class<?> base = entity.getClass();
         try {
@@ -225,22 +176,6 @@ public class BaseDaoImpl<T extends Serializable> {
             }
             return base;
         }
-    }
-
-    private List<Method> getAllBaseMethod(final T entity) {
-      Class<?> base = entity.getClass().getSuperclass();
-      List<Method> list = new ArrayList<>();
-      list.addAll(Arrays.asList(base.getDeclaredMethods()));
-
-      while (true) {
-        try {
-          base = base.getSuperclass();
-          list.addAll(Arrays.asList(base.getDeclaredMethods()));
-        } catch (Exception e) {
-          break;
-        }
-        }
-      return list;
     }
 
     private EntityManager em() {
@@ -288,6 +223,35 @@ public class BaseDaoImpl<T extends Serializable> {
 
     // private void clear() {
     // ConnHandler.clear();
+    // }
+
+    // private List<Method> getAllBaseMethod(final T entity) {
+    // Class<?> base = entity.getClass().getSuperclass();
+    // List<Method> list = new ArrayList<>();
+    // list.addAll(Arrays.asList(base.getDeclaredMethods()));
+    //
+    // while (true) {
+    // try {
+    // base = base.getSuperclass();
+    // list.addAll(Arrays.asList(base.getDeclaredMethods()));
+    // } catch (Exception e) {
+    // break;
+    // }
+    // }
+    // return list;
+    // }
+
+    // private void valVersion(T updatedEntity, T storedEntity) throws Exception {
+    // Field upedEntityVer = getBaseClass(updatedEntity).getDeclaredField("version");
+    // upedEntityVer.setAccessible(true);
+    // Field storEntityVer = getBaseClass(storedEntity).getDeclaredField("version");
+    // storEntityVer.setAccessible(true);
+    // if (upedEntityVer.get(updatedEntity) == null) {
+    // throw new Exception(" - Version is Required");
+    // } else if ((long) upedEntityVer.get(updatedEntity) != (long) storEntityVer.get(storedEntity))
+    // {
+    // throw new Exception(" - Data Not Up-to-date");
+    // }
     // }
 
     // /**

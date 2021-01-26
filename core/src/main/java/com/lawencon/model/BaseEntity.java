@@ -1,52 +1,93 @@
 package com.lawencon.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import lombok.Data;
+import javax.persistence.PreUpdate;
+import javax.persistence.Version;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
-@Data
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable {
   public static final long serialVersionUID = 1L;
 
   @Id
-  @Column(name = "id")
-  @GeneratedValue(generator = "UUID")
-  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+  @Column(name = "id", columnDefinition = "varchar DEFAULT uuid_generate_v4()")
+  @GeneratedValue(generator = "uuid")
+  @GenericGenerator(name = "uuid", strategy = "uuid")
   private String id;
 
-  @JsonIgnore
   @Column(name = "created_by")
   private String createdBy;
 
-  @JsonIgnore
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "created_at")
+  @CreationTimestamp
   private LocalDateTime createdAt;
 
-  @JsonIgnore
   @Column(name = "updated_by")
   private String updatedBy;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  @PreUpdate
+  public void preUpdate() {
+    updatedAt = LocalDateTime.now();
+  }
+
   @Column(name = "version")
+  @Version
   private Long version;
 
-  public void setVersion(Long version) {
-    if (version == null) {
-      this.version = 0L;
-    } else {
-      this.version = version;
-    }
+  public Long getVersion() {
+    return version;
   }
+
+  public void setVersion(Long version) {
+    this.version = version;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public LocalDateTime getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(LocalDateTime updatedAt) {
+    this.updatedAt = updatedAt;
+    }
 }
