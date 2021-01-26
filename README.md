@@ -673,6 +673,7 @@ error
     },
     "experiences": [
       {
+        "id": "",
         "title": "",
         "description": "",
         "startDate": "",
@@ -704,12 +705,14 @@ error
   },
   "experiences": [
     {
+      "id": "",
       "title": "",
       "description": "",
       "startDate": "",
       "endDate": ""
     }
-  ]
+  ],
+  "userId": ""
 }
 ```
 
