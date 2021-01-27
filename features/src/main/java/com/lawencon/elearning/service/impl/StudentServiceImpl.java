@@ -1,13 +1,16 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
-import com.lawencon.elearning.model.DetailExam;
+import com.lawencon.elearning.dto.StudentDashboardDTO;
+import com.lawencon.elearning.dto.StudentProfileDTO;
+import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Student;
-import com.lawencon.elearning.service.DetailExamService;
+import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.StudentService;
 
 /**
@@ -19,10 +22,10 @@ import com.lawencon.elearning.service.StudentService;
 public class StudentServiceImpl extends BaseServiceImpl implements StudentService {
 
   @Autowired
-  StudentDao studentDao;
+  private StudentDao studentDao;
 
   @Autowired
-  DetailExamService detailExamService;
+  private CourseService courseService;
 
   @Override
   public void insertStudent(Student data) throws Exception {
@@ -36,8 +39,15 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   }
 
   @Override
-  public Student getStudentProfile(String id) throws Exception {
-    return studentDao.getStudentProfile(id);
+  public StudentProfileDTO getStudentProfile(String id) throws Exception {
+    Student std = studentDao.getStudentProfile(id);
+    StudentProfileDTO stdProfile = new StudentProfileDTO();
+    stdProfile.setCreatedAt(std.getCreatedAt());
+    stdProfile.setEmail(std.getUser().getEmail());
+    stdProfile.setFirstName(std.getUser().getFirstName());
+    stdProfile.setLastName(std.getUser().getLastName());
+    stdProfile.setGender(std.getGender());
+    return stdProfile;
   }
 
   @Override
@@ -63,8 +73,23 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   }
 
   @Override
-  public DetailExam getStudentScores(String id) throws Exception {
-    return null;
+  public StudentDashboardDTO getStudentDashboard(String id) {
+    Student std = studentDao.getStudentDashboard(id);
+    StudentDashboardDTO stdDashboard = new StudentDashboardDTO();
+    stdDashboard.setCreatedAt(std.getCreatedAt());
+    stdDashboard.setEmail(std.getUser().getEmail());
+    stdDashboard.setFirstName(std.getUser().getFirstName());
+    stdDashboard.setGender(std.getGender());
+    stdDashboard.setId(std.getId());
+    stdDashboard.setIdPhoto(std.getUser().getUserPhoto().getId());
+    stdDashboard.setLastName(std.getUser().getLastName());
+    stdDashboard.setPhone(std.getPhone());
+    return stdDashboard;
+  }
+
+  @Override
+  public List<Course> getStudentCourse(String id) throws Exception {
+    return courseService.getMyCourse(id);
   }
 
 }

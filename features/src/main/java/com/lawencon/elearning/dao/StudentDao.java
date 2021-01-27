@@ -24,4 +24,6 @@ public interface StudentDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
+  Student getStudentDashboard(String id);
+
 }

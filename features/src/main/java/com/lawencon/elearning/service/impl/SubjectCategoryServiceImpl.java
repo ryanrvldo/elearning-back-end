@@ -19,7 +19,7 @@ import com.lawencon.util.Callback;
 public class SubjectCategoryServiceImpl extends BaseServiceImpl implements SubjectCategoryService {
 
   @Autowired
-  SubjectCategoryDao subjectCategoryDao;
+  private SubjectCategoryDao subjectCategoryDao;
 
   @Override
   public List<SubjectCategory> getAllSubject() {

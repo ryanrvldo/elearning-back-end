@@ -48,8 +48,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public List<Course> getMyCourse() throws Exception {
-    return courseDao.getMyCourse();
+  public List<Course> getMyCourse(String id) throws Exception {
+    return courseDao.getMyCourse(id);
   }
 
   @Override

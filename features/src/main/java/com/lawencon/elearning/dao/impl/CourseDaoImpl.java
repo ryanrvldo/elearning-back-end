@@ -37,23 +37,26 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<Course> getCurentAvailableCourse() throws Exception {
     String sql = buildQueryOf(
-        "SELECT c.id ,c.code, ct.type_name AS courseName, c.capacity ,c.period_start ,c.period_end ,t.id ,t.code ,t.first_name ,t.last_name ,t.title_degree ,cc.code ,cc.category_name ",
+        "SELECT c.id ,c.code, ct.type_name AS courseName, c.capacity ,c.period_start ,c.period_end ,t.id ,t.code ,u.first_name ,u.last_name ,t.title_degree ,cc.code ,cc.category_name ",
         "FROM tb_m_courses AS c ",
         "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
         "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
+        "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
-        "WHERE current_timestamp < c.period_end").toString();
+        "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
+        "INNER JOIN tb_m_students AS s ON sc.id_student = s.id ", "WHERE s.id = sc.id_student")
+            .toString();
     List<?> listObj = createNativeQuery(sql).getResultList();
 
     List<Course> listResult = HibernateUtils.bMapperList(listObj, Course.class, "id", "code",
         "courseType.name",
-        "capacity", "periodStart", "periodEnd", "teacher.id", "teacher.code", "teacher.firstName",
-        "teacher.lastName", "teacher.titleDegree", "category.code", "category.name");
+        "capacity", "periodStart", "periodEnd", "teacher.id", "teacher.code", "user.firstName",
+        "user.lastName", "teacher.titleDegree", "category.code", "category.name");
     return listResult;
   }
 
   @Override
-  public List<Course> getMyCourse() throws Exception {
+  public List<Course> getMyCourse(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT c.id ,c.code, ct.type_name AS courseName, c.capacity ,c.period_start ,c.period_end ,t.id ,t.code ,t.first_name ,t.last_name ,t.title_degree ,cc.code ,cc.category_name ",
         "FROM tb_m_courses AS c ",
@@ -61,10 +64,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
         "INNER JOIN student_course AS sc ON c.id = sc.course_id ",
-        "INNER JOIN tb_m_students AS s ON sc.student_id = s.id WHERE s.id = sc.student_id")
+        "INNER JOIN tb_m_students AS s ON sc.student_id = s.id WHERE s.id = ?")
             .toString();
 
-    List<?> listObj = createNativeQuery(sql).getResultList();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
     List<Course> listResult = HibernateUtils.bMapperList(listObj, Course.class, "id", "code",
         "courseType.name",
         "capacity", "periodStart", "periodEnd", "teacher.id", "teacher.code", "teacher.firstName",
