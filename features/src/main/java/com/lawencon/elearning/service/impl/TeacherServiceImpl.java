@@ -7,12 +7,17 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.TeacherProfileDTO;
+import com.lawencon.elearning.dto.TeacherRequestDTO;
 import com.lawencon.elearning.dto.TeacherResponseDTO;
+import com.lawencon.elearning.dto.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Experience;
+import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.TeacherService;
+import com.lawencon.elearning.service.UserService;
 
 /**
  *  @author Dzaky Fadhilla Guci
@@ -27,6 +32,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Autowired
   private ExperienceService experienceService;
 
+  @Autowired
+  private UserService userService;
+  
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
@@ -60,12 +68,27 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public void saveTeacher(Teacher data) throws Exception {
-    if (data.getId() != null) {
-      throw new IllegalRequestException("id", data.getId());
-    }
-    data.setCreatedAt(LocalDateTime.now());
-    teacherDao.saveTeacher(data, null);
+  public void saveTeacher(TeacherRequestDTO data) throws Exception {
+    User user = new User();
+    user.setFirstName(data.getFirstName());
+    user.setLastName(data.getLastName());
+    user.setUsername(data.getUsername());
+    user.setPassword(data.getPassword());
+    user.setEmail(data.getEmail());
+    Role role = new Role();
+    role.setId(data.getRoleId());
+    user.setRole(role);
+    userService.addUser(user);
+
+    Teacher teacher = new Teacher();
+    teacher.setUser(user);
+    teacher.setCode(data.getCode());
+    teacher.setPhone(data.getPhone());
+    teacher.setGender(data.getGender());
+    teacher.setTitleDegree(data.getTitleDegree());
+    teacher.setCreatedAt(LocalDateTime.now());
+    teacher.setCreatedBy(data.getCreatedBy());
+    teacherDao.saveTeacher(teacher, null);
   }
 
   @Override
@@ -92,9 +115,21 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public void updateTeacher(Teacher data) throws Exception {
+  public void updateTeacher(UpdateTeacherRequestDTO data) throws Exception {
     validateNullId(data.getId(), "Id");
-    teacherDao.updateTeacher(data, null);
+    Teacher teacherDB = findTeacherById(data.getId());
+    teacherDB.setTitleDegree(data.getTitleDegree());
+    teacherDB.setGender(data.getGender());
+    teacherDB.setUpdatedBy(data.getUpdatedBy());
+
+    User user = new User();
+    user.setFirstName(data.getFirstName());
+    user.setId(teacherDB.getUser().getId());
+    user.setLastName(data.getLastName());
+    user.setEmail(data.getEmail());
+    userService.updateUser(user);
+
+    teacherDao.updateTeacher(teacherDB, null);
 
   }
 

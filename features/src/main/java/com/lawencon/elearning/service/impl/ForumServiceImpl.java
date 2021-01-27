@@ -3,11 +3,13 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ForumDao;
+import com.lawencon.elearning.dto.ForumModuleResponseDTO;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.service.ForumService;
@@ -30,7 +32,9 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   public void saveForum(Forum data) throws Exception {
     LocalDateTime timeNow = LocalDateTime.now();
     data.setCreatedAt(timeNow);
+    data.setCreatedBy(data.getUser().getId());
     data.setTrxDate(LocalDate.now());
+
     String trxNumber = generateTrxNumber(timeNow);
     data.setTrxNumber(trxNumber);
     forumDao.saveForum(data, null);
@@ -57,9 +61,18 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   }
 
   @Override
-  public List<Forum> getByModuleId(String moduleId) throws Exception {
+  public List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception {
     validateNullId(moduleId, "Id Module");
-    return forumDao.getByModuleId(moduleId);
+    List<Forum> forums = forumDao.getByModuleId(moduleId);
+    List<ForumModuleResponseDTO> forumResponses = new ArrayList<>();
+
+    forums.forEach(val -> {
+      ForumModuleResponseDTO forumDTO = new ForumModuleResponseDTO(val.getId(), val.getTrxNumber(),
+          val.getContent(), val.getCreatedAt(), val.getUser());
+      forumResponses.add(forumDTO);
+    });
+
+    return forumResponses;
   }
 
   private void validateNullId(String id, String msg) throws Exception {

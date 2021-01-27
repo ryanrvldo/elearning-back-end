@@ -19,10 +19,10 @@ import com.lawencon.elearning.service.ScheduleService;
 public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService {
 
   @Autowired
-  ModuleDao moduleDao;
+  private ModuleDao moduleDao;
 
   @Autowired
-  ScheduleService scheduleService;
+  private ScheduleService scheduleService;
 
   @Override
   public Module getModuleById(String id) throws Exception {
@@ -37,7 +37,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public void insertModule(List<Module> data) throws Exception {
     for (int i = 0; i < data.size(); i++) {
-      scheduleService.saveSchedule(data.get(0).getSchedule());
+      scheduleService.saveSchedule(data.get(i).getSchedule());
       data.get(i).setCreatedAt(LocalDateTime.now());
       moduleDao.insertModule(data.get(i), null);
     }

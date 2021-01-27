@@ -34,8 +34,6 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
     }
       data.setCreatedAt(LocalDateTime.now());
       scheduleDao.saveSchedule(data, null);
-
-
   }
 
   @Override

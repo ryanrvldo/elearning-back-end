@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 
 /**
@@ -24,5 +25,7 @@ public interface ExamService {
   Long getCountDataByModule(String moduleId) throws Exception;
 
   String getIdByCode(String code) throws Exception;
+
+  List<DetailExam> getListScoreAvg(String studentId) throws Exception;
 
 }

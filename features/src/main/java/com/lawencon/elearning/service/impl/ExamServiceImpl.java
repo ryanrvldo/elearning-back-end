@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
+import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExamService;
 
 /**
@@ -19,6 +21,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Autowired
   private ExamDao examDao;
+
+  @Autowired
+  private DetailExamService dtlExamService;
 
   @Override
   public List<Exam> getAllExams() throws Exception {
@@ -68,6 +73,12 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   public String getIdByCode(String code) throws Exception {
     validateNullId(code, "code");
     return examDao.getIdByCode(code);
+  }
+
+  @Override
+  public List<DetailExam> getListScoreAvg(String studentId) throws Exception {
+    validateNullId(studentId, "Student Id");
+    return dtlExamService.getListScoreAvg(studentId);
   }
 
   private void validateNullId(String id, String msg) throws Exception {

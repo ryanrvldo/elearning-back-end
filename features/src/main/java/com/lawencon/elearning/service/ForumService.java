@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.ForumModuleResponseDTO;
 import com.lawencon.elearning.model.Forum;
 
 /**
@@ -17,6 +18,6 @@ public interface ForumService {
 
   Forum findForumById(String id) throws Exception;
 
-  List<Forum> getByModuleId(String moduleId) throws Exception;
+  List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception;
 
 }
