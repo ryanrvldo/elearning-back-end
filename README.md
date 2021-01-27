@@ -203,7 +203,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/api/course/:id`
+- Endpoint : `/api/modules/:courseid`
 
 #### Response :
 

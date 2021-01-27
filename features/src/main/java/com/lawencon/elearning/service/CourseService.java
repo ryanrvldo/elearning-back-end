@@ -2,6 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.Module;
 
 /**
  * @author : Galih Dika Permana
@@ -26,4 +27,6 @@ public interface CourseService {
   void updateIsActive(String id, String userId) throws Exception;
 
   void registerCourse(Course course) throws Exception;
+
+  List<Module> getDetailCourse(String id) throws Exception;
 }

@@ -47,7 +47,7 @@ public class User extends BaseMaster {
   private Role role;
 
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "id_photo")
+  @JoinColumn(name = "id_photo", foreignKey = @ForeignKey(name = "fk_photo"))
   private File userPhoto;
 
 }

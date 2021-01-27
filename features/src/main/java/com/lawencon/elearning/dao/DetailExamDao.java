@@ -23,7 +23,7 @@ public interface DetailExamDao {
 
   void updateScoreStudent(String id, Double score) throws Exception;
 
-  DetailExam getExamSubmission(String id) throws Exception;
+  List<DetailExam> getExamSubmission(String id) throws Exception;
 
   void sendStudentExam(DetailExam dtlExam) throws Exception;
 

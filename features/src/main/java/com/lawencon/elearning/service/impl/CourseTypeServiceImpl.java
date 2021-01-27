@@ -24,12 +24,12 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
 
   @Override
   public void insertCourseType(CourseType courseType) throws Exception {
-    setupUpdatedValue(courseType, () -> courseTypeDao.getTypeById(courseType.getId()));
     courseTypeDao.insertCourseType(courseType, null);
   }
 
   @Override
   public void updateCourseType(CourseType courseType) throws Exception {
+    setupUpdatedValue(courseType, () -> courseTypeDao.getTypeById(courseType.getId()));
     courseTypeDao.updateCourseType(courseType, null);
   }
 

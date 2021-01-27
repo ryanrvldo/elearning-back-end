@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.ModuleService;
 
 /**
  * @author : Galih Dika Permana
@@ -16,6 +18,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private CourseDao courseDao;
+  @Autowired
+  private ModuleService mdlService;
 
   @Override
   public List<Course> getListCourse() throws Exception {
@@ -63,6 +67,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public void registerCourse(Course course) throws Exception {
     courseDao.registerCourse(course);
+  }
+
+  public List<Module> getDetailCourse(String id) throws Exception {
+    return mdlService.getDetailCourse(id);
   }
 
 }

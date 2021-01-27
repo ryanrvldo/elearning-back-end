@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.Module;
-import com.lawencon.elearning.util.HibernateUtils;
+import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
 
 /**
@@ -25,7 +26,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
         "select AVG(de.grade), m.code, m.title, e.start_time, e.end_time ",
         "from tb_r_dtl_exams de ",
         "inner join tb_r_exams e on e.id = de.id_exam ",
-        "inner join tb_m_modules m on m.id = e.id_module where de.id_student = ? ",
+        "inner join tb_m_modules m on m.id = e.id_module where de.id_student = ?1 ",
         "group by m.code, m.title, e.start_time, e.end_time").toString();
     List<DetailExam> listResult = new ArrayList<>();
 
@@ -55,7 +56,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
         "select de.grade , m.code, m.title,c.descripton ,c.code ,e.start_time, e.end_time ",
         "from tb_r_dtl_exams de inner join tb_r_exams e on e.id = de.id_exam ",
         "inner join tb_m_modules m on m.id = e.id_module ",
-        "INNER JOIN tb_m_courses c ON m.id_course = c.id where de.id_student = ?").toString();
+        "INNER JOIN tb_m_courses c ON m.id_course = c.id where de.id_student = ?1").toString();
     List<DetailExam> listResult = new ArrayList<>();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
@@ -110,19 +111,30 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public DetailExam getExamSubmission(String id) throws Exception {
+  public List<DetailExam> getExamSubmission(String id) throws Exception {
     String sql =
         buildQueryOf(
-            "SELECT de.id , de.trx_number AS code ,s.first_name ,s.last_name ,de.trx_date ",
+            "SELECT de.id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date ",
             "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student =s.id ",
-            "INNER JOIN tb_r_exams e ON de.id_exam =e.id WHERE de.id_exam = e.id").toString();
+            "INNER JOIN tb_m_users u ON s.id_user = u.id WHERE de.id_exam = ?1").toString();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-    List<DetailExam> listResult = HibernateUtils.bMapperList(listObj, DetailExam.class, "id", "trxNumber",
-        "student.firstName", "student.lastName", "trxDate");
+    List<DetailExam> listResult = new ArrayList<>();
 
-    return getResultModel(listResult);
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      DetailExam dtlExam = new DetailExam();
+      dtlExam.setId((String) objArr[0]);
+      dtlExam.setTrxNumber((String) objArr[1]);
+      User user = new User();
+      user.setFirstName((String) objArr[2]);
+      user.setLastName((String) objArr[3]);
+      dtlExam.setGrade((Double) objArr[4]);
+      dtlExam.setTrxDate((LocalDate) objArr[5]);
+      listResult.add(dtlExam);
+    });
+    return listResult;
   }
 
   @Override
