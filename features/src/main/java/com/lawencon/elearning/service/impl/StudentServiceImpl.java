@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
+import com.lawencon.elearning.dto.CourseResponseDTO;
 import com.lawencon.elearning.dto.StudentDashboardDTO;
 import com.lawencon.elearning.dto.StudentProfileDTO;
-import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.StudentService;
@@ -88,7 +88,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   }
 
   @Override
-  public List<Course> getStudentCourse(String id) throws Exception {
+  public List<CourseResponseDTO> getStudentCourse(String id) throws Exception {
     return courseService.getMyCourse(id);
   }
 

@@ -15,5 +15,4 @@ public class StudentExamDTO {
   private String studentId;
   private Long studentVersion;
   private String createdBy;
-
 }

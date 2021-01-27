@@ -1,7 +1,7 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -40,8 +40,10 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       mdl.setCode((String) objArr[1]);
       mdl.setTitle((String) objArr[2]);
       Exam exam = new Exam();
-      exam.setStartTime((LocalDateTime) objArr[3]);
-      exam.setEndTime((LocalDateTime) objArr[4]);
+      Timestamp inTime = (Timestamp) objArr[3];
+      exam.setStartTime(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[4];
+      exam.setEndTime(inTime.toLocalDateTime());
       exam.setModule(mdl);
       dtlExam.setExam(exam);
       listResult.add(dtlExam);
@@ -72,8 +74,10 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       course.setDescripton((String) objArr[3]);
       course.setCode((String) objArr[4]);
       Exam exam = new Exam();
-      exam.setStartTime((LocalDateTime) objArr[5]);
-      exam.setEndTime((LocalDateTime) objArr[6]);
+      Timestamp inTime = (Timestamp) objArr[5];
+      exam.setStartTime(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[5];
+      exam.setEndTime(inTime.toLocalDateTime());
       exam.setModule(mdl);
       dtlExam.setExam(exam);
       listResult.add(dtlExam);
@@ -131,7 +135,8 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       user.setFirstName((String) objArr[2]);
       user.setLastName((String) objArr[3]);
       dtlExam.setGrade((Double) objArr[4]);
-      dtlExam.setTrxDate((LocalDate) objArr[5]);
+      Date inDate = (Date) objArr[5];
+      dtlExam.setTrxDate(inDate.toLocalDate());
       listResult.add(dtlExam);
     });
     return listResult;

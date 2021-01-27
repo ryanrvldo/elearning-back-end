@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -27,8 +29,9 @@ public class CourseController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<?> registerCourse() throws Exception {
-    return WebResponseUtils.createWebResponse(null, HttpStatus.OK);
+  public ResponseEntity<?> registerCourse(@RequestBody Course body) throws Exception {
+    courseService.registerCourse(body);
+    return WebResponseUtils.createWebResponse("Register Course Success", HttpStatus.OK);
   }
   
   @GetMapping("/{id}/students")

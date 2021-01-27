@@ -1,6 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -12,7 +12,6 @@ import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
 
 /**
@@ -67,8 +66,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setCourseType(courseType);
 
       course.setCapacity((Integer) objArr[3]);
-      course.setPeriodStart((LocalDateTime) objArr[4]);
-      course.setPeriodEnd((LocalDateTime) objArr[5]);
+      Timestamp inTime = (Timestamp) objArr[4];
+      course.setPeriodStart(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[5];
+      course.setPeriodEnd(inTime.toLocalDateTime());
 
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[6]);
@@ -94,10 +95,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<Course> getMyCourse(String id) throws Exception {
     String sql = buildQueryOf(
-        "SELECT c.id ,c.code, ct.type_name AS courseName, c.capacity ,c.period_start ,c.period_end ,t.id ,t.code ,t.first_name ,t.last_name ,t.title_degree ,cc.code ,cc.category_name ",
+        "SELECT c.id ,c.code, ct.type_name AS typeName, c.capacity ,c.period_start ,c.period_end ,t.id ,t.code ,u.first_name ,u.last_name ,t.title_degree ,cc.code ,cc.category_name ",
         "FROM tb_m_courses AS c ",
         "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
         "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
+        "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
         "INNER JOIN student_course AS sc ON c.id = sc.course_id ",
         "INNER JOIN tb_m_students AS s ON sc.student_id = s.id WHERE s.id = ?")
@@ -117,8 +119,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setCourseType(courseType);
 
       course.setCapacity((Integer) objArr[3]);
-      course.setPeriodStart((LocalDateTime) objArr[4]);
-      course.setPeriodEnd((LocalDateTime) objArr[5]);
+      Timestamp inTime = (Timestamp) objArr[4];
+      course.setPeriodStart(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[5];
+      course.setPeriodEnd(inTime.toLocalDateTime());
 
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[6]);
@@ -158,11 +162,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id").toString();
 
     List<?> listObj = createNativeQuery(sql).getResultList();
-    List<Course> listResult =
-        HibernateUtils.bMapperList(listObj, Course.class, "id", "code", "courseType.name",
-        "capacity", "status", "description", "periodStart", "periodEnd", "teacher.id",
-        "teacher.code", "teacher.firstName", "teacher.lastName", "teacher.titleDegree",
-        "category.code", "category.name");
+    List<Course> listResult = new ArrayList<>();
 
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
@@ -177,8 +177,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setCapacity((Integer) objArr[3]);
       course.setStatus(CourseStatus.valueOf((String) objArr[4]));
       course.setDescripton((String) objArr[5]);
-      course.setPeriodStart((LocalDateTime) objArr[6]);
-      course.setPeriodEnd((LocalDateTime) objArr[7]);
+
+      Timestamp inTime = (Timestamp) objArr[4];
+      course.setPeriodStart(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[5];
+      course.setPeriodEnd(inTime.toLocalDateTime());
 
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[8]);

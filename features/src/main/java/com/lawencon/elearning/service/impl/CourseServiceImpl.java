@@ -1,10 +1,12 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
+import com.lawencon.elearning.dto.CourseResponseDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.CourseService;
@@ -43,18 +45,21 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public List<Course> getCurentAvailableCourse() throws Exception {
-    return courseDao.getCurentAvailableCourse();
+  public List<CourseResponseDTO> getCurentAvailableCourse() throws Exception {
+    List<Course> listCourse = courseDao.getCurentAvailableCourse();
+    return mergeData(listCourse);
   }
 
   @Override
-  public List<Course> getMyCourse(String id) throws Exception {
-    return courseDao.getMyCourse(id);
+  public List<CourseResponseDTO> getMyCourse(String id) throws Exception {
+    List<Course> listCourse = courseDao.getMyCourse(id);
+    return mergeData(listCourse);
   }
 
   @Override
-  public List<Course> getCourseForAdmin() throws Exception {
-    return courseDao.getCourseForAdmin();
+  public List<CourseResponseDTO> getCourseForAdmin() throws Exception {
+    List<Course> listCourse = courseDao.getCourseForAdmin();
+    return mergeData(listCourse);
   }
 
   @Override
@@ -73,4 +78,27 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     return mdlService.getDetailCourse(id);
   }
 
+  private List<CourseResponseDTO> mergeData(List<Course> listCourse) {
+    List<CourseResponseDTO> responseList = new ArrayList<>();
+    listCourse.forEach(val -> {
+      CourseResponseDTO courseDto = new CourseResponseDTO();
+      courseDto.setCourseId(val.getId());
+      courseDto.setCourseCode(val.getCode());
+      courseDto.setTypeName(val.getCourseType().getName());
+      courseDto.setCourseCapacity(val.getCapacity());
+      courseDto.setCourseStatus(val.getStatus());
+      courseDto.setCourseDescription(val.getDescripton());
+      courseDto.setCoursePeriodStart(val.getPeriodStart());
+      courseDto.setCoursePeriodEnd(val.getPeriodEnd());
+      courseDto.setTeacherId(val.getTeacher().getId());
+      courseDto.setTeacherCode(val.getTeacher().getCode());
+      courseDto.setUserFirstName(val.getTeacher().getUser().getFirstName());
+      courseDto.setUserLastName(val.getTeacher().getUser().getLastName());
+      courseDto.setTeacherTittle(val.getTeacher().getTitleDegree());
+      courseDto.setCategoryCode(val.getCategory().getCode());
+      courseDto.setCategoryName(val.getCategory().getName());
+      responseList.add(courseDto);
+    });
+    return responseList;
+  }
 }

@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.CourseResponseDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 
@@ -18,11 +19,11 @@ public interface CourseService {
 
   void deleteCourse(String id) throws Exception;
 
-  List<Course> getCurentAvailableCourse() throws Exception;
+  List<CourseResponseDTO> getCurentAvailableCourse() throws Exception;
 
-  List<Course> getMyCourse(String id) throws Exception;
+  List<CourseResponseDTO> getMyCourse(String id) throws Exception;
 
-  List<Course> getCourseForAdmin() throws Exception;
+  List<CourseResponseDTO> getCourseForAdmin() throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 

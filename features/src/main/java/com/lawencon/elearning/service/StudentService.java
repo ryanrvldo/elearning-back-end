@@ -1,9 +1,9 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.CourseResponseDTO;
 import com.lawencon.elearning.dto.StudentDashboardDTO;
 import com.lawencon.elearning.dto.StudentProfileDTO;
-import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Student;
 
 /**
@@ -29,6 +29,6 @@ public interface StudentService {
 
   StudentDashboardDTO getStudentDashboard(String id);
 
-  List<Course> getStudentCourse(String id) throws Exception;
+  List<CourseResponseDTO> getStudentCourse(String id) throws Exception;
 
 }
