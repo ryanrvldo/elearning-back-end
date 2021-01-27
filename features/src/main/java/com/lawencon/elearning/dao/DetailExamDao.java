@@ -21,7 +21,7 @@ public interface DetailExamDao {
 
   void deleteDetailExam(String id) throws Exception;
 
-  void updateScoreStudent(String id, Double score) throws Exception;
+  void updateScoreStudent(String id, Double score, String userId) throws Exception;
 
   List<DetailExam> getExamSubmission(String id) throws Exception;
 

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
-import com.lawencon.elearning.dto.DetailExamDTO;
+import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
@@ -60,9 +60,9 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public void updateScoreStudent(String id, Double score) throws Exception {
+  public void updateScoreStudent(String id, Double score, String userId) throws Exception {
     begin();
-    dtlExamDao.updateScoreStudent(id, score);
+    dtlExamDao.updateScoreStudent(id, score, userId);
     commit();
   }
 
@@ -72,7 +72,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public void sendStudentExam(DetailExamDTO data) throws Exception {
+  public void sendStudentExam(StudentExamDTO data) throws Exception {
     File file = new File();
     file.setId(data.getFileId());
     file.setVersion(data.getFileVersion());

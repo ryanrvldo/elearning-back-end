@@ -105,9 +105,9 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public void updateScoreStudent(String id, Double score) throws Exception {
-    String sql = buildQueryOf("UPDATE tb_r_dtl_exams SET grade = ?1 WHERE id = ?2").toString();
-    createNativeQuery(sql).setParameter(1, score).setParameter(2, id).executeUpdate();
+  public void updateScoreStudent(String id, Double score, String userId) throws Exception {
+    String sql = buildQueryOf("UPDATE tb_r_dtl_exams SET grade = ?1").toString();
+    updateNativeSQL(sql, id, userId, score.toString());
   }
 
   @Override

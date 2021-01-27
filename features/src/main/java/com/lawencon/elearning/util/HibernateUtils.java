@@ -19,7 +19,7 @@ import java.util.Map;
  * <li>Support 1 nest for variable type model</li>
  * </ul>
  *
- * @author Galih Dika
+ * @author Ryan Rivaldo
  */
 public class HibernateUtils {
 

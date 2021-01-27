@@ -6,7 +6,7 @@ import lombok.Data;
  * @author : Galih Dika Permana
  */
 @Data
-public class DetailExamDTO {
+public class StudentExamDTO {
 
   private String fileId;
   private Long fileVersion;
