@@ -15,6 +15,12 @@ import org.hibernate.annotations.GenericGenerator;
 public abstract class BaseEntity implements Serializable {
   public static final long serialVersionUID = 1L;
 
+  public BaseEntity() {
+    if (version == null) {
+      version = 0L;
+    }
+  }
+
   @Id
   @Column(name = "id", columnDefinition = "varchar DEFAULT uuid_generate_v4()")
   @GeneratedValue(generator = "uuid")

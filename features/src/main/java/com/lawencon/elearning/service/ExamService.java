@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 
@@ -26,6 +27,15 @@ public interface ExamService {
 
   String getIdByCode(String code) throws Exception;
 
+
+  // ----------------------- Detail Exam ------------------------
+  void submitAssignemt(StudentExamDTO data) throws Exception;
+
+  void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception;
+
   List<DetailExam> getListScoreAvg(String studentId) throws Exception;
+
+  List<DetailExam> getExamSubmissions(String examId) throws Exception;
+
 
 }

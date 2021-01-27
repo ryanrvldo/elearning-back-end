@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.service.ForumService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -32,9 +33,10 @@ public class ForumController {
   }
 
   @PostMapping
-  public ResponseEntity<?> saveForum(@RequestBody Forum body) throws Exception {
-    forumService.saveForum(body);
-    return WebResponseUtils.createWebResponse("Forum has been saved", HttpStatus.CREATED);
+  public ResponseEntity<?> saveForum(@RequestBody String body) throws Exception {
+    Forum forum = new ObjectMapper().readValue(body, Forum.class);
+    forumService.saveForum(forum);
+    return WebResponseUtils.createWebResponse("Add post success!", HttpStatus.CREATED);
   }
 
   @DeleteMapping("/{id}")

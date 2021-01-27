@@ -40,9 +40,14 @@ public class TeacherRequestDTO {
   private String roleId;
 
   @NotBlank
+  private Long roleVersion;
+
+  @NotBlank
   private String createdBy;
 
   @NotBlank
   private String titleDegree;
+
+
 
 }

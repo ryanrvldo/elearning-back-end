@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
+import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
@@ -36,6 +37,8 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     examDao.saveExam(data, null);
 
   }
+
+
 
   @Override
   public void updateExam(Exam data) throws Exception {
@@ -79,6 +82,24 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   public List<DetailExam> getListScoreAvg(String studentId) throws Exception {
     validateNullId(studentId, "Student Id");
     return dtlExamService.getListScoreAvg(studentId);
+  }
+
+  @Override
+  public List<DetailExam> getExamSubmissions(String examId) throws Exception {
+    validateNullId(examId, "Exam Id");
+    return dtlExamService.getExamSubmission(examId);
+  }
+
+  @Override
+  public void submitAssignemt(StudentExamDTO data) throws Exception {
+    dtlExamService.sendStudentExam(data);
+
+  }
+
+  @Override
+  public void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception {
+    // dtlExamService.updateScoreStudent(id, newScore, teacherId);
+
   }
 
   private void validateNullId(String id, String msg) throws Exception {

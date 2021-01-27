@@ -1,11 +1,14 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.DeleteRequestDTO;
+import com.lawencon.elearning.dto.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.TeacherProfileDTO;
 import com.lawencon.elearning.dto.TeacherRequestDTO;
 import com.lawencon.elearning.dto.TeacherResponseDTO;
@@ -59,12 +62,26 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public List<Teacher> allTeachersForAdmin() throws Exception {
+  public List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception {
     List<Teacher> listTeachers = teacherDao.allTeachersForAdmin();
     if (listTeachers == null) {
       throw new Exception("Teachers data have not been registered");
     }
-    return listTeachers;
+    
+    List<TeacherForAdminDTO> listResult = new ArrayList<>();
+    listTeachers.forEach(val->{
+      TeacherForAdminDTO teacherAdminDTO = new TeacherForAdminDTO();
+      teacherAdminDTO.setId(val.getId());
+      teacherAdminDTO.setActive(val.getIsActive());
+      teacherAdminDTO.setCode(val.getCode());
+      teacherAdminDTO.setPhone(val.getPhone());
+      teacherAdminDTO.setGender(val.getGender());
+      teacherAdminDTO.setUsername(val.getUser().getUsername());
+      teacherAdminDTO.setVersion(val.getVersion());
+      listResult.add(teacherAdminDTO);
+    });
+
+    return listResult;
   }
 
   @Override
@@ -77,6 +94,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     user.setEmail(data.getEmail());
     Role role = new Role();
     role.setId(data.getRoleId());
+    role.setVersion(data.getRoleVersion());
     user.setRole(role);
     userService.addUser(user);
 
@@ -140,11 +158,13 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public void deleteTeacherById(String id) throws Exception {
-    validateNullId(id, "Id");
-    commit();
-    teacherDao.deleteTeacherById(id);
-    begin();
+  public void deleteTeacherById(DeleteRequestDTO deleteReq) throws Exception {
+    validateNullId(deleteReq.getId(), "Id");
+    if (teacherDao.checkConstraint(deleteReq.getId()) > 0) {
+      teacherDao.deleteTeacherById(deleteReq.getId());
+    } else {
+      updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy());
+    }
   }
 
   @Override

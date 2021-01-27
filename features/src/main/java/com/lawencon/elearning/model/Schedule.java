@@ -23,7 +23,9 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "tb_m_schedules",
     uniqueConstraints = {
-        @UniqueConstraint(name = "bk_schedule", columnNames = {"code"})})
+        @UniqueConstraint(name = "bk_schedule", columnNames = {"code"}),
+        @UniqueConstraint(name = "bk_teacher_schedule",
+            columnNames = {"id_teacher", "schedule_date", "start_time"})})
 public class Schedule extends BaseMaster {
   private static final long serialVersionUID = 1L;
 

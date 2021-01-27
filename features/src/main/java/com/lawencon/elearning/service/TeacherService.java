@@ -1,6 +1,8 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.DeleteRequestDTO;
+import com.lawencon.elearning.dto.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.TeacherProfileDTO;
 import com.lawencon.elearning.dto.TeacherRequestDTO;
 import com.lawencon.elearning.dto.UpdateTeacherRequestDTO;
@@ -14,7 +16,7 @@ public interface TeacherService {
 
   List<Teacher> getAllTeachers() throws Exception;
 
-  List<Teacher> allTeachersForAdmin() throws Exception;
+  List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception;
 
   void saveTeacher(TeacherRequestDTO data) throws Exception;
 
@@ -28,7 +30,7 @@ public interface TeacherService {
 
   Teacher getFullNameByUserId(String userId) throws Exception;
 
-  void deleteTeacherById(String id) throws Exception;
+  void deleteTeacherById(DeleteRequestDTO deleteReq) throws Exception;
 
   Teacher findByIdForCourse(String id) throws Exception;
 

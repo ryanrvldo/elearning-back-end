@@ -31,5 +31,7 @@ public interface TeacherDao {
 
   Teacher findByIdForCourse(String id) throws Exception;
 
+  Long checkConstraint(String id) throws Exception;
+
 
 }

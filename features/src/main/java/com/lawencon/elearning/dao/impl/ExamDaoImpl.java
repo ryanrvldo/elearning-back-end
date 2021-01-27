@@ -38,14 +38,14 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
   @Override
   public List<Exam> getExamsByModule(String moduleId) throws Exception {
     String sql = buildQueryOf("SELECT id AS exam_id, trx_number , description , \"type\" , ",
-        "start_time , end_time, id_file AS file_id FROM tb_r_exams WHERE id_module = ?1 ")
+        "start_time , end_time, id_file AS file_id, version FROM tb_r_exams WHERE id_module = ?1 ")
             .toString();
     
     List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
 
     List<Exam> listResult = HibernateUtils.bMapperList(listObj, Exam.class, "id", "trxNumber",
         "description",
-        "type", "startTime", "endTime", "file.id");
+        "type", "startTime", "endTime", "file.id", "version");
 
     return listResult;
   }

@@ -1,6 +1,8 @@
 package com.lawencon.elearning.dto;
 
 import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import com.lawencon.elearning.model.Gender;
 import lombok.Data;
 
@@ -11,11 +13,15 @@ import lombok.Data;
 @Data
 public class TeacherResponseDTO {
 
-  private String id;
+  @NotBlank
   private String firstName;
+  @NotBlank
   private String lastName;
+  @NotBlank
   private String email;
+  @NotBlank
   private LocalDateTime createdAt;
+  @NotNull
   private Gender gender;
 
   public TeacherResponseDTO(String firstName, String lastName, String email,
@@ -27,17 +33,6 @@ public class TeacherResponseDTO {
     this.gender = gender;
   }
 
-
-
-  public TeacherResponseDTO(String id, String firstName, String lastName, String email,
-      LocalDateTime createdAt, Gender gender) {
-    this.id = id;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.createdAt = createdAt;
-    this.gender = gender;
-  }
 
 
 

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.DeleteRequestDTO;
 import com.lawencon.elearning.dto.TeacherRequestDTO;
 import com.lawencon.elearning.dto.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.service.TeacherService;
@@ -27,6 +28,11 @@ public class TeacherController {
 
   @Autowired
   private TeacherService teacherService;
+
+  @GetMapping
+  public ResponseEntity<?> getAllTeachers() throws Exception {
+    return WebResponseUtils.createWebResponse(teacherService.allTeachersForAdmin(), HttpStatus.OK);
+  }
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getTeacherProfile(@PathVariable("id") String id) throws Exception {
@@ -53,9 +59,9 @@ public class TeacherController {
         HttpStatus.OK);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteTeacher(@PathVariable("id") String id) throws Exception {
-    teacherService.deleteTeacherById(id);
+  @DeleteMapping
+  public ResponseEntity<?> deleteTeacher(@RequestBody DeleteRequestDTO deleteReq) throws Exception {
+    teacherService.deleteTeacherById(deleteReq);
     return WebResponseUtils.createWebResponse("Delete Teacher Profile Success!", HttpStatus.OK);
   }
 
