@@ -5,8 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseTypeDao;
+import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
+import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.service.CourseTypeService;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  * @author : Galih Dika Permana
@@ -17,32 +21,59 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   @Autowired
   private CourseTypeDao courseTypeDao;
 
+  @Autowired
+  private ValidationUtil validateUtil;
+
   @Override
   public List<CourseType> getListCourseType() throws Exception {
-    return courseTypeDao.getListCourseType();
+    List<CourseType> courseTypes = courseTypeDao.getListCourseType();
+    if (courseTypes == null) {
+      throw new DataIsNotExistsException("Data is not exist");
+    }
+    return courseTypes;
   }
 
   @Override
-  public void insertCourseType(CourseType courseType) throws Exception {
+  public void insertCourseType(CourseTypeCreateRequestDTO courseTypeDTO) throws Exception {
+    validateUtil.validate(courseTypeDTO);
+    CourseType courseType = new CourseType();
+    courseType.setCode(courseTypeDTO.getCode());
+    courseType.setCreatedBy(courseTypeDTO.getCreatedBy());
+    courseType.setName(courseTypeDTO.getName());
     courseTypeDao.insertCourseType(courseType, null);
   }
 
   @Override
-  public void updateCourseType(CourseType courseType) throws Exception {
-    setupUpdatedValue(courseType, () -> courseTypeDao.getTypeById(courseType.getId()));
+  public void updateCourseType(CourseTypeUpdateRequestDTO courseTypeDTO) throws Exception {
+    validateUtil.validate(courseTypeDTO);
+    CourseType courseType = new CourseType();
+    courseType.setId(courseTypeDTO.getId());
+    courseType.setUpdatedBy(courseTypeDTO.getUpdateBy());
+    courseType.setCode(courseTypeDTO.getCode());
+    courseType.setName(courseTypeDTO.getName());
+
+    CourseType courseTypes = courseTypeDao.getTypeById(courseType.getId());
+    if (courseTypes == null) {
+      throw new DataIsNotExistsException("data is not exist");
+    }
+    setupUpdatedValue(courseType, () -> courseTypes);
     courseTypeDao.updateCourseType(courseType, null);
   }
 
   @Override
   public void deleteCourseType(String id) throws Exception {
+    CourseType courseTypes = courseTypeDao.getTypeById(id);
+    if (courseTypes == null) {
+      throw new DataIsNotExistsException("data is not exist");
+    }
     courseTypeDao.deleteCourseType(id);
   }
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-      begin();
+    begin();
     courseTypeDao.updateIsActive(id, userId);
-      commit();
+    commit();
   }
 
 }

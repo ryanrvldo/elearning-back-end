@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.module;
 
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Schedule;

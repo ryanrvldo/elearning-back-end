@@ -1,10 +1,10 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
-import com.lawencon.elearning.dto.CourseResponseDTO;
 import com.lawencon.elearning.dto.RegisterStudentDTO;
 import com.lawencon.elearning.dto.StudentDashboardDTO;
 import com.lawencon.elearning.dto.StudentProfileDTO;
+import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.model.Student;
 
 /**

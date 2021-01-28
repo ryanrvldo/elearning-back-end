@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.module;
 
 import java.util.List;
 import com.lawencon.elearning.model.Attendance;

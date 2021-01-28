@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.course;
 
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
-import com.lawencon.elearning.dto.ModulRequestDTO;
+import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;

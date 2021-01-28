@@ -21,6 +21,7 @@ import lombok.EqualsAndHashCode;
     uniqueConstraints = {@UniqueConstraint(name = "bk_type", columnNames = {"code"})})
 @JsonInclude(Include.NON_NULL)
 public class CourseType extends BaseMaster {
+
   private static final long serialVersionUID = 1L;
 
   @Column(nullable = false, length = 50)

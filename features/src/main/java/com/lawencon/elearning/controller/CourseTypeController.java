@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.model.CourseType;
+import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
+import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
 import com.lawencon.elearning.service.CourseTypeService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -27,41 +28,27 @@ public class CourseTypeController {
 
   @GetMapping
   public ResponseEntity<?> getListCourseType() throws Exception {
-    try {
-      return WebResponseUtils.createWebResponse(courseTypeService.getListCourseType(),
-          HttpStatus.OK);
-    } catch (Exception e) {
-      return WebResponseUtils.createWebResponse("Data not found", HttpStatus.NOT_FOUND);
-    }
+    return WebResponseUtils.createWebResponse(courseTypeService.getListCourseType(), HttpStatus.OK);
   }
 
   @PostMapping
-  public ResponseEntity<?> insertCourseType(@RequestBody CourseType data) throws Exception{
-    try {
-      courseTypeService.insertCourseType(data);
-      return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.OK);
-    } catch (Exception e) {
-      return WebResponseUtils.createWebResponse("Insert data failed", HttpStatus.BAD_REQUEST);
-    }
+  public ResponseEntity<?> insertCourseType(@RequestBody CourseTypeCreateRequestDTO data)
+      throws Exception {
+    courseTypeService.insertCourseType(data);
+    return WebResponseUtils.createWebResponse("Insert data course type success",
+        HttpStatus.CREATED);
   }
 
   @PutMapping
-  public ResponseEntity<?> updateCourseType(@RequestBody CourseType data) throws Exception {
-    try {
-      courseTypeService.updateCourseType(data);
-      return WebResponseUtils.createWebResponse("Update data success", HttpStatus.OK);
-    } catch (Exception e) {
-      return WebResponseUtils.createWebResponse("Update data failed", HttpStatus.BAD_REQUEST);
-    }
+  public ResponseEntity<?> updateCourseType(@RequestBody CourseTypeUpdateRequestDTO data)
+      throws Exception {
+    courseTypeService.updateCourseType(data);
+    return WebResponseUtils.createWebResponse("Update data course type success", HttpStatus.OK);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<?> deleteCourseTypeById(@RequestParam("id") String id) throws Exception {
-    try {
-      courseTypeService.deleteCourseType(id);
-      return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
-    } catch (Exception e) {
-      return WebResponseUtils.createWebResponse("Delete data failed", HttpStatus.BAD_REQUEST);
-    }
+    courseTypeService.deleteCourseType(id);
+    return WebResponseUtils.createWebResponse("Delete data course type success", HttpStatus.OK);
   }
 }

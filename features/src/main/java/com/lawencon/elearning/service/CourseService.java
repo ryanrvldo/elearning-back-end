@@ -1,7 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
-import com.lawencon.elearning.dto.CourseResponseDTO;
+import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 

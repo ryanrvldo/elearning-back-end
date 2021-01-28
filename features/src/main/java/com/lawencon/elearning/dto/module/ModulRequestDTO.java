@@ -1,8 +1,9 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.module;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import com.lawencon.elearning.dto.ScheduleRequestDTO;
 import lombok.Data;
 
 /**
