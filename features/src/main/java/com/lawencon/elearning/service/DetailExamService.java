@@ -1,7 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
-import com.lawencon.elearning.dto.StudentExamDTO;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.util.Callback;
 
@@ -27,5 +27,5 @@ public interface DetailExamService {
 
   List<DetailExam> getExamSubmission(String id) throws Exception;
 
-  void sendStudentExam(StudentExamDTO dtlExam) throws Exception;
+  void sendStudentExam(MultipartFile multiPartFile, String content, String body) throws Exception;
 }

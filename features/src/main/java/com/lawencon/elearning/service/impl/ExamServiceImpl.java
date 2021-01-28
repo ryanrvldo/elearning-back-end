@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
-import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
@@ -51,6 +50,12 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public void saveExam(MultipartFile multiPartFile, String content, String body) throws Exception {
+    if (content == null) {
+      throw new IllegalRequestException("Content cannot be empty!");
+    }
+    if (body == null) {
+      throw new IllegalRequestException("Teacher Exam data cannot be empty!");
+    }
     FileResponseDto fileResponseDTO = fileService.createFile(multiPartFile, content);
     TeacherExamRequestDTO teacherExam =
         new ObjectMapper().readValue(body, TeacherExamRequestDTO.class);
@@ -128,9 +133,15 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public void submitAssignemt(StudentExamDTO data) throws Exception {
-    dtlExamService.sendStudentExam(data);
-
+  public void submitAssignemt(MultipartFile multiPartFile, String content, String body)
+      throws Exception {
+    if (content == null) {
+      throw new IllegalRequestException("Content cannot be empty!");
+    }
+    if (body == null) {
+      throw new IllegalRequestException("Student Exam data cannot be empty!");
+    }
+    dtlExamService.sendStudentExam(multiPartFile, content, body);
   }
 
   @Override

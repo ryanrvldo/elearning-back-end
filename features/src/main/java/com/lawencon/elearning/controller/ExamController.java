@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -44,13 +43,14 @@ public class ExamController {
    }
 
    @PostMapping("/student")
-   public ResponseEntity<?> sendStudentExam(@RequestBody StudentExamDTO body) throws Exception {
-     examService.submitAssignemt(body);
+   public ResponseEntity<?> sendStudentExam(@RequestPart("file") MultipartFile multiPartFile,
+       @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
+     examService.submitAssignemt(multiPartFile, content, body);
      return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
    }
 
    @PostMapping("/module")
-   public ResponseEntity<?> sendStudentExam(@RequestPart("file") MultipartFile multiPartFile,
+   public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
        @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
      examService.saveExam(multiPartFile, content, body);
      return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);

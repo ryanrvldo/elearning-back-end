@@ -15,19 +15,25 @@ public class UpdateTeacherRequestDTO {
 
   @NotBlank
   private String id;
+
   @NotBlank
   @Size(max = 50)
   private String firstName;
+
   @NotBlank
   @Size(max = 50)
   private String lastName;
+
   @NotBlank
   private String email;
+
   @NotBlank
   @Size(max = 50)
   private String titleDegree;
+
   @NotNull
   private Gender gender;
+
   @NotBlank
   private String updatedBy;
 

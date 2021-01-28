@@ -2,7 +2,6 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 
@@ -30,7 +29,7 @@ public interface ExamService {
 
 
   // ----------------------- Detail Exam ------------------------
-  void submitAssignemt(StudentExamDTO data) throws Exception;
+  void submitAssignemt(MultipartFile multiPartFile, String content, String body) throws Exception;
 
   void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception;
 

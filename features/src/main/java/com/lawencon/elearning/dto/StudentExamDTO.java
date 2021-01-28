@@ -1,5 +1,8 @@
 package com.lawencon.elearning.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -8,11 +11,20 @@ import lombok.Data;
 @Data
 public class StudentExamDTO {
 
-  private String fileId;
-  private Long fileVersion;
+  @NotBlank
   private String examId;
+
+  @NotNull
+  @Min(0)
   private Long examVersion;
+
+  @NotBlank
   private String studentId;
+
+  @NotNull
+  @Min(0)
   private Long studentVersion;
+
+  @NotBlank
   private String createdBy;
 }

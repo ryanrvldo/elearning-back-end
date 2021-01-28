@@ -3,17 +3,24 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
+import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.StudentExamDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.DetailExamService;
+import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
+import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
 
 /**
@@ -23,6 +30,12 @@ import com.lawencon.util.Callback;
 public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExamService {
   @Autowired
   private DetailExamDao dtlExamDao;
+
+  @Autowired
+  private FileService fileService;
+
+  @Autowired
+  private ValidationUtil validationUtil;
 
   @Override
   public List<DetailExam> getListScoreAvg(String id) throws Exception {
@@ -72,27 +85,36 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public void sendStudentExam(StudentExamDTO data) throws Exception {
-    File file = new File();
-    file.setId(data.getFileId());
-    file.setVersion(data.getFileVersion());
+  public void sendStudentExam(MultipartFile multiPartFile, String content, String body)
+      throws Exception {
+    FileResponseDto fileResponseDTO =
+        Optional.ofNullable(fileService.createFile(multiPartFile, content))
+            .orElseThrow(() -> new DataIsNotExistsException("Id file not found!"));
+    StudentExamDTO studentExamDTO = new ObjectMapper().readValue(body, StudentExamDTO.class);
+    validationUtil.validate(studentExamDTO);
+
     Exam exam = new Exam();
-    exam.setId(data.getExamId());
-    exam.setVersion(data.getExamVersion());
+    exam.setId(studentExamDTO.getExamId());
+    exam.setVersion(studentExamDTO.getExamVersion());
+
     Student student = new Student();
-    student.setId(data.getStudentId());
-    student.setVersion(data.getStudentVersion());
+    student.setId(studentExamDTO.getStudentId());
+    student.setVersion(studentExamDTO.getStudentVersion());
 
-    DetailExam dtlExam = new DetailExam();
-    dtlExam.setStudent(student);
-    dtlExam.setExam(exam);
-    dtlExam.setFile(file);
-    dtlExam.setCreatedAt(LocalDateTime.now());
-    dtlExam.setCreatedBy(data.getCreatedBy());
-    dtlExam.setTrxDate(LocalDate.now());
-    dtlExam.setTrxNumber(TransactionNumberUtils.generateDtlExamTrxNumber());
+    File file = new File();
+    file.setId(fileResponseDTO.getId());
 
-    dtlExamDao.sendStudentExam(dtlExam);
+    DetailExam detailExam = new DetailExam();
+    detailExam.setCreatedBy(studentExamDTO.getCreatedBy());
+    detailExam.setCreatedAt(LocalDateTime.now());
+    detailExam.setTrxDate(LocalDate.now());
+    detailExam.setTrxNumber(TransactionNumberUtils.generateDtlExamTrxNumber());
+    detailExam.setGrade(0D);
+    detailExam.setStudent(student);
+    detailExam.setExam(exam);
+    detailExam.setFile(file);
+
+    dtlExamDao.sendStudentExam(detailExam);
   }
 
 
