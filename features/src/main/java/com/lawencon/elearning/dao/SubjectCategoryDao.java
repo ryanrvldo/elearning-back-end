@@ -11,7 +11,7 @@ import com.lawencon.util.Callback;
  */
 public interface SubjectCategoryDao {
 
-  List<SubjectCategory> getAllSubject();
+  List<SubjectCategory> getAllSubject() throws Exception;
 
   SubjectCategory getById(String id) throws Exception;
 

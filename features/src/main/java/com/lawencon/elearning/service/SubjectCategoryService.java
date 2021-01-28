@@ -11,7 +11,7 @@ import com.lawencon.util.Callback;
  */
 public interface SubjectCategoryService {
 
-  List<SubjectCategory> getAllSubject();
+  List<SubjectCategory> getAllSubject() throws Exception;
 
   void updateSubject(SubjectCategory data, Callback before) throws Exception;
 

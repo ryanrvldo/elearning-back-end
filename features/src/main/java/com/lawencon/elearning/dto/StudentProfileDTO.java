@@ -12,10 +12,14 @@ import lombok.Data;
 @Data
 public class StudentProfileDTO {
 
-  private LocalDateTime createdAt;
-  private Gender gender;
   private String firstName;
+
   private String lastName;
+
   private String email;
+
+  private Gender gender;
+
+  private LocalDateTime createdAt;
 
 }

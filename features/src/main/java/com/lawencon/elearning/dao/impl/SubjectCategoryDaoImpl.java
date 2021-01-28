@@ -17,7 +17,7 @@ public class SubjectCategoryDaoImpl extends CustomBaseDao<SubjectCategory>
     implements SubjectCategoryDao {
 
   @Override
-  public List<SubjectCategory> getAllSubject() {
+  public List<SubjectCategory> getAllSubject() throws Exception {
     return getAll();
   }
 

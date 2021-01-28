@@ -12,7 +12,7 @@ public interface StudentDao {
 
   void insertStudent(Student data, Callback before) throws Exception;
 
-  Student getStudentById(String id);
+  Student getStudentById(String id) throws Exception;
 
   Student getStudentProfile(String id) throws Exception;
 
@@ -24,6 +24,6 @@ public interface StudentDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  Student getStudentDashboard(String id);
+  Student getStudentDashboard(String id) throws Exception;
 
 }

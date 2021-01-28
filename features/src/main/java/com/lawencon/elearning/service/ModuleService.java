@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.ModulRequestDTO;
 import com.lawencon.elearning.model.Module;
 
 /**
@@ -16,7 +17,7 @@ public interface ModuleService {
 
   List<Module> getDetailCourse(String idCourse) throws Exception;
 
-  void insertModule(List<Module> data) throws Exception;
+  void insertModule(List<ModulRequestDTO> data) throws Exception;
 
   void updateModule(Module data) throws Exception;
 

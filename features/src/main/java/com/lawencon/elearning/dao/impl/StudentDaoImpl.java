@@ -25,7 +25,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   }
 
   @Override
-  public Student getStudentById(String id) {
+  public Student getStudentById(String id) throws Exception {
     return getById(id);
   }
 
@@ -82,11 +82,11 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   }
 
   @Override
-  public Student getStudentDashboard(String id) {
+  public Student getStudentDashboard(String id) throws Exception {
     String query = buildQueryOf(
         "SELECT s.id as id_student, f.id as id_file, u.first_name, u.last_name, u.email, s.phone, s.gender, s.created_at ",
         "FROM tb_m_students s ", "INNER JOIN tb_m_users u ON u.id = s.id_user ",
-        "LEFT JOIN tb_r_files f ON f.id = u.id_photo ", "WHERE s.id = ?").toString();
+        "LEFT JOIN tb_r_files f ON f.id = u.id_photo ", "WHERE s.id = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
     List<Student> listResult = new ArrayList<>();
     listObj.forEach(val -> {

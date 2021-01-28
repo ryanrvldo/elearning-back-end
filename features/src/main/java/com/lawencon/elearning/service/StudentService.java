@@ -2,6 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.CourseResponseDTO;
+import com.lawencon.elearning.dto.RegisterStudentDTO;
 import com.lawencon.elearning.dto.StudentDashboardDTO;
 import com.lawencon.elearning.dto.StudentProfileDTO;
 import com.lawencon.elearning.model.Student;
@@ -13,7 +14,7 @@ import com.lawencon.elearning.model.Student;
  */
 public interface StudentService {
 
-  void insertStudent(Student data) throws Exception;
+  void insertStudent(RegisterStudentDTO data) throws Exception;
 
   Student getStudentById(String id) throws Exception;
 
@@ -27,7 +28,7 @@ public interface StudentService {
 
   Student getStudentByIdUser(String id) throws Exception;
 
-  StudentDashboardDTO getStudentDashboard(String id);
+  StudentDashboardDTO getStudentDashboard(String id) throws Exception;
 
   List<CourseResponseDTO> getStudentCourse(String id) throws Exception;
 

@@ -26,7 +26,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
     String query = buildQueryOf(
         "SELECT m.id as module_id, m.code, m.title, m.description, sc.subject_name, s.id as schedule_id, s.schedule_date, s.start_time, s.end_time ",
         "FROM tb_m_modules m ", "INNER JOIN tb_m_subject_categories sc ON sc.id = m.id_subject ",
-        "INNER JOIN tb_m_schedules s ON s.id = m.id_schedule ", "WHERE m.id_course = ?").toString();
+        "INNER JOIN tb_m_schedules s ON s.id = m.id_schedule ", "WHERE m.id_course = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, idCourse).getResultList();
     return HibernateUtils.bMapperList(listObj, Module.class, "id", "code", "title", "description",
         "subject.subjectName", "schedule.id", "schedule.date", "schedule.startTime",
@@ -57,12 +57,13 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   @Override
   public Module getModuleByIdCustom(String id) throws Exception {
     String query = buildQueryOf(
-        "SELECT m.title, m.code, m.description, s.schedule_date, s.start_time, s.end_time",
+        "SELECT m.title, m.code, m.description, s.schedule_date, s.start_time, s.end_time, mf.id_file",
         "FROM tb_m_modules as m", "INNER JOIN tb_m_schedules as s on s.id = m.id_schedule",
-        "WHERE m.id = ?").toString();
+        "INNER JOIN module_files as mf.id_module = ? ",
+        "WHERE m.id = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
     List<Module> listResult = HibernateUtils.bMapperList(listObj, Module.class, "title", "code",
-        "description", "schedule.date", "schedule.startTime", "schedule.endTime");
+        "description", "schedule.date", "schedule.startTime", "schedule.endTime", "files.idFile");
     return getResultModel(listResult);
   }
 

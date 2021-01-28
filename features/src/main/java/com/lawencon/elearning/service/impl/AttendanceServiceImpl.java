@@ -3,10 +3,12 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.AttendanceDao;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.Attendance;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.AttendanceService;
@@ -29,7 +31,8 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
 
   @Override
   public List<Attendance> getAttendanceList(String idModule) throws Exception {
-    return attendanceDao.getAttendanceList(idModule);
+    return Optional.ofNullable(attendanceDao.getAttendanceList(idModule))
+        .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
   }
 
   @Override
@@ -45,9 +48,11 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
 
   @Override
   public void verifAttendance(String id, String userId) throws Exception {
-    begin();
-    attendanceDao.verifAttendance(id, userId);
-    commit();
+    Attendance attendance = attendanceDao.getAttendanceById(id);
+    attendance.setIsVerified(true);
+    attendance.setUpdatedBy(userId);
+    attendance.setUpdatedAt(LocalDateTime.now());
+    attendanceDao.verifAttendance(attendance, null);
   }
 
 }

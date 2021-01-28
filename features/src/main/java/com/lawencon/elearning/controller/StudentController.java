@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.RegisterStudentDTO;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -45,15 +46,15 @@ public class StudentController {
   }
 
   @PostMapping
-  public ResponseEntity<?> registerStudent(@RequestBody Student body) throws Exception {
+  public ResponseEntity<?> registerStudent(@RequestBody RegisterStudentDTO body) throws Exception {
     studentService.insertStudent(body);
-    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Register Success", HttpStatus.OK);
   }
 
   @PutMapping
   public ResponseEntity<?> updateStudentProfile(@RequestBody Student body) throws Exception {
     studentService.updateStudentProfile(body);
-    return WebResponseUtils.createWebResponse("Update Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Update Profile Success", HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
