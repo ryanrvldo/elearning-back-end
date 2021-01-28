@@ -20,7 +20,7 @@ Request:
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/api/login`
+- Endpoint : `/login`
 - Body :
 
 ```json
@@ -60,7 +60,7 @@ error
 #### Request:
 
 - Method : `POST`
-- Endpoint : `/api/student/register`
+- Endpoint : `/student/register`
 - Body :
 
 ```json
@@ -101,7 +101,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/api/student/dashboard/:id`
+- Endpoint : `/student/dashboard/:id`
 
 ### Response :
 
@@ -135,7 +135,7 @@ error
 ### Student's Score
 
 - Method: `GET`
-- Endpoint: `api/student/:id/scores`
+- Endpoint: `exam/avarage-scores/student/:id`
 
 #### Response:
 
@@ -170,7 +170,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/api/course/available`
+- Endpoint : `/course/available`
 
 #### Response :
 
@@ -203,7 +203,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/api/modules/:courseid`
+- Endpoint : `/modules/course/:id`
 
 #### Response :
 
@@ -244,7 +244,7 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/api/course/register`
+- Endpoint : `/course/register`
 - Body :
 
 ```json
@@ -279,7 +279,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/api/student/:id/course`
+- Endpoint : `/student/:id/course`
 
 #### Response :
 
@@ -325,7 +325,7 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/api/student/attendance`
+- Endpoint : `/student/attendance`
 - Body:
 
 ```json
@@ -360,7 +360,7 @@ error
 #### Request :
 
 - Method : `PATCH`
-- Endpoint : `/api/student/attendance`
+- Endpoint : `/student/attendance`
 - Body:
 
 ```json
@@ -830,7 +830,7 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/api/admin/teacher/register`
+- Endpoint : `/admin/teacher/register`
 - Body :
 
 ```json
@@ -843,7 +843,7 @@ error
   "username": "",
   "password": "",
   "email": "",
-  "role_code": ""
+  "role_id": ""
 }
 ```
 
@@ -877,13 +877,13 @@ error
 
 ```json
 {
+  "id": "",
   "firstName": "",
   "lastName": "",
   "email": "",
   "title": "",
-  "createdAt": "",
   "gender": "",
-  "address": ""
+  "updatedBy": ""
 }
 ```
 
@@ -937,7 +937,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/api/admin/courses`
+- Endpoint : `/admin/courses`
 
 #### Response :
 
@@ -966,7 +966,7 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/api/admin/course`
+- Endpoint : `/admin/course`
 - Body:
 
 ```json
@@ -1009,7 +1009,7 @@ error
 #### Request :
 
 - Method : `DELETE`
-- EndPoint : `/api/admin/course/:id`
+- EndPoint : `/admin/course/:id`
 
 #### Response :
 
@@ -1036,7 +1036,7 @@ error
 #### Request
 
 - Method : `GET`
-- Endpoint : `/api/admin/subject-categories`
+- Endpoint : `/admin/subject-categories`
 
 #### Response :
 
@@ -1070,7 +1070,7 @@ error
 #### Request :
 
 - Method : `PUT`
-- Endpoint : `/api/admin/subject-categories`
+- Endpoint : `/admin/subject-categories`
 - Body:
 
 ```json
@@ -1106,7 +1106,7 @@ error
 #### Request :
 
 - method : `POST`
-- Endpoint : `/api/admin/subject-categories`
+- Endpoint : `/admin/subject-categories`
 - Body:
 
 ```json

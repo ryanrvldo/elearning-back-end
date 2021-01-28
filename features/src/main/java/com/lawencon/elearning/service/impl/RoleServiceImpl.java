@@ -5,6 +5,7 @@ import com.lawencon.elearning.dao.RoleDao;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.service.RoleService;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class RoleServiceImpl extends BaseServiceImpl implements RoleService {
 
   @Override
   public void create(Role role) throws Exception {
+    role.setCreatedAt(LocalDateTime.now());
     roleDao.create(role);
   }
 

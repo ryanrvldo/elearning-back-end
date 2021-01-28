@@ -1,10 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.model.Course;
@@ -13,6 +8,11 @@ import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -71,7 +71,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       mdl.setCode((String) objArr[1]);
       mdl.setTitle((String) objArr[2]);
       Course course = new Course();
-      course.setDescripton((String) objArr[3]);
+      course.setDescription((String) objArr[3]);
       course.setCode((String) objArr[4]);
       Exam exam = new Exam();
       Timestamp inTime = (Timestamp) objArr[5];

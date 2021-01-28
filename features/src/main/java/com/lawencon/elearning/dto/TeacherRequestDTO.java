@@ -1,15 +1,19 @@
 package com.lawencon.elearning.dto;
 
+import com.lawencon.elearning.model.Gender;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import com.lawencon.elearning.model.Gender;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *  @author Dzaky Fadhilla Guci
  */
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TeacherRequestDTO {
 
   @NotBlank

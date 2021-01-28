@@ -1,9 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.CourseResponseDTO;
@@ -11,6 +7,10 @@ import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ModuleService;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -87,7 +87,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       courseDto.setTypeName(val.getCourseType().getName());
       courseDto.setCourseCapacity(val.getCapacity());
       courseDto.setCourseStatus(val.getStatus());
-      courseDto.setCourseDescription(val.getDescripton());
+      courseDto.setCourseDescription(val.getDescription());
       courseDto.setCoursePeriodStart(val.getPeriodStart());
       courseDto.setCoursePeriodEnd(val.getPeriodEnd());
       courseDto.setTeacherId(val.getTeacher().getId());

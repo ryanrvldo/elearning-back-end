@@ -1,5 +1,7 @@
 package com.lawencon.elearning.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lawencon.model.BaseMaster;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,8 +16,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,13 +29,15 @@ import lombok.EqualsAndHashCode;
 @Table(name = "tb_m_courses", uniqueConstraints = {
     @UniqueConstraint(name = "bk_course", columnNames = {"code"})})
 public class Course extends BaseMaster {
+
   private static final long serialVersionUID = 1L;
 
   @Column(nullable = false, length = 100)
   private String code;
 
-  @Column(nullable = false)
-  private String descripton;
+  // TODO: 1/28/21 fix column name and database data type
+  @Column(columnDefinition = "TEXT", nullable = false)
+  private String description;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_course_type", foreignKey = @ForeignKey(name = "fk_type"),

@@ -1,9 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.model.Course;
@@ -13,6 +9,10 @@ import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -176,7 +176,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
       course.setCapacity((Integer) objArr[3]);
       course.setStatus(CourseStatus.valueOf((String) objArr[4]));
-      course.setDescripton((String) objArr[5]);
+      course.setDescription((String) objArr[5]);
 
       Timestamp inTime = (Timestamp) objArr[4];
       course.setPeriodStart(inTime.toLocalDateTime());
