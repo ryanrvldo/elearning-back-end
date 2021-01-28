@@ -68,7 +68,6 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
     String sql = "UPDATE tb_m_teachers SET is_active = FALSE";
-    createNativeQuery(sql).setParameter(1, id).executeUpdate();
     updateNativeSQL(sql, id, userId);
   }
 
@@ -116,12 +115,13 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
 
   @Override
   public Long checkConstraint(String id) throws Exception {
-    String sql = buildQueryOf("SELECT id FROM tb_m_teachers tmt ",
+    String sql = buildQueryOf("SELECT count(*) AS total_constraint FROM tb_m_teachers tmt ",
         "WHERE tmt.id = ?1 AND ?2 IN ",
         "((SELECT id_teacher FROM tb_m_courses) , (SELECT id_teacher FROM tb_m_schedules) , ",
-        "(SELECT id_teacher FROM tb_m_experiences)) LIMIT 1").toString();
+        "(SELECT id_teacher FROM tb_m_experiences))").toString();
 
-    return (Long) createNativeQuery(sql).setParameter(1, id).setParameter(2, id).getSingleResult();
+    return Long.valueOf(createNativeQuery(sql).setParameter(1, id).setParameter(2, id)
+        .getSingleResult().toString());
   }
 
 }

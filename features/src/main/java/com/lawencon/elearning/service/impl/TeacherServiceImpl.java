@@ -160,7 +160,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public void deleteTeacherById(DeleteRequestDTO deleteReq) throws Exception {
     validateNullId(deleteReq.getId(), "Id");
-    if (teacherDao.checkConstraint(deleteReq.getId()) > 0) {
+    if (teacherDao.checkConstraint(deleteReq.getId()) == 0) {
       teacherDao.deleteTeacherById(deleteReq.getId());
     } else {
       updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy());
