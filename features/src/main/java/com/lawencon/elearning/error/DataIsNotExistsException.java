@@ -12,4 +12,8 @@ public class DataIsNotExistsException extends Exception {
     super(String.format("Data is not exits with %s : %s.", paramName, paramValue));
   }
 
+  public DataIsNotExistsException(String message) {
+    super(message);
+  }
+
 }

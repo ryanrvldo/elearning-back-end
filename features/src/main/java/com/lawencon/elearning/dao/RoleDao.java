@@ -1,7 +1,7 @@
 package com.lawencon.elearning.dao;
 
-import java.util.List;
 import com.lawencon.elearning.model.Role;
+import java.util.List;
 
 /**
  * @author Rian Rivaldo
@@ -15,5 +15,7 @@ public interface RoleDao {
   Role findByCode(String code) throws Exception;
 
   List<Role> findAll() throws Exception;
+
+  void updateRole(Role role) throws Exception;
 
 }

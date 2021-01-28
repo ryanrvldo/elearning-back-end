@@ -1,21 +1,21 @@
 package com.lawencon.elearning.controller;
 
+import com.lawencon.elearning.dto.role.RoleCreateRequestDto;
+import com.lawencon.elearning.dto.role.RoleUpdateRequestDto;
+import com.lawencon.elearning.service.RoleService;
+import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.model.Role;
-import com.lawencon.elearning.service.RoleService;
-import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
- * 
  * @author WILLIAM
- *
  */
 
 @RestController
@@ -39,10 +39,15 @@ public class RoleController {
     return WebResponseUtils.createWebResponse(roleService.findByCode(code), HttpStatus.OK);
   }
 
-  @PostMapping
-  public ResponseEntity<?> insertRole(@RequestBody Role body) throws Exception {
+  @PostMapping(value = {"/role"})
+  public ResponseEntity<?> insertRole(@RequestBody RoleCreateRequestDto body) throws Exception {
     roleService.create(body);
-    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.CREATED);
+  }
+
+  @PutMapping(value = {"/role"})
+  public ResponseEntity<?> updateRole(@RequestBody RoleUpdateRequestDto body) throws Exception {
+    return WebResponseUtils.createWebResponse(roleService.updateRole(body), HttpStatus.OK);
   }
 
 }

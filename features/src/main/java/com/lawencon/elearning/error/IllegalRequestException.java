@@ -9,4 +9,8 @@ public class IllegalRequestException extends Exception {
     super(String.format("Bad request with %s: %s. ", paramName, paramValue));
   }
 
+  public IllegalRequestException(String message) {
+    super(message);
+  }
+
 }

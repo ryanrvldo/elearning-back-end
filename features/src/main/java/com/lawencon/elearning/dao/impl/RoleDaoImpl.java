@@ -35,4 +35,9 @@ public class RoleDaoImpl extends CustomBaseDao<Role> implements RoleDao {
     return getAll();
   }
 
+  @Override
+  public void updateRole(Role role) throws Exception {
+    save(role, null, null, true, true);
+  }
+
 }

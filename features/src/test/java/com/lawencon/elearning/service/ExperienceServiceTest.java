@@ -1,71 +1,54 @@
 package com.lawencon.elearning.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.lawencon.elearning.model.Gender;
+import com.lawencon.elearning.dto.role.RoleResponseDto;
 import com.lawencon.elearning.model.Role;
-import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
-import java.time.LocalDateTime;
+import javax.persistence.RollbackException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * @author Rian Rivaldo
  */
 @ExtendWith(SpringExtension.class)
-@DataJpaTest
+@SpringBootTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 class ExperienceServiceTest {
 
   @Autowired
-  private ExperienceService experienceService;
+  private RoleService roleService;
 
   @Autowired
   private UserService userService;
 
-  @Autowired
-  private TeacherService teacherService;
-
   @Test
   void injectedComponentAreNotNull() {
-    assertThat(experienceService).isNotNull();
+    assertThat(roleService).isNotNull();
     assertThat(userService).isNotNull();
-    assertThat(teacherService).isNotNull();
   }
 
   @Test
-  void testCreateExperience() throws Exception {
+  void testCreateUserAlreadyExists() throws Exception {
+    RoleResponseDto roleResponse = roleService.findByCode("RL-001");
     User user = new User();
-    user.setCreatedAt(LocalDateTime.now());
-    user.setCreatedBy("SUPER_ADMIN");
-    user.setEmail("galih@gmail.com");
-    user.setFirstName("Galih");
-    user.setLastName("Joget");
-    user.setUsername("galihjoget");
-    user.setPassword("rahasia");
-
+    user.setFirstName("Super Administrator");
+    user.setUsername("superAdmin");
+    user.setPassword("superAdmin");
+    user.setEmail("superadmin@lawerning.com");
     Role role = new Role();
-    role.setId("1");
+    role.setId(roleResponse.getId());
+    role.setVersion(roleResponse.getVersion());
     user.setRole(role);
-    userService.addUser(user);
-    assertThat(user.getId()).isNotNull();
-
-    Teacher teacher = new Teacher();
-    teacher.setUser(user);
-    teacher.setCreatedAt(LocalDateTime.now());
-    teacher.setCreatedBy("SUPER_ADMIN");
-    teacher.setCode("TCHR-0001");
-    teacher.setGender(Gender.FEMALE);
-    teacher.setPhone("0281921839");
-    teacher.setTitleDegree("S.KOM");
-//    teacherService.saveTeacher(teacher);
-    assertThat(teacher.getId()).isNotNull();
+    assertThatThrownBy(() -> userService.addUser(user))
+        .hasCauseInstanceOf(RollbackException.class);
   }
 
 }
