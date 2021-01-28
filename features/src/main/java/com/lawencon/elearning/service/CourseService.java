@@ -19,7 +19,7 @@ public interface CourseService {
 
   void deleteCourse(String id) throws Exception;
 
-  List<CourseResponseDTO> getCurentAvailableCourse() throws Exception;
+  List<CourseResponseDTO> getCurrentAvailableCourse() throws Exception;
 
   List<CourseResponseDTO> getMyCourse(String id) throws Exception;
 
@@ -27,7 +27,7 @@ public interface CourseService {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  void registerCourse(Course course) throws Exception;
+  void registerCourse(String student, String course) throws Exception;
 
   List<Module> getDetailCourse(String id) throws Exception;
 }

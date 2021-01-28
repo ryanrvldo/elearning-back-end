@@ -18,7 +18,7 @@ public interface CourseDao {
 
   void deleteCourse(String id) throws Exception;
 
-  List<Course> getCurentAvailableCourse() throws Exception;
+  List<Course> getCurrentAvailableCourse() throws Exception;
 
   List<Course> getMyCourse(String id) throws Exception;
 
@@ -26,7 +26,7 @@ public interface CourseDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  void registerCourse(Course course) throws Exception;
+  void registerCourse(String course, String student) throws Exception;
 
   Course getCourseById(String id) throws Exception;
 }

@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,6 +19,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "tb_m_course_categories",
     uniqueConstraints = {@UniqueConstraint(name = "bk_category", columnNames = {"code"})})
+@JsonInclude(Include.NON_NULL)
 public class CourseCategory extends BaseMaster {
   private static final long serialVersionUID = 1L;
 

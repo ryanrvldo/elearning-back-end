@@ -30,5 +30,4 @@ public class ForumModuleResponseDTO {
   @NotNull
   private User user;
 
-
 }

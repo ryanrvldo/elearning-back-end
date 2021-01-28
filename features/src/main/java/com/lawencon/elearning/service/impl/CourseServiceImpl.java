@@ -1,5 +1,9 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.CourseResponseDTO;
@@ -7,10 +11,6 @@ import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ModuleService;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -21,7 +21,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Autowired
   private CourseDao courseDao;
   @Autowired
-  private ModuleService mdlService;
+  private ModuleService moduleService;
 
   @Override
   public List<Course> getListCourse() throws Exception {
@@ -45,8 +45,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public List<CourseResponseDTO> getCurentAvailableCourse() throws Exception {
-    List<Course> listCourse = courseDao.getCurentAvailableCourse();
+  public List<CourseResponseDTO> getCurrentAvailableCourse() throws Exception {
+    List<Course> listCourse = courseDao.getCurrentAvailableCourse();
     return mergeData(listCourse);
   }
 
@@ -70,12 +70,14 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public void registerCourse(Course course) throws Exception {
-    courseDao.registerCourse(course);
+  public void registerCourse(String student, String course) throws Exception {
+    begin();
+    courseDao.registerCourse(course, student);
+    commit();
   }
 
   public List<Module> getDetailCourse(String id) throws Exception {
-    return mdlService.getDetailCourse(id);
+    return moduleService.getDetailCourse(id);
   }
 
   private List<CourseResponseDTO> mergeData(List<Course> listCourse) {
