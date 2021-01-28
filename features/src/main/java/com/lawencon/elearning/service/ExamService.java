@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
@@ -13,7 +14,7 @@ public interface ExamService {
 
   List<Exam> getAllExams() throws Exception;
 
-  void saveExam(Exam data) throws Exception;
+  void saveExam(MultipartFile multiPartFile, String content, String body) throws Exception;
 
   void updateExam(Exam data) throws Exception;
 

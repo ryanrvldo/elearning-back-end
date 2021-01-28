@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.teacher;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -8,23 +8,22 @@ import lombok.Data;
 /**
  *  @author Dzaky Fadhilla Guci
  */
-
 @Data
-public class UpdateTeacherRequestDTO {
+public class TeacherForAdminDTO {
 
   @NotBlank
   private String id;
   @NotBlank
-  private String firstName;
+  private String code;
   @NotBlank
-  private String lastName;
+  private String phone;
   @NotBlank
-  private String email;
-  @NotBlank
-  private String titleDegree;
+  private String username;
   @NotNull
   private Gender gender;
   @NotBlank
-  private String updatedBy;
+  private boolean isActive;
+  @NotBlank
+  private Long version;
 
 }

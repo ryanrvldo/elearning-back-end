@@ -1,11 +1,15 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
 
@@ -42,6 +46,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     save(data, before, null, true, true);
   }
 
+
   @Override
   public Teacher findTeacherById(String id) throws Exception {
     return getById(id);
@@ -50,17 +55,37 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public Teacher findTeacherByIdCustom(String id) throws Exception {
 
-    String sql = buildQueryOf(
-        "SELECT tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, tmt.gender, tmt.version ",
-        "FROM tb_m_teachers tmt ",
-        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE id = ?1 AND is_active = true")
-            .toString();
+     String sql = buildQueryOf(
+         "SELECT tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at,",
+         "tmt.gender, tmt.version , tmu.id_photo FROM tb_m_teachers tmt ",
+         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.id=? AND tmt.is_active = true")
+             .toString();
+    
+    
+     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
+     List<Teacher> listResult = new ArrayList<Teacher>();
 
-    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+     listObj.forEach(val -> {
+       Object[] objArr = (Object[]) val;
+       User user = new User();
+       user.setFirstName((String) objArr[0]);
+       user.setLastName((String) objArr[1]);
+       user.setEmail((String) objArr[2]);
 
-    List<Teacher> listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "user.firstName",
-        "user.lastName", "user.email", "titleDegree", "createdAt", "gender", "version");
+       Teacher teacher = new Teacher();
+       teacher.setTitleDegree((String) objArr[3]);
+       Timestamp inTime = (Timestamp) objArr[4];
+       teacher.setCreatedAt(inTime.toLocalDateTime());
+
+       teacher.setGender(Gender.valueOf((String) objArr[5]));
+       teacher.setVersion(Long.valueOf(objArr[6].toString()));
+       File file = new File();
+       file.setId((String) objArr[7]);
+       user.setUserPhoto(file);
+       teacher.setUser(user);
+       listResult.add(teacher);
+     });
 
     return getResultModel(listResult);
   }

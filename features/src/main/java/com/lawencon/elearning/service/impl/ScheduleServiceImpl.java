@@ -4,13 +4,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ScheduleDao;
+import com.lawencon.elearning.error.DataAlreadyExistException;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.service.ScheduleService;
+import com.lawencon.elearning.util.TransactionNumberUtils;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  *  @author Dzaky Fadhilla Guci
@@ -22,18 +27,24 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Autowired
   private ScheduleDao scheduleDao;
 
+  @Autowired
+  private ValidationUtil validateUtil;
+
   @Override
   public List<Schedule> getAllSchedules() throws Exception {
-    return scheduleDao.getAllSchedules();
+    return Optional.ofNullable(scheduleDao.getAllSchedules()).orElseThrow(
+        () -> new DataIsNotExistsException("Schedule is empty and has not been initialized."));
   }
 
   @Override
   public void saveSchedule(Schedule data) throws Exception {
+    validateUtil.validate(data);
     if (checkScheduleTeacher(data.getTeacher().getId(), data.getDate(), data.getStartTime()) > 0) {
-      throw new Exception("Teacher already has schedule on that time");
+      throw new DataAlreadyExistException("Time", data.getDate().toString());
     }
-      data.setCreatedAt(LocalDateTime.now());
-      scheduleDao.saveSchedule(data, null);
+    data.setCode(TransactionNumberUtils.generateScheduleCode());
+    data.setCreatedAt(LocalDateTime.now());
+    scheduleDao.saveSchedule(data, () -> new DataAlreadyExistException(""));
   }
 
   @Override
@@ -45,20 +56,23 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public Schedule findScheduleById(String id) throws Exception {
     validateNullId(id, "Id");
-    return scheduleDao.findScheduleById(id);
+    return Optional.ofNullable(scheduleDao.findScheduleById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
   public Schedule getByIdCustom(String id) throws Exception {
     validateNullId(id, "Id");
-    return scheduleDao.getByIdCustom(id);
+    return Optional.ofNullable(scheduleDao.getByIdCustom(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
 
   }
 
   @Override
   public List<Schedule> getByTeacherId(String teacherId) throws Exception {
     validateNullId(teacherId, "Teacher Id");
-    return scheduleDao.getByTeacherId(teacherId);
+    return Optional.ofNullable(scheduleDao.getByTeacherId(teacherId))
+        .orElseThrow(() -> new DataIsNotExistsException("Teacher Id", teacherId));
   }
 
   @Override

@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.DeleteRequestDTO;
-import com.lawencon.elearning.dto.TeacherRequestDTO;
-import com.lawencon.elearning.dto.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
+import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
+import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -60,7 +60,7 @@ public class TeacherController {
   }
 
   @DeleteMapping
-  public ResponseEntity<?> deleteTeacher(@RequestBody DeleteRequestDTO deleteReq) throws Exception {
+  public ResponseEntity<?> deleteTeacher(@RequestBody DeleteTeacherDTO deleteReq) throws Exception {
     teacherService.deleteTeacherById(deleteReq);
     return WebResponseUtils.createWebResponse("Delete Teacher Profile Success!", HttpStatus.OK);
   }

@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.StudentExamDTO;
 import com.lawencon.elearning.model.DetailExam;
-import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -49,8 +50,9 @@ public class ExamController {
    }
 
    @PostMapping("/module")
-   public ResponseEntity<?> sendStudentExam(@RequestBody Exam body) throws Exception {
-     examService.saveExam(body);
+   public ResponseEntity<?> sendStudentExam(@RequestPart("file") MultipartFile multiPartFile,
+       @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
+     examService.saveExam(multiPartFile, content, body);
      return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
    }
 

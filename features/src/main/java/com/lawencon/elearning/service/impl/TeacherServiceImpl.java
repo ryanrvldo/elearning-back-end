@@ -3,16 +3,18 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
-import com.lawencon.elearning.dto.DeleteRequestDTO;
-import com.lawencon.elearning.dto.TeacherForAdminDTO;
-import com.lawencon.elearning.dto.TeacherProfileDTO;
-import com.lawencon.elearning.dto.TeacherRequestDTO;
-import com.lawencon.elearning.dto.TeacherResponseDTO;
-import com.lawencon.elearning.dto.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
+import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
+import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
+import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
+import com.lawencon.elearning.dto.teacher.TeacherResponseDTO;
+import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.Role;
@@ -21,6 +23,7 @@ import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  *  @author Dzaky Fadhilla Guci
@@ -38,6 +41,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Autowired
   private UserService userService;
   
+  @Autowired
+  private ValidationUtil validUtil;
+
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
@@ -54,20 +60,15 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public List<Teacher> getAllTeachers() throws Exception {
-    List<Teacher> listTeachers = teacherDao.getAllTeachers();
-    if (listTeachers == null) {
-      throw new Exception("Teachers data have not been registered");
-    }
-    return listTeachers;
+    return Optional.ofNullable(teacherDao.getAllTeachers())
+        .orElseThrow(() -> new DataIsNotExistsException("Teachers data have not been registered "));
   }
 
   @Override
   public List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception {
-    List<Teacher> listTeachers = teacherDao.allTeachersForAdmin();
-    if (listTeachers == null) {
-      throw new Exception("Teachers data have not been registered");
-    }
-    
+    List<Teacher> listTeachers = Optional.ofNullable(teacherDao.allTeachersForAdmin())
+        .orElseThrow(() -> new DataIsNotExistsException("Teachers data have not been registered "));
+
     List<TeacherForAdminDTO> listResult = new ArrayList<>();
     listTeachers.forEach(val->{
       TeacherForAdminDTO teacherAdminDTO = new TeacherForAdminDTO();
@@ -86,12 +87,14 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public void saveTeacher(TeacherRequestDTO data) throws Exception {
+    validUtil.validate(data);
     User user = new User();
     user.setFirstName(data.getFirstName());
     user.setLastName(data.getLastName());
     user.setUsername(data.getUsername());
     user.setPassword(data.getPassword());
     user.setEmail(data.getEmail());
+
     Role role = new Role();
     role.setId(data.getRoleId());
     role.setVersion(data.getRoleVersion());
@@ -119,12 +122,19 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
     validateNullId(id, "Id");
-
     Teacher teacher = teacherDao.findTeacherByIdCustom(id);
+    if (teacher == null) {
+      throw new DataIsNotExistsException("Id", id);
+    }
+
     List<Experience> experiences = experienceService.getAllByTeacherId(id);
-    TeacherResponseDTO teacherResponse = new TeacherResponseDTO(teacher.getUser().getFirstName(),
-        teacher.getUser().getLastName(), teacher.getUser().getEmail(), teacher.getCreatedAt(),
-        teacher.getGender());
+
+    TeacherResponseDTO teacherResponse =
+        new TeacherResponseDTO(teacher.getUser().getFirstName(), teacher.getUser().getLastName(),
+            teacher.getUser().getEmail(), teacher.getCreatedAt(), teacher.getGender(),
+            null == teacher.getUser().getUserPhoto().getId() ? ""
+                : teacher.getUser().getUserPhoto().getId());
+
     TeacherProfileDTO teacherProfile = new TeacherProfileDTO();
     teacherProfile.setTeacher(teacherResponse);
     teacherProfile.setExperiences(experiences);
@@ -134,8 +144,11 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public void updateTeacher(UpdateTeacherRequestDTO data) throws Exception {
-    validateNullId(data.getId(), "Id");
+    validUtil.validate(data);
     Teacher teacherDB = findTeacherById(data.getId());
+    if (teacherDB == null) {
+      throw new DataIsNotExistsException("id", data.getId());
+    }
     teacherDB.setTitleDegree(data.getTitleDegree());
     teacherDB.setGender(data.getGender());
     teacherDB.setUpdatedBy(data.getUpdatedBy());
@@ -154,11 +167,12 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public Teacher getFullNameByUserId(String userId) throws Exception {
     validateNullId(userId, "User Id");
-    return teacherDao.findByUserId(userId);
+    return Optional.ofNullable(teacherDao.findByUserId(userId))
+        .orElseThrow(() -> new DataIsNotExistsException("User Id", userId));
   }
 
   @Override
-  public void deleteTeacherById(DeleteRequestDTO deleteReq) throws Exception {
+  public void deleteTeacherById(DeleteTeacherDTO deleteReq) throws Exception {
     validateNullId(deleteReq.getId(), "Id");
     if (teacherDao.checkConstraint(deleteReq.getId()) == 0) {
       teacherDao.deleteTeacherById(deleteReq.getId());

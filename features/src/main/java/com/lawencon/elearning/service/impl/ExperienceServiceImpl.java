@@ -1,16 +1,16 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExperienceDao;
 import com.lawencon.elearning.dto.ExperienceRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.service.ExperienceService;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
@@ -50,7 +50,7 @@ public class ExperienceServiceImpl extends BaseServiceImpl implements Experience
   public List<Experience> getAllByTeacherId(String teacherId) throws Exception {
     List<Experience> experiences = experienceDao.findAllByTeacherId(teacherId);
     if (experiences.isEmpty()) {
-      throw new DataIsNotExistsException("teacher id", teacherId);
+      return null;
     }
     return experiences;
   }

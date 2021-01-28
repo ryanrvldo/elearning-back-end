@@ -17,4 +17,12 @@ public class TransactionNumberUtils {
     return String.format("DT-%s", System.currentTimeMillis());
   }
 
+  public static String generateScheduleCode() {
+    return String.format("SCH-%s", System.currentTimeMillis());
+  }
+
+  public static String generateForumTrxNumber() {
+    return String.format("FRM-%s", System.currentTimeMillis());
+  }
+
 }

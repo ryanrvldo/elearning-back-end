@@ -1,9 +1,11 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.teacher;
 
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.model.Gender;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -11,29 +13,26 @@ import lombok.Data;
  */
 
 @Data
+@AllArgsConstructor
 public class TeacherResponseDTO {
 
   @NotBlank
   private String firstName;
-  @NotBlank
+
   private String lastName;
+
   @NotBlank
   private String email;
+
   @NotBlank
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime createdAt;
+
   @NotNull
   private Gender gender;
 
-  public TeacherResponseDTO(String firstName, String lastName, String email,
-      LocalDateTime createdAt, Gender gender) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.email = email;
-    this.createdAt = createdAt;
-    this.gender = gender;
-  }
-
-
+  @NotNull
+  private String photoId;
 
 
 }

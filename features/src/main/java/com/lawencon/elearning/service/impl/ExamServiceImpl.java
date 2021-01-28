@@ -2,16 +2,26 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
+import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.StudentExamDTO;
+import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
+import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExamService;
+import com.lawencon.elearning.service.FileService;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  *  @author Dzaky Fadhilla Guci
@@ -24,21 +34,46 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   private ExamDao examDao;
 
   @Autowired
+  private FileService fileService;
+
+  @Autowired
+  private ValidationUtil validateUtil;
+
+  @Autowired
   private DetailExamService dtlExamService;
 
   @Override
   public List<Exam> getAllExams() throws Exception {
-    return examDao.getAllExams();
+    return Optional.ofNullable(examDao.getAllExams())
+        .orElseThrow(
+            () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
   }
 
   @Override
-  public void saveExam(Exam data) throws Exception {
-    data.setCreatedAt(LocalDateTime.now());
-    examDao.saveExam(data, null);
+  public void saveExam(MultipartFile multiPartFile, String content, String body) throws Exception {
+    FileResponseDto fileResponseDTO = fileService.createFile(multiPartFile, content);
+    TeacherExamRequestDTO teacherExam =
+        new ObjectMapper().readValue(body, TeacherExamRequestDTO.class);
+    validateUtil.validate(teacherExam);
 
+    Module module = new Module();
+    module.setId(teacherExam.getModuleId());
+    module.setVersion(teacherExam.getModuleVersion());
+    
+    Exam exam = new Exam();
+    exam.setModule(module);
+    exam.setDescription(teacherExam.getDescription());
+    exam.setStartTime(teacherExam.getStartTime());
+    exam.setEndTime(teacherExam.getEndTime());
+    exam.setCreatedAt(LocalDateTime.now());
+    exam.setCreatedBy(teacherExam.getCreatedBy());
+
+    File file = new File();
+    file.setId(fileResponseDTO.getId());
+    exam.setFile(file);
+
+    examDao.saveExam(exam, null);
   }
-
-
 
   @Override
   public void updateExam(Exam data) throws Exception {
@@ -52,13 +87,15 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException("id", id);
     }
-    return examDao.findExamById(id);
+    return Optional.ofNullable(examDao.findExamById(id)).orElseThrow(
+        () -> new DataIsNotExistsException("id", id));
   }
 
   @Override
   public List<Exam> getExamsByModule(String moduleId) throws Exception {
     validateNullId(moduleId, "Id Module");
-    return examDao.getExamsByModule(moduleId);
+    return Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
+        () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
   }
 
   @Override
@@ -98,8 +135,13 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception {
-    // dtlExamService.updateScoreStudent(id, newScore, teacherId);
+    validateNullId("id", id);
+    if (newScore == null || newScore < 0) {
+      throw new IllegalRequestException("Bad request with score! cannot be empty or less than 0");
+    }
+    validateNullId("Teacher Id", teacherId);
 
+    dtlExamService.updateScoreStudent(id, newScore, teacherId);
   }
 
   private void validateNullId(String id, String msg) throws Exception {

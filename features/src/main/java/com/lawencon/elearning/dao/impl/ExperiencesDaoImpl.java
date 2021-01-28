@@ -1,10 +1,10 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.base.BaseDaoImpl;
 import com.lawencon.elearning.dao.ExperienceDao;
 import com.lawencon.elearning.model.Experience;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -32,6 +32,7 @@ public class ExperiencesDaoImpl extends BaseDaoImpl<Experience> implements Exper
   @Override
   public List<Experience> findAllByTeacherId(String teacherId) throws Exception {
     return createQuery("FROM Experience WHERE teacher.id = ?1 ", Experience.class)
+        .setParameter(1, teacherId)
         .getResultList();
   }
 

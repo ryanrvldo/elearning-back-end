@@ -1,8 +1,10 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.teacher;
 
-import com.lawencon.elearning.model.Gender;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import com.lawencon.elearning.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,21 +19,25 @@ import lombok.NoArgsConstructor;
 public class TeacherRequestDTO {
 
   @NotBlank
+  @Size(max = 50)
   private String code;
 
   @NotBlank
+  @Size(max = 50)
   private String firstName;
 
   @NotBlank
   private String lastName;
 
   @NotBlank
+  @Size(max = 20)
   private String phone;
 
   @NotNull
   private Gender gender;
 
   @NotBlank
+  @Size(max = 100)
   private String username;
 
   @NotBlank
@@ -43,13 +49,15 @@ public class TeacherRequestDTO {
   @NotBlank
   private String roleId;
 
-  @NotBlank
+  @NotNull
+  @Min(0)
   private Long roleVersion;
 
   @NotBlank
   private String createdBy;
 
   @NotBlank
+  @Size(max = 50)
   private String titleDegree;
 
 
