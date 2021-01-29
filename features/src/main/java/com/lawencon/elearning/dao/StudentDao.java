@@ -1,8 +1,8 @@
 package com.lawencon.elearning.dao;
 
+import java.util.List;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.util.Callback;
-import java.util.List;
 
 /**
  * 
@@ -29,4 +29,6 @@ public interface StudentDao {
 
   List<Student> findAll() throws Exception;
   
+  List<Student> getListStudentByIdCourse(String idCourse) throws Exception;
+
 }

@@ -1,8 +1,7 @@
 package com.lawencon.elearning.dto.module;
 
-import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.Schedule;
-import com.lawencon.elearning.model.SubjectCategory;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Data;
 
 /**
@@ -15,30 +14,10 @@ public class ModuleResponseDTO {
   private String code;
   private String tittle;
   private String description;
-  private Schedule schedule;
-  private Course course;
-  private SubjectCategory subject;
-  
-  public ModuleResponseDTO(String id, String code, String tittle, String description,
-      Schedule schedule, Course course, SubjectCategory subject) {
-
-    this.id = id;
-    this.code = code;
-    this.tittle = tittle;
-    this.description = description;
-    this.schedule = schedule;
-    this.course = course;
-    this.subject = subject;
-  }
-
-  public ModuleResponseDTO(String code, String tittle, String description, Schedule schedule,
-      Course course, SubjectCategory subject) {
-    this.code = code;
-    this.tittle = tittle;
-    this.description = description;
-    this.schedule = schedule;
-    this.course = course;
-    this.subject = subject;
-  }
+  private String idSchedule;
+  private LocalDate scheduleDate;
+  private LocalTime startTime;
+  private LocalTime endTime;
+  private String subjectName;
 
 }

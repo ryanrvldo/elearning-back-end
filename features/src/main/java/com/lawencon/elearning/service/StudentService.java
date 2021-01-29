@@ -3,6 +3,7 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
+import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentProfileDTO;
 import com.lawencon.elearning.model.Student;
@@ -31,5 +32,7 @@ public interface StudentService {
   StudentDashboardDTO getStudentDashboard(String id) throws Exception;
 
   List<CourseResponseDTO> getStudentCourse(String id) throws Exception;
+
+  List<StudentByCourseResponseDTO> getListStudentByIdCourse(String idCourse) throws Exception;
 
 }

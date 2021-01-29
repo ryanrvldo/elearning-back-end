@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
+import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
@@ -44,12 +46,26 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public List<Module> getDetailCourse(String idCourse) throws Exception {
+  public List<ModuleResponseDTO> getDetailCourse(String idCourse) throws Exception {
     List<Module> listResult = moduleDao.getDetailCourse(idCourse);
     if (listResult.isEmpty()) {
       throw new DataIsNotExistsException("There is no module yet");
     }
-    return listResult;
+    List<ModuleResponseDTO> listModuleDTO = new ArrayList<>();
+    for (int i = 0; i < listResult.size(); i++) {
+      ModuleResponseDTO moduleDTO = new ModuleResponseDTO();
+      moduleDTO.setId(listResult.get(i).getId());
+      moduleDTO.setCode(listResult.get(i).getCode());
+      moduleDTO.setTittle(listResult.get(i).getTitle());
+      moduleDTO.setDescription(listResult.get(i).getDescription());
+      moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
+      moduleDTO.setIdSchedule(listResult.get(i).getSchedule().getId());
+      moduleDTO.setScheduleDate(listResult.get(i).getSchedule().getDate());
+      moduleDTO.setStartTime((listResult.get(i).getSchedule().getStartTime()));
+      moduleDTO.setEndTime((listResult.get(i).getSchedule().getEndTime()));
+      listModuleDTO.add(moduleDTO);
+    }
+    return listModuleDTO;
   }
 
   @Override
@@ -90,7 +106,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         rollback();
         throw e;
       }
-
     }
   }
 

@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
+import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentProfileDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -155,6 +157,25 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException(msg, id);
     }
+  }
+
+  @Override
+  public List<StudentByCourseResponseDTO> getListStudentByIdCourse(String idCourse)
+      throws Exception {
+    List<Student> listStudent = studentDao.getListStudentByIdCourse(idCourse);
+    List<StudentByCourseResponseDTO> listDto = new ArrayList<>();
+    for (int i = 0; i < listStudent.size(); i++) {
+      StudentByCourseResponseDTO studentDto = new StudentByCourseResponseDTO();
+      studentDto.setId(listStudent.get(i).getId());
+      studentDto.setCode(listStudent.get(i).getCode());
+      studentDto.setEmail(listStudent.get(i).getUser().getEmail());
+      studentDto.setFirstName(listStudent.get(i).getUser().getFirstName());
+      studentDto.setLastName((listStudent.get(i).getUser().getLastName()));
+      studentDto.setGender(String.valueOf(listStudent.get(i).getGender()));
+      studentDto.setPhone(listStudent.get(i).getPhone());
+      listDto.add(studentDto);
+    }
+    return listDto;
   }
 
 }

@@ -57,13 +57,13 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   @Override
   public Module getModuleByIdCustom(String id) throws Exception {
     String query = buildQueryOf(
-        "SELECT m.title, m.code, m.description, s.schedule_date, s.start_time, s.end_time, mf.id_file",
-        "FROM tb_m_modules as m", "INNER JOIN tb_m_schedules as s on s.id = m.id_schedule",
-        "INNER JOIN module_files as mf.id_module = ? ",
+        "SELECT m.title, m.code, m.description, s.schedule_date, s.start_time, s.end_time ",
+        "FROM tb_m_modules as m ", "INNER JOIN tb_m_schedules as s on s.id = m.id_schedule ",
         "WHERE m.id = ?");
-    List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
+    List<?> listObj =
+        createNativeQuery(query).setParameter(1, id).getResultList();
     List<Module> listResult = HibernateUtils.bMapperList(listObj, Module.class, "title", "code",
-        "description", "schedule.date", "schedule.startTime", "schedule.endTime", "files.idFile");
+        "description", "schedule.date", "schedule.startTime", "schedule.endTime");
     return getResultModel(listResult);
   }
 
