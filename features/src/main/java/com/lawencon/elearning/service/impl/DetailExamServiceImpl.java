@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
-import com.lawencon.elearning.dto.StudentExamDTO;
+import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;

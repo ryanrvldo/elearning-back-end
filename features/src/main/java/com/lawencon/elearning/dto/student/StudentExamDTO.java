@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.student;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;

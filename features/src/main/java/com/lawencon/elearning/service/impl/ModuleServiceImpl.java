@@ -43,8 +43,11 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public List<Module> getDetailCourse(String idCourse) throws Exception {
-    return Optional.ofNullable(moduleDao.getDetailCourse(idCourse))
-        .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
+    List<Module> listResult = moduleDao.getDetailCourse(idCourse);
+    if (listResult.isEmpty()) {
+      throw new DataIsNotExistsException("There is no module yet");
+    }
+    return listResult;
   }
 
   @Override

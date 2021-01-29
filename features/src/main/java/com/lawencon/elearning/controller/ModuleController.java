@@ -32,8 +32,8 @@ public class ModuleController {
     return WebResponseUtils.createWebResponse(moduleService.getDetailCourse(id), HttpStatus.OK);
   }
 
-  @PostMapping
-  public ResponseEntity<?> insertCourseCategory(@RequestBody List<ModulRequestDTO> data)
+  @PostMapping("/module")
+  public ResponseEntity<?> insertModule(@RequestBody List<ModulRequestDTO> data)
       throws Exception {
     try {
       moduleService.insertModule(data);

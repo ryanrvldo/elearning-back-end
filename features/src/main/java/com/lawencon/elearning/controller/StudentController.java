@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.RegisterStudentDTO;
+import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.WebResponseUtils;

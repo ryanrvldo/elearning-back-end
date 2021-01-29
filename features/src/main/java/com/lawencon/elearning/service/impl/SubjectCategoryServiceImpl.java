@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
+import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.service.SubjectCategoryService;
+import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
 
 /**
@@ -23,11 +25,14 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   @Autowired
   private SubjectCategoryDao subjectCategoryDao;
 
+  @Autowired
+  private ValidationUtil validationUtil;
+
   @Override
   public List<SubjectCategory> getAllSubject() throws Exception {
     List<SubjectCategory> listResult =  subjectCategoryDao.getAllSubject();
-    if(listResult.size() == 0) {
-      throw new Exception("Data Is Empty");
+    if (listResult.isEmpty()) {
+      throw new DataIsNotExistsException("No Subject Category Yet");
     }
     return listResult;
   }
@@ -39,9 +44,15 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public void addSubject(SubjectCategory data, Callback before) throws Exception {
-    data.setCreatedAt(LocalDateTime.now());
-    subjectCategoryDao.addSubject(data, before);
+  public void addSubject(CreateSubjectCategoryRequestDTO data, Callback before) throws Exception {
+    validationUtil.validate(data);
+    SubjectCategory subject = new SubjectCategory();
+    subject.setCode(data.getCode());
+    subject.setDescription(data.getDescription());
+    subject.setSubjectName(data.getSubjectName());
+    subject.setCreatedBy(data.getCreatedBy());
+    subject.setCreatedAt(LocalDateTime.now());
+    subjectCategoryDao.addSubject(subject, before);
   }
 
   @Override

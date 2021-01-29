@@ -11,6 +11,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
+import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;

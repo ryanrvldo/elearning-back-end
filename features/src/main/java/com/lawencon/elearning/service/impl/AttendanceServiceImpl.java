@@ -3,7 +3,6 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -31,8 +30,11 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
 
   @Override
   public List<Attendance> getAttendanceList(String idModule) throws Exception {
-    return Optional.ofNullable(attendanceDao.getAttendanceList(idModule))
-        .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
+    List<Attendance> listResult = attendanceDao.getAttendanceList(idModule);
+    if (listResult.isEmpty()) {
+      throw new DataIsNotExistsException("There is no attendance yet");
+    }
+    return listResult;
   }
 
   @Override

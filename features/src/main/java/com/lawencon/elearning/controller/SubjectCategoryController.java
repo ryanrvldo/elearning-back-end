@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.service.SubjectCategoryService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -39,7 +40,7 @@ public class SubjectCategoryController {
   }
 
   @PostMapping
-  public ResponseEntity<?> insertSubjectCategory(@RequestBody SubjectCategory body)
+  public ResponseEntity<?> insertSubjectCategory(@RequestBody CreateSubjectCategoryRequestDTO body)
       throws Exception {
     subjectCategoryService.addSubject(body, null);
     return WebResponseUtils.createWebResponse("Insert Subject Success", HttpStatus.OK);
