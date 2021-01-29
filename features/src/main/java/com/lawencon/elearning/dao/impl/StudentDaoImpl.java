@@ -1,17 +1,18 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Gender;
+import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author WILLIAM
@@ -110,4 +111,25 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
     return getResultModel(listResult);
   }
 
+  @Override
+  public List<Student> findAll() throws Exception {
+    String query = buildQueryOf(
+        "SELECT student, user, role FROM Student AS student ",
+        "INNER JOIN User AS user ON user.id = student.user.id ",
+        "INNER JOIN Role AS role ON role.id = user.role.id "
+    );
+    List<Student> studentList = new ArrayList<>();
+    List<Object[]> objList = createQuery(query, Object[].class)
+        .getResultList();
+    objList.forEach(objArr -> {
+      Student student = (Student) objArr[0];
+      User user = (User) objArr[1];
+      Role role = (Role) objArr[2];
+      user.setRole(role);
+      student.setUser(user);
+      studentList.add(student);
+    });
+    return studentList;
+  }
+  
 }

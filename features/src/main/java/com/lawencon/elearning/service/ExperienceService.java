@@ -1,6 +1,8 @@
 package com.lawencon.elearning.service;
 
-import com.lawencon.elearning.dto.ExperienceRequestDTO;
+import com.lawencon.elearning.dto.experience.ExperienceCreateRequestDTO;
+import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
+import com.lawencon.elearning.dto.experience.ExperienceUpdateRequestDto;
 import com.lawencon.elearning.model.Experience;
 import java.util.List;
 
@@ -9,7 +11,8 @@ import java.util.List;
  */
 public interface ExperienceService {
 
-  void createExperience(ExperienceRequestDTO experienceRequest) throws Exception;
+  ExperienceResponseDto createExperience(ExperienceCreateRequestDTO experienceRequest)
+      throws Exception;
 
   Experience getById(String id) throws Exception;
 
@@ -17,6 +20,9 @@ public interface ExperienceService {
 
   List<Experience> getAllByTeacherId(String teacherId) throws Exception;
 
-  void updateExperience(ExperienceRequestDTO experienceRequest) throws Exception;
+  ExperienceResponseDto updateExperience(ExperienceUpdateRequestDto experienceRequest)
+      throws Exception;
+
+  void deleteExperience(String id) throws Exception;
 
 }

@@ -213,21 +213,26 @@ success
 ```json
 {
   "code": 200,
-  "result": [
-    {
-      "id": "",
-      "code": "",
-      "tittle": "",
-      "description": "",
-      "subjectName": "",
-      "schedule": {
+  "result": {
+    "id": "",
+    "code": "",
+    "name": "",
+    "modules": [
+      {
         "id": "",
-        "date": "",
-        "start_time": "",
-        "end_time": ""
+        "code": "",
+        "tittle": "",
+        "description": "",
+        "subjectName": "",
+        "schedule": {
+          "id": "",
+          "date": "",
+          "start_time": "",
+          "end_time": ""
+        }
       }
-    }
-  ]
+    ]
+  }
 }
 ```
 
@@ -356,7 +361,7 @@ error
 }
 ```
 
-### Verif attendance
+### Verify attendance
 
 #### Request :
 
@@ -398,7 +403,7 @@ error
 #### Request:
 
 - Method: `GET`
-- Endpoint: `api/module/:id`
+- Endpoint: `module/:id`
 
 #### Response
 
@@ -434,7 +439,7 @@ success
 #### Request:
 
 - Method: `GET`
-- ENDPOINT: `api/exam/module/:id`
+- ENDPOINT: `exam/module/:id`
 
 #### Response:
 
@@ -477,7 +482,7 @@ error
 #### Request:
 
 - Method: `POST`
-- Endpoint: `api/exam/student/`
+- Endpoint: `exam/student/`
 - Body:
 
 ```json
@@ -505,7 +510,7 @@ error
 #### Request
 
 - Method: `POST`
-- Endpoint: `api/exam/module/`
+- Endpoint: `exam/module/`
 
 ```json
 {
@@ -527,7 +532,7 @@ error
 #### Request:
 
 - Method: `GET`
-- Endpoint: `api/forum/module/:id`
+- Endpoint: `forum/module/:id`
 
 #### Response:
 
@@ -555,7 +560,7 @@ error
 #### Request:
 
 - Method: `POST`
-- Endpoint: `api/forum/module/:id`
+- Endpoint: `forum/module/:id`
 - body:
 
 ```json
@@ -592,7 +597,7 @@ error
 #### Request
 
 - Method: `GET`
-- Endpoint: `api/teacher/dashboard/:id`
+- Endpoint: `teacher/dashboard/:id`
 
 #### Response
 
@@ -617,7 +622,7 @@ error
 #### Request
 
 - Method: `GET`
-- Endpoint: `api/course/:id/students`
+- Endpoint: `course/:id/students`
 
 #### Response
 
@@ -643,7 +648,7 @@ error
 #### Request
 
 - Method: `GET`,
-- Endpoint: `api/exam/:id/submission`
+- Endpoint: `exam/:id/submission`
 
 #### Response
 
@@ -668,7 +673,7 @@ error
 #### Request
 
 - Method: `PATCH`
-- Endpoint: `api/exam/submission`
+- Endpoint: `exam/submission`
 - Body:
 
 ```json
@@ -690,7 +695,7 @@ error
 ### GET Teacher Profile
 
 - Method: `GET`
-- Endpoint: `api/teacher/:id`
+- Endpoint: `teacher/:id`
 
 #### Response
 
@@ -725,7 +730,7 @@ error
 #### Request
 
 - Method: `PUT`
-- Endpoint: `api/teacher/:id`
+- Endpoint: `teacher/:id`
 - Body:
 
 ```json
@@ -757,7 +762,7 @@ error
 #### Request
 
 - Method: `GET`
-- Endpoint: `api/student/:id`
+- Endpoint: `student/:id`
 
 #### Response
 
@@ -781,7 +786,7 @@ error
 #### Request
 
 - Method: `PUT`
-- Endpoint: `api/student/:id`
+- Endpoint: `student/:id`
 
 #### Response
 
@@ -805,7 +810,7 @@ error
 #### Request
 
 - Method: `GET`
-- Endpoint: `api/admin/teachers`
+- Endpoint: `admin/teachers`
 
 ### Response
 
@@ -873,7 +878,7 @@ error
 #### Request
 
 - Method: `PUT`
-- Endpoint: `api/admin/teacher/:id`
+- Endpoint: `admin/teacher/:id`
 - Body:
 
 ```json
@@ -911,7 +916,7 @@ error
 #### Request
 
 - Method: `DELETE`
-- Endpoint: `api/admin/teacher/:id`
+- Endpoint: `admin/teacher/:id`
 
 #### Response
 

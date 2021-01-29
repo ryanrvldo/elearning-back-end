@@ -1,10 +1,10 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.base.BaseDaoImpl;
 import com.lawencon.elearning.dao.ExperienceDao;
 import com.lawencon.elearning.model.Experience;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -39,6 +39,11 @@ public class ExperiencesDaoImpl extends BaseDaoImpl<Experience> implements Exper
   @Override
   public void update(Experience experience) throws Exception {
     save(experience, null, null, true, true);
+  }
+
+  @Override
+  public void delete(String id) throws Exception {
+    deleteById(id);
   }
 
 }

@@ -1,7 +1,7 @@
 package com.lawencon.elearning.dao;
 
-import java.util.List;
 import com.lawencon.elearning.model.Experience;
+import java.util.List;
 
 /**
  * @author Rian Rivaldo
@@ -17,5 +17,7 @@ public interface ExperienceDao {
   List<Experience> findAllByTeacherId(String teacherId) throws Exception;
 
   void update(Experience experience) throws Exception;
+
+  void delete(String id) throws Exception;
 
 }

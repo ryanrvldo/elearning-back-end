@@ -1,5 +1,6 @@
 package com.lawencon.elearning.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.FileDao;
@@ -38,6 +39,9 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
   @Override
   public List<FileResponseDto> createMultipleFile(List<MultipartFile> files, String content)
       throws Exception {
+    if (files.isEmpty()) {
+      throw new IllegalRequestException("There is no file have been inputted yet.");
+    }
     List<FileResponseDto> responseList = new ArrayList<>();
     for (MultipartFile file : files) {
       FileResponseDto response = uploadFile(file, content);
@@ -83,14 +87,29 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
   private FileResponseDto uploadFile(MultipartFile multipartFile, String content)
       throws Exception {
+    if (multipartFile.isEmpty()) {
+      throw new IllegalRequestException("There is no file have been inputted yet.");
+    }
     String multipartFileName = multipartFile.getOriginalFilename();
     if (multipartFileName == null || multipartFileName.trim().isEmpty()) {
       throw new IllegalRequestException("file name", multipartFileName);
     }
-    ObjectMapper objectMapper = new ObjectMapper();
-    FileRequestDto fileRequestDto = objectMapper.readValue(content, FileRequestDto.class);
 
-    FileType fileType = FileType.valueOf(fileRequestDto.getType());
+    ObjectMapper objectMapper = new ObjectMapper();
+    FileRequestDto fileRequestDto;
+    try {
+      fileRequestDto = objectMapper.readValue(content, FileRequestDto.class);
+    } catch (JsonProcessingException jsonException) {
+      throw new IllegalRequestException("Invalid file content.");
+    }
+
+    FileType fileType;
+    try {
+      fileType = FileType.valueOf(fileRequestDto.getType().toUpperCase());
+    } catch (IllegalArgumentException e) {
+      throw new IllegalRequestException("Invalid file type.");
+    }
+
     File file = new File();
     file.setName(multipartFileName);
     file.setContentType(multipartFile.getContentType());
@@ -103,8 +122,14 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     file.setCreatedBy(fileRequestDto.getUserId());
     fileDao.create(file);
 
-    return new FileResponseDto(file.getId(), file.getName(), file.getType(),
-        file.getSize(), file.getContentType(), file.getVersion());
+    return new FileResponseDto(
+        file.getId(),
+        file.getName(),
+        file.getType(),
+        file.getSize(),
+        file.getContentType(),
+        file.getVersion()
+    );
   }
 
 }
