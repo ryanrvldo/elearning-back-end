@@ -27,7 +27,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
   @Override
   public void saveSchedule(Schedule data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
   @Override
@@ -76,8 +76,8 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
     String sql = buildQueryOf(
         "SELECT count(*) FROM tb_m_schedules WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3  AND is_active = true")
         .toString();
-    return (Long) createNativeQuery(sql).setParameter(1, id).setParameter(2, date)
-        .setParameter(3, startTime).getSingleResult();
+    return Long.valueOf(createNativeQuery(sql).setParameter(1, id).setParameter(2, date)
+        .setParameter(3, startTime).getSingleResult().toString());
   }
 
 

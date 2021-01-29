@@ -9,6 +9,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Schedule;
@@ -37,6 +38,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public Module getModuleById(String id) throws Exception {
+    validateNullId(id, "id");
     return Optional.ofNullable(moduleDao.getModuleById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
@@ -63,7 +65,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       teacher.setId(data.get(i).getScheduleRequestDTO().getTeacherId());
       teacher.setVersion(data.get(i).getScheduleRequestDTO().getTeacherVersion());
       schedule.setTeacher(teacher);
-      scheduleService.saveSchedule(schedule);
       Module module = new Module();
       module.setSchedule(schedule);
       Course course = new Course();
@@ -79,18 +80,30 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       module.setCreatedBy(data.get(i).getModuleCreatedBy());
       module.setDescription(data.get(i).getModuleDescription());
       module.setTitle(data.get(i).getModuleTittle());
-      moduleDao.insertModule(module, null);
+      try {
+        begin();
+        scheduleService.saveSchedule(schedule);
+        moduleDao.insertModule(module, null);
+        commit();
+      } catch (Exception e) {
+        e.printStackTrace();
+        rollback();
+        throw e;
+      }
+
     }
   }
 
   @Override
   public void updateModule(Module data) throws Exception {
+    validateNullId(data.getId(), "id");
     setupUpdatedValue(data, () -> moduleDao.getModuleById(data.getId()));
     moduleDao.updateModule(data, null);
   }
 
   @Override
   public void deleteModule(String id) throws Exception {
+    validateNullId(id, "id");
     begin();
     moduleDao.deleteModule(id);
     commit();
@@ -98,8 +111,15 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public Module getModuleByIdCustom(String id) throws Exception {
+    validateNullId(id, "id");
     return Optional.ofNullable(moduleDao.getModuleByIdCustom(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

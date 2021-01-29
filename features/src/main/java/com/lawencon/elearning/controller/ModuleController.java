@@ -35,11 +35,7 @@ public class ModuleController {
   @PostMapping("/module")
   public ResponseEntity<?> insertModule(@RequestBody List<ModulRequestDTO> data)
       throws Exception {
-    try {
       moduleService.insertModule(data);
       return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.OK);
-    } catch (Exception e) {
-      return WebResponseUtils.createWebResponse("Insert data failed", HttpStatus.BAD_REQUEST);
-    }
   }
 }

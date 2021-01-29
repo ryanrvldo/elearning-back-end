@@ -6,10 +6,13 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import com.lawencon.base.BaseServiceImpl;
+import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
+import com.lawencon.elearning.model.Gender;
+import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseCategoryService;
@@ -63,6 +66,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
     initCourses();
   }
 
+<<<<<<< Updated upstream
   // private void initSuperAdmin() throws Exception {
   // Role role = new Role();
   // role.setCode("RL-001");
@@ -190,6 +194,130 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
   // courseTypeService.insertCourseType(courseType);
   // }
   // }
+=======
+  private void initSuperAdmin() throws Exception {
+    Role role = new Role();
+    role.setCode("RL-001");
+    role.setName("Super Admin");
+    roleService.create(role);
+
+    User user = new User();
+    user.setFirstName("Super Administrator");
+    user.setUsername("superAdmin");
+    user.setPassword("superAdmin");
+    user.setEmail("superadmin@lawerning.com");
+    user.setRole(role);
+    userService.addUser(user);
+  }
+
+  private void initRoles() throws Exception {
+    Role superAdminRole = roleService.findByCode("RL-001");
+    for (int i = 2; i <= 4; i++) {
+      Role role = new Role();
+      role.setCode("RL-00" + i);
+      role.setName("Role-00" + i);
+      role.setCreatedBy(superAdminRole.getId());
+      roleService.create(role);
+    }
+  }
+
+  private void initUser() throws Exception {
+    initAdmin();
+    initStudent();
+    initTeacher();
+  }
+
+  private void initAdmin() throws Exception {
+    User user = new User();
+    user.setFirstName("Administrator");
+    user.setUsername("admin");
+    user.setEmail("admin@lawerning.com");
+    user.setPassword("admin");
+
+    User superAdminUser = userService.getByUsername("superAdmin");
+    user.setCreatedBy(superAdminUser.getId());
+
+    Role role = roleService.findByCode("RL-002");
+    user.setRole(role);
+    userService.addUser(user);
+  }
+
+  private void initStudent() throws Exception {
+    User adminUser = userService.getByUsername("admin");
+    for (int i = 1; i <= 20; i++) {
+      RegisterStudentDTO std = new RegisterStudentDTO();
+      std.setFirstName("Student");
+      std.setLastName("00" + i);
+      std.setUsername("student-00" + i);
+      std.setEmail(String.format("student-00%d@gmail.com", i));
+      std.setPassword("student");
+      std.setCreatedBy(adminUser.getId());
+      Role role = roleService.findByCode("RL-004");
+      std.setRoleId(role.getId());
+      std.setRoleVersion(role.getVersion());
+      std.setCode("ST-00" + i);
+      std.setPhone("08120000" + i);
+      if (i % 2 == 0) {
+        std.setGender("MALE");
+      } else {
+        std.setGender("FEMALE");
+      }
+      studentService.insertStudent(std);
+    }
+  }
+
+  private void initTeacher() throws Exception {
+    User adminUser = userService.getByUsername("admin");
+    Role role = roleService.findByCode("RL-003");
+    for (int i = 1; i <= 10; i++) {
+      Gender gender;
+      if (i % 2 == 0) {
+        gender = Gender.MALE;
+      } else {
+        gender = Gender.FEMALE;
+      }
+      TeacherRequestDTO requestDTO = new TeacherRequestDTO(
+          "TC-00" + i,
+          "Teacher",
+          "00" + i,
+          "08990000" + i,
+          gender,
+          "teacher-00" + i,
+          "teacher",
+          String.format("teacher-00%d@gmail.com", i),
+          role.getId(),
+          0L,
+          adminUser.getId(),
+          "S.AMPLE"
+      );
+      teacherService.saveTeacher(requestDTO);
+    }
+  }
+
+  private void initCourseCategories() throws Exception {
+    User adminUser = userService.getByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      CourseCategory courseCategory = new CourseCategory();
+      courseCategory.setCode("CC-00" + i);
+      courseCategory.setName("CourseCategory-00" + i);
+      courseCategory.setCreatedAt(LocalDateTime.now());
+      courseCategory.setCreatedBy(adminUser.getId());
+      courseCategoryService.insertCourseCategory(courseCategory);
+    }
+  }
+
+  private void initCourseTypes() throws Exception {
+    User adminUser = userService.getByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      CourseType courseType = new CourseType();
+      courseType.setCode("CT-00" + i);
+      courseType.setName("CourseType-00" + i);
+      courseType.setCreatedAt(LocalDateTime.now());
+      courseType.setCreatedBy(adminUser.getId());
+      courseTypeService.insertCourseType(courseType);
+    }
+  }
+>>>>>>> Stashed changes
 
   private void initCourses() throws Exception {
     User adminUser = userService.getByUsername("admin");

@@ -9,6 +9,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
 import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.service.SubjectCategoryService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -39,6 +40,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Override
   public void updateSubject(SubjectCategory data, Callback before) throws Exception {
+    validateNullId(data.getId(), "id");
     setupUpdatedValue(data, () -> subjectCategoryDao.getById(data.getId()));
     subjectCategoryDao.updateSubject(data, before);
   }
@@ -57,6 +59,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Override
   public void deleteSubject(String id) throws Exception {
+    validateNullId(id, "id");
     begin();
     subjectCategoryDao.deleteSubject(id);
     commit();
@@ -71,8 +74,15 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Override
   public SubjectCategory getById(String id) throws Exception {
+    validateNullId(id, "id");
     return Optional.ofNullable(subjectCategoryDao.getById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

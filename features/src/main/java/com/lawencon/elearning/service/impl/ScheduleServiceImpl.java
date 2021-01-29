@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ScheduleDao;
-import com.lawencon.elearning.error.DataAlreadyExistException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Schedule;
@@ -39,12 +38,9 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public void saveSchedule(Schedule data) throws Exception {
     validateUtil.validate(data);
-    if (checkScheduleTeacher(data.getTeacher().getId(), data.getDate(), data.getStartTime()) > 0) {
-      throw new DataAlreadyExistException("Time", data.getDate().toString());
-    }
     data.setCode(TransactionNumberUtils.generateScheduleCode());
     data.setCreatedAt(LocalDateTime.now());
-    scheduleDao.saveSchedule(data, () -> new DataAlreadyExistException(""));
+    scheduleDao.saveSchedule(data, null);
   }
 
   @Override

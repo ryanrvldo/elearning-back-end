@@ -12,6 +12,7 @@ import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentProfileDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
@@ -62,18 +63,29 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     student.setPhone(data.getPhone());
     student.setGender(Gender.valueOf(data.getGender()));
     student.setCreatedBy(data.getCreatedBy());
-    userService.addUser(user);
-    studentDao.insertStudent(student, null);
+    try {
+      begin();
+      userService.addUser(user);
+      studentDao.insertStudent(student, null);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
   }
 
   @Override
   public Student getStudentById(String id) throws Exception {
+    validateNullId(id, "id");
     return Optional.ofNullable(studentDao.getStudentById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
   public StudentProfileDTO getStudentProfile(String id) throws Exception {
+    validateNullId(id, "id");
     Student std = Optional.ofNullable(studentDao.getStudentProfile(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
     StudentProfileDTO stdProfile = new StudentProfileDTO();
@@ -87,12 +99,14 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public void updateStudentProfile(Student data) throws Exception {
+    validateNullId(data.getId(), "id");
     setupUpdatedValue(data, () -> studentDao.getStudentById(data.getId()));
     studentDao.updateStudentProfile(data, null);
   }
 
   @Override
   public void deleteById(String id) throws Exception {
+    validateNullId(id, "id");
     begin();
     studentDao.deleteStudentById(id);
     commit();
@@ -106,12 +120,14 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public Student getStudentByIdUser(String id) throws Exception {
+    validateNullId(id, "user id");
     return Optional.ofNullable(studentDao.getStudentByIdUser(id))
         .orElseThrow(() -> new DataIsNotExistsException("user id", id));
   }
 
   @Override
   public StudentDashboardDTO getStudentDashboard(String id) throws Exception {
+    validateNullId(id, "id");
     Student std = Optional.ofNullable(studentDao.getStudentDashboard(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
     StudentDashboardDTO stdDashboard = new StudentDashboardDTO();
@@ -133,6 +149,12 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       throw new DataIsNotExistsException("You haven't select any course");
     }
     return listResult;
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

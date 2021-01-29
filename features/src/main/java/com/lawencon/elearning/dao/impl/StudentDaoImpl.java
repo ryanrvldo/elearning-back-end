@@ -21,7 +21,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
 
   @Override
   public void insertStudent(Student data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
   @Override

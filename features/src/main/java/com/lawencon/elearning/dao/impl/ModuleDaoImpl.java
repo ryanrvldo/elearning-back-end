@@ -35,7 +35,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
 
   @Override
   public void insertModule(Module data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
   @Override
