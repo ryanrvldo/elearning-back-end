@@ -43,7 +43,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
 
   @Override
   public void saveTeacher(Teacher data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
 
@@ -98,7 +98,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
 
   @Override
   public void updateTeacher(Teacher data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
 
   }
 
@@ -139,14 +139,24 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
-  public Long checkConstraint(String id) throws Exception {
-    String sql = buildQueryOf("SELECT count(*) AS total_constraint FROM tb_m_teachers tmt ",
-        "WHERE tmt.id = ?1 AND ?2 IN ",
-        "((SELECT id_teacher FROM tb_m_courses) , (SELECT id_teacher FROM tb_m_schedules) , ",
-        "(SELECT id_teacher FROM tb_m_experiences))").toString();
+  public List<String> checkConstraint(String id) throws Exception {
+    String sql = buildQueryOf("SELECT tmc.id_teacher AS course , tms.id_teacher AS schedule , ",
+        "tme.id_teacher AS experience FROM tb_m_teachers tmt ",
+        "LEFT JOIN tb_m_courses tmc ON tmt.id = tmc.id_teacher ",
+        "LEFT JOIN tb_m_schedules tms  ON tmt.id = tms.id_teacher ",
+        "LEFT JOIN tb_m_experiences tme ON tmt.id = tme.id_teacher ",
+        "WHERE tmt.id = ?1 LIMIT 1").toString();
 
-    return Long.valueOf(createNativeQuery(sql).setParameter(1, id).setParameter(2, id)
-        .getSingleResult().toString());
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    List<String> strings = new ArrayList<String>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      strings.add((String) objArr[0]);
+      strings.add((String) objArr[1]);
+      strings.add((String) objArr[2]);
+
+    });
+    return strings.size() > 0 ? strings : null;
   }
 
 }

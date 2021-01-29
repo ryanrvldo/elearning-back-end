@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import com.lawencon.elearning.dto.WebResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
@@ -23,8 +24,8 @@ public class ErrorController {
     return WebResponseUtils.createWebResponse(exception.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(value = {DataIsNotExistsException.class})
-  public ResponseEntity<WebResponseDTO<String>> notFound(DataIsNotExistsException e) {
+  @ExceptionHandler(value = {DataIsNotExistsException.class, IllegalRequestException.class})
+  public ResponseEntity<WebResponseDTO<String>> notFound(Exception e) {
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
@@ -41,7 +42,8 @@ public class ErrorController {
       PSQLException e) {
     if (e.getServerErrorMessage() != null) {
       String detailMessage = e.getServerErrorMessage().getDetail();
-      if (detailMessage != null && detailMessage.contains("already exists")) {
+      if (detailMessage != null && (detailMessage.contains("already exists")
+          || detailMessage.contains("is not present in table"))) {
         return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
       }
     }

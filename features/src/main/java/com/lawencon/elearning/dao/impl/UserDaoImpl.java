@@ -1,10 +1,10 @@
 package com.lawencon.elearning.dao.impl;
 
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -14,7 +14,7 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   @Override
   public void createUser(User user) throws Exception {
-    save(user, null, null, true, true);
+    save(user, null, null, false, false);
   }
 
   @Override
@@ -48,7 +48,7 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   @Override
   public void updateUser(User user) throws Exception {
-    save(user, null, null, true, true);
+    save(user, null, null, false, false);
   }
 
   @Override

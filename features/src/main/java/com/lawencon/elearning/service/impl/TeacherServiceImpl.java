@@ -26,7 +26,7 @@ import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @Service
@@ -40,22 +40,14 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Autowired
   private UserService userService;
-  
+
   @Autowired
   private ValidationUtil validUtil;
 
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-    try {
-      begin();
-      teacherDao.updateIsActive(id, userId);
-      commit();
-    } catch (Exception e) {
-      e.printStackTrace();
-      rollback();
-    }
-
+    teacherDao.updateIsActive(id, userId);
   }
 
   @Override
@@ -70,7 +62,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
         .orElseThrow(() -> new DataIsNotExistsException("Teachers data have not been registered "));
 
     List<TeacherForAdminDTO> listResult = new ArrayList<>();
-    listTeachers.forEach(val->{
+    listTeachers.forEach(val -> {
       TeacherForAdminDTO teacherAdminDTO = new TeacherForAdminDTO();
       teacherAdminDTO.setId(val.getId());
       teacherAdminDTO.setActive(val.getIsActive());
@@ -99,7 +91,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     role.setId(data.getRoleId());
     role.setVersion(data.getRoleVersion());
     user.setRole(role);
-    userService.addUser(user);
 
     Teacher teacher = new Teacher();
     teacher.setUser(user);
@@ -109,7 +100,19 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     teacher.setTitleDegree(data.getTitleDegree());
     teacher.setCreatedAt(LocalDateTime.now());
     teacher.setCreatedBy(data.getCreatedBy());
-    teacherDao.saveTeacher(teacher, null);
+
+    try {
+      begin();
+      userService.addUser(user);
+      teacherDao.saveTeacher(teacher, null);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
+
   }
 
   @Override
@@ -129,11 +132,10 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
     List<Experience> experiences = experienceService.getAllByTeacherId(id);
 
-    TeacherResponseDTO teacherResponse =
-        new TeacherResponseDTO(teacher.getUser().getFirstName(), teacher.getUser().getLastName(),
-            teacher.getUser().getEmail(), teacher.getCreatedAt(), teacher.getGender(),
-            null == teacher.getUser().getUserPhoto().getId() ? ""
-                : teacher.getUser().getUserPhoto().getId());
+    TeacherResponseDTO teacherResponse = new TeacherResponseDTO(teacher.getUser().getFirstName(),
+        teacher.getUser().getLastName(), teacher.getUser().getEmail(), teacher.getCreatedAt(),
+        teacher.getGender(), null == teacher.getUser().getUserPhoto().getId() ? ""
+            : teacher.getUser().getUserPhoto().getId());
 
     TeacherProfileDTO teacherProfile = new TeacherProfileDTO();
     teacherProfile.setTeacher(teacherResponse);
@@ -145,10 +147,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public void updateTeacher(UpdateTeacherRequestDTO data) throws Exception {
     validUtil.validate(data);
-    Teacher teacherDB = findTeacherById(data.getId());
-    if (teacherDB == null) {
-      throw new DataIsNotExistsException("id", data.getId());
-    }
+    Teacher teacherDB = Optional.ofNullable(findTeacherById(data.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id", data.getId()));
+
     teacherDB.setTitleDegree(data.getTitleDegree());
     teacherDB.setGender(data.getGender());
     teacherDB.setUpdatedBy(data.getUpdatedBy());
@@ -158,10 +159,16 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     user.setId(teacherDB.getUser().getId());
     user.setLastName(data.getLastName());
     user.setEmail(data.getEmail());
-    userService.updateUser(user);
-
-    teacherDao.updateTeacher(teacherDB, null);
-
+    try {
+      begin();
+      userService.updateUser(user);
+      teacherDao.updateTeacher(teacherDB, null);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
   }
 
   @Override
@@ -174,10 +181,19 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public void deleteTeacherById(DeleteTeacherDTO deleteReq) throws Exception {
     validateNullId(deleteReq.getId(), "Id");
-    if (teacherDao.checkConstraint(deleteReq.getId()) == 0) {
+
+    try {
+      begin();
       teacherDao.deleteTeacherById(deleteReq.getId());
-    } else {
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      if (e.getMessage().equals("ID Not Found")) {
+        throw new DataIsNotExistsException("Id");
+      }
+      begin();
       updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy());
+      commit();
     }
   }
 
