@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.model.Attendance;
+import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.service.AttendanceService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -21,7 +21,8 @@ public class AttendanceController {
   private AttendanceService attService;
 
   @PostMapping
-  public ResponseEntity<?> createAttendance(@RequestBody Attendance body) throws Exception {
+  public ResponseEntity<?> createAttendance(@RequestBody AttendanceRequestDTO body)
+      throws Exception {
     attService.createAttendance(body);
     return WebResponseUtils.createWebResponse("Create attendance Success", HttpStatus.OK);
   }
