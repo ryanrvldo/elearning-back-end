@@ -15,7 +15,7 @@ import com.lawencon.elearning.service.ForumService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @RestController
@@ -39,6 +39,7 @@ public class ForumController {
 
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteDiscussion(@PathVariable("id") String id) throws Exception {
+    forumService.deleteForum(id);
     return WebResponseUtils.createWebResponse("Post has been removed", HttpStatus.OK);
   }
 }

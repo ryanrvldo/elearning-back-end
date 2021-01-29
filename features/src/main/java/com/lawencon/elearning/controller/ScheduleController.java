@@ -21,7 +21,7 @@ public class ScheduleController {
 
  @GetMapping("/schedules/teacher/{id}")
  public ResponseEntity<?> getSchedulesByModule(@PathVariable("id") String id) throws Exception {
-   return WebResponseUtils.createWebResponse(scheduleService.getByIdCustom(id), HttpStatus.OK);
+   return WebResponseUtils.createWebResponse(scheduleService.getByTeacherId(id), HttpStatus.OK);
  }
  
 }

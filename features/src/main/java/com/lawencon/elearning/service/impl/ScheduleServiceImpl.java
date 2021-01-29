@@ -3,12 +3,14 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ScheduleDao;
+import com.lawencon.elearning.dto.ScheduleResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Schedule;
@@ -65,10 +67,25 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   }
 
   @Override
-  public List<Schedule> getByTeacherId(String teacherId) throws Exception {
+  public List<ScheduleResponseDTO> getByTeacherId(String teacherId) throws Exception {
     validateNullId(teacherId, "Teacher Id");
-    return Optional.ofNullable(scheduleDao.getByTeacherId(teacherId))
+
+    List<Schedule> schedules = Optional.ofNullable(scheduleDao.getByTeacherId(teacherId))
         .orElseThrow(() -> new DataIsNotExistsException("Teacher Id", teacherId));
+
+    List<ScheduleResponseDTO> listResult = new ArrayList<ScheduleResponseDTO>();
+
+    schedules.forEach(schedule -> {
+      ScheduleResponseDTO scheduleDTO = new ScheduleResponseDTO();
+      scheduleDTO.setId(schedule.getId());
+      scheduleDTO.setVersion(schedule.getVersion());
+      scheduleDTO.setCode(schedule.getCode());
+      scheduleDTO.setDate(schedule.getDate());
+      scheduleDTO.setStartTime(schedule.getStartTime());
+      scheduleDTO.setEndTime(schedule.getEndTime());
+      listResult.add(scheduleDTO);
+    });
+    return listResult;
   }
 
   @Override

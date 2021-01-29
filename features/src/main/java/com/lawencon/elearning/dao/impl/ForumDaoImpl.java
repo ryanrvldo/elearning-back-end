@@ -43,7 +43,7 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
   public List<Forum> getByModuleId(String moduleId) throws Exception {
     String sql = buildQueryOf(
         "SELECT trf.trx_number ,  trf.\"content\" , trf.created_at,  ",
-        "tmu.id AS id_user, tmr.id AS id_role , tmr.code AS role_code, tmu.first_name , tmu.last_name , tmu.id_photo ",
+        "tmu.id AS id_user, tmr.id AS id_role , tmr.code AS role_code, tmu.first_name , tmu.last_name , tmu.id_photo, trf.id as id_forum ",
         "FROM tb_r_forums trf ",
         "INNER JOIN tb_m_users tmu ON trf.id_user = tmu.id  ",
         "INNER JOIN tb_m_roles tmr ON tmr.id = tmu.id_role  ",
@@ -76,11 +76,18 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
       userPhoto.setId((String) objArr[8]);
       u.setUserPhoto(userPhoto);
       forum.setUser(u);
+      forum.setId((String) objArr[9]);
 
       listResult.add(forum);
     });
     return listResult.size() > 0 ? listResult : null;
   }
+
+  @Override
+  public void deleteForum(String id) throws Exception {
+    deleteById(id);
+  }
+
 
 
 }

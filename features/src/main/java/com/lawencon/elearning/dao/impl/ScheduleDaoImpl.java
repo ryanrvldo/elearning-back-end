@@ -58,13 +58,14 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
   
   @Override
   public List<Schedule> getByTeacherId(String teacherId) throws Exception {
-    String sql = buildQueryOf("SELECT code, schedule_date, start_time, end_time ",
+    String sql = buildQueryOf("SELECT id , code, schedule_date, start_time, end_time ",
         "  FROM tb_m_schedules tms WHERE id_teacher=?1  AND is_active = true").toString();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, teacherId).getResultList();
 
     List<Schedule> listResult =
-        HibernateUtils.bMapperList(listObj, Schedule.class, "code", "date", "startTime", "endTime");
+        HibernateUtils.bMapperList(listObj, Schedule.class, "id", "code", "date", "startTime",
+            "endTime");
 
     return listResult.size() > 0 ? listResult : null;
   }

@@ -4,12 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ForumDao;
 import com.lawencon.elearning.dto.forum.ForumModuleResponseDTO;
 import com.lawencon.elearning.dto.forum.ForumRequestDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.model.Module;
@@ -32,7 +34,9 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
 
   @Override
   public List<Forum> getAllForums() throws Exception {
-    return forumDao.getAllForums();
+    return Optional.ofNullable(forumDao.getAllForums())
+        .orElseThrow(
+            () -> new DataIsNotExistsException("Forum is empty and has not been initialized."));
   }
 
   @Override
@@ -68,7 +72,8 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   @Override
   public Forum findForumById(String id) throws Exception {
     validateNullId(id, "id");
-    return forumDao.findForumById(id);
+    return Optional.ofNullable(forumDao.findForumById(id)).orElseThrow(
+        () -> new DataIsNotExistsException("Discussion in this module has not been initialized."));
   }
 
   @Override
@@ -79,11 +84,22 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
 
     forums.forEach(val -> {
       ForumModuleResponseDTO forumDTO = new ForumModuleResponseDTO(val.getId(), val.getTrxNumber(),
-          val.getContent(), val.getCreatedAt(), val.getUser());
+          val.getContent(), val.getCreatedAt(), val.getUser().getId(), val.getUser().getFirstName(),
+          val.getUser().getLastName(), val.getUser().getRole().getCode(),
+          val.getUser().getUserPhoto().getId());
       forumResponses.add(forumDTO);
     });
 
     return forumResponses;
+  }
+
+  @Override
+  public void deleteForum(String id) throws Exception {
+    validateNullId(id, "Id");
+    begin();
+    forumDao.deleteForum(id);
+    commit();
+
   }
 
   private void validateNullId(String id, String msg) throws Exception {

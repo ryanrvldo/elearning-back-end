@@ -3,6 +3,7 @@ package com.lawencon.elearning.service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import com.lawencon.elearning.dto.ScheduleResponseDTO;
 import com.lawencon.elearning.model.Schedule;
 
 /**
@@ -21,7 +22,7 @@ public interface ScheduleService {
 
   Schedule getByIdCustom(String id) throws Exception;
 
-  List<Schedule> getByTeacherId(String teacherId) throws Exception;
+  List<ScheduleResponseDTO> getByTeacherId(String teacherId) throws Exception;
 
   Long checkScheduleTeacher(String teacherId, LocalDate date, LocalTime startTime) throws Exception;
 
