@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.StudentService;
@@ -57,9 +58,10 @@ public class StudentController {
     return WebResponseUtils.createWebResponse("Update Profile Success", HttpStatus.OK);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteStudent(@PathVariable("id") String id) throws Exception {
-    studentService.deleteById(id);
+  @DeleteMapping
+  public ResponseEntity<?> deleteStudent(@RequestBody DeleteMasterRequestDTO body)
+      throws Exception {
+    studentService.deleteStudent(body);
     return WebResponseUtils.createWebResponse("Delete Success", HttpStatus.OK);
   }
 

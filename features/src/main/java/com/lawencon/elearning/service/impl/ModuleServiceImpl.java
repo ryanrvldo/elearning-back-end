@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
+import com.lawencon.elearning.dto.module.UpdateModuleDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
@@ -110,17 +112,54 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public void updateModule(Module data) throws Exception {
-    validateNullId(data.getId(), "id");
-    setupUpdatedValue(data, () -> moduleDao.getModuleById(data.getId()));
-    moduleDao.updateModule(data, null);
+  public void updateModule(UpdateModuleDTO data) throws Exception {
+    validationUtil.validate(data);
+    Schedule schedule = new Schedule();
+    schedule.setCreatedBy(data.getScheduleRequestDTO().getScheduleCreatedBy());
+    schedule.setDate(data.getScheduleRequestDTO().getScheduleDate());
+    schedule.setEndTime(data.getScheduleRequestDTO().getScheduleEnd());
+    schedule.setStartTime(data.getScheduleRequestDTO().getScheduleStart());
+    Teacher teacher = new Teacher();
+    teacher.setId(data.getScheduleRequestDTO().getTeacherId());
+    teacher.setVersion(data.getScheduleRequestDTO().getTeacherVersion());
+    schedule.setTeacher(teacher);
+    Module module = new Module();
+    module.setSchedule(schedule);
+    Course course = new Course();
+    course.setId(data.getCourseId());
+    course.setVersion(data.getCourseVersion());
+    module.setCourse(course);
+    SubjectCategory subject = new SubjectCategory();
+    subject.setId(data.getSubjectId());
+    subject.setVersion(data.getSubjectVersion());
+    module.setSubject(subject);
+    module.setCode(data.getModuleCode());
+    module.setId(data.getId());
+    module.setUpdatedBy(data.getUpdatedBy());
+    setupUpdatedValue(module, () -> moduleDao.getModuleById(data.getId()));
+    moduleDao.updateModule(module, null);
   }
 
   @Override
-  public void deleteModule(String id) throws Exception {
-    validateNullId(id, "id");
+  public void deleteModule(DeleteMasterRequestDTO data) throws Exception {
+    validateNullId(data.getId(), "id");
+    try {
+      begin();
+      moduleDao.deleteModule(data.getId());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      if (e.getMessage().equals("ID Not Found")) {
+        throw new DataIsNotExistsException(e.getMessage());
+      }
+      updateIsActive(data.getId(), data.getUpdatedBy());
+    }
+  }
+
+  @Override
+  public void updateIsActive(String id, String userId) throws Exception {
     begin();
-    moduleDao.deleteModule(id);
+    moduleDao.updateIsActive(id, userId);
     commit();
   }
 

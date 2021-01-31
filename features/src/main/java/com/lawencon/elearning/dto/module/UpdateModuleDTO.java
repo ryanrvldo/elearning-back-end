@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto.subject;
+package com.lawencon.elearning.dto.module;
 
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UpdateSubjectCategoryRequestDTO extends CreateSubjectCategoryRequestDTO {
+public class UpdateModuleDTO extends ModulRequestDTO {
 
   @NotBlank
   private String id;

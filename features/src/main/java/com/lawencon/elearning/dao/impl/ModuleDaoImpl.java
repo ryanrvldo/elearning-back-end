@@ -49,9 +49,9 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   }
 
   @Override
-  public void updateIsActive(String id) throws Exception {
-    String query = "UPDATE from tb_m_modules SET is_active = false WHERE id = ?";
-    createNativeQuery(query).setParameter(1, id).executeUpdate();
+  public void updateIsActive(String id, String userId) throws Exception {
+    String query = "UPDATE from tb_m_modules SET is_active = false";
+    updateNativeSQL(query, id, userId);
   }
 
   @Override
@@ -65,6 +65,12 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
     List<Module> listResult = HibernateUtils.bMapperList(listObj, Module.class, "title", "code",
         "description", "schedule.date", "schedule.startTime", "schedule.endTime");
     return getResultModel(listResult);
+  }
+
+  @Override
+  public void insertLesson(String idModule, String idFile) throws Exception {
+    createNativeQuery("INSERT INTO module_files VALUES (?1, ?2)").setParameter(1, idModule)
+        .setParameter(2, idFile).executeUpdate();
   }
 
 }

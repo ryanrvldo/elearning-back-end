@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
@@ -107,17 +108,26 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   }
 
   @Override
-  public void deleteById(String id) throws Exception {
-    validateNullId(id, "id");
-    begin();
-    studentDao.deleteStudentById(id);
-    commit();
+  public void deleteStudent(DeleteMasterRequestDTO data) throws Exception {
+    validateNullId(data.getId(), "id");
+    try {
+      begin();
+      studentDao.deleteStudentById(data.getId());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      if (e.getMessage().equals("ID Not Found")) {
+        throw new DataIsNotExistsException(e.getMessage());
+      }
+      updateIsActive(data.getId(), data.getUpdatedBy());
+    }
   }
 
   @Override
-  public void updateIsActive(Student data) throws Exception {
-    data.setIsActive(false);
-    studentDao.updateIsActive(data.getId(), data.getUser().getId());
+  public void updateIsActive(String id, String userId) throws Exception {
+    begin();
+    studentDao.updateIsActive(id, userId);
+    commit();
   }
 
   @Override
@@ -146,17 +156,14 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public List<CourseResponseDTO> getStudentCourse(String id) throws Exception {
+    validateNullId(id, "id");
+    Optional.ofNullable(studentDao.getStudentById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
     List<CourseResponseDTO> listResult = courseService.getMyCourse(id);
     if (listResult.isEmpty()) {
       throw new DataIsNotExistsException("You haven't select any course");
     }
     return listResult;
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
   @Override
@@ -176,6 +183,12 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       listDto.add(studentDto);
     }
     return listDto;
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

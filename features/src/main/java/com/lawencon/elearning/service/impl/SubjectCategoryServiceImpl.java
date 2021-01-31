@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
+import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.SubjectCategory;
@@ -39,10 +41,17 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public void updateSubject(SubjectCategory data, Callback before) throws Exception {
-    validateNullId(data.getId(), "id");
-    setupUpdatedValue(data, () -> subjectCategoryDao.getById(data.getId()));
-    subjectCategoryDao.updateSubject(data, before);
+  public void updateSubject(UpdateSubjectCategoryRequestDTO data, Callback before)
+      throws Exception {
+    validationUtil.validate(data);
+    SubjectCategory subject = new SubjectCategory();
+    subject.setId(data.getId());
+    subject.setCode(data.getCode());
+    subject.setDescription(data.getDescription());
+    subject.setSubjectName(data.getSubjectName());
+    subject.setUpdatedBy(data.getUpdatedBy());
+    setupUpdatedValue(subject, () -> subjectCategoryDao.getById(data.getId()));
+    subjectCategoryDao.updateSubject(subject, before);
   }
 
   @Override
@@ -58,11 +67,19 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public void deleteSubject(String id) throws Exception {
-    validateNullId(id, "id");
-    begin();
-    subjectCategoryDao.deleteSubject(id);
-    commit();
+  public void deleteSubject(DeleteMasterRequestDTO data) throws Exception {
+    validateNullId(data.getId(), "id");
+    try {
+      begin();
+      subjectCategoryDao.deleteSubject(data.getId());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      if (e.getMessage().equals("ID Not Found")) {
+        throw new DataIsNotExistsException(e.getMessage());
+      }
+      updateIsActive(data.getId(), data.getUpdatedBy());
+    }
   }
 
   @Override

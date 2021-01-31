@@ -18,10 +18,12 @@ public interface ModuleDao {
 
   void insertModule(Module data, Callback before) throws Exception;
 
+  void insertLesson(String idModule, String idFile) throws Exception;
+
   void updateModule(Module data, Callback before) throws Exception;
 
   void deleteModule(String id) throws Exception;
 
-  void updateIsActive(String id) throws Exception;
+  void updateIsActive(String id, String userId) throws Exception;
 
 }

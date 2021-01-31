@@ -1,8 +1,10 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
+import com.lawencon.elearning.dto.module.UpdateModuleDTO;
 import com.lawencon.elearning.model.Module;
 
 /**
@@ -20,8 +22,10 @@ public interface ModuleService {
 
   void insertModule(List<ModulRequestDTO> data) throws Exception;
 
-  void updateModule(Module data) throws Exception;
+  void updateModule(UpdateModuleDTO data) throws Exception;
 
-  void deleteModule(String id) throws Exception;
+  void deleteModule(DeleteMasterRequestDTO data) throws Exception;
+
+  void updateIsActive(String id, String userId) throws Exception;
 
 }

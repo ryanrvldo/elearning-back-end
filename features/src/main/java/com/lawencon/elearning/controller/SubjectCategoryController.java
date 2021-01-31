@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
-import com.lawencon.elearning.model.SubjectCategory;
+import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.service.SubjectCategoryService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -47,15 +48,16 @@ public class SubjectCategoryController {
   }
 
   @PatchMapping
-  public ResponseEntity<?> updateSubjectCategory(@RequestBody SubjectCategory body)
+  public ResponseEntity<?> updateSubjectCategory(@RequestBody UpdateSubjectCategoryRequestDTO body)
       throws Exception {
     subjectCategoryService.updateSubject(body, null);
     return WebResponseUtils.createWebResponse("Update Subject Success", HttpStatus.OK);
   }
 
   @DeleteMapping
-  public ResponseEntity<?> deleteSubjectCategory(@PathVariable String id) throws Exception {
-    subjectCategoryService.deleteSubject(id);
+  public ResponseEntity<?> deleteSubjectCategory(@RequestBody DeleteMasterRequestDTO body)
+      throws Exception {
+    subjectCategoryService.deleteSubject(body);
     return WebResponseUtils.createWebResponse("Delete Subject Success", HttpStatus.OK);
   }
 

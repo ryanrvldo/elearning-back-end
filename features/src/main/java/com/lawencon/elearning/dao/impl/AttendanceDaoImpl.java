@@ -22,7 +22,7 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
   }
 
   @Override
-  public void verifAttendance(Attendance data, Callback before) throws Exception {
+  public void verifyAttendance(Attendance data, Callback before) throws Exception {
     save(data, before, null, true, true);
   }
 

@@ -11,9 +11,9 @@ import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Attendance;
+import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.AttendanceService;
-import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -27,9 +27,6 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
 
   @Autowired
   private AttendanceDao attendanceDao;
-
-  @Autowired
-  private StudentService studentService;
 
   @Autowired
   private ValidationUtil validationUtil;
@@ -47,13 +44,16 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Override
   public void createAttendance(AttendanceRequestDTO attendanceDTO) throws Exception {
     validationUtil.validate(attendanceDTO);
+    Student student = new Student();
+    student.setId(attendanceDTO.getIdStudent());
+    student.setVersion(attendanceDTO.getStudentVersion());
     Attendance data = new Attendance();
-    data.getStudent().setId(attendanceDTO.getIdStudent());
-    data.getStudent().setVersion(attendanceDTO.getStudentVersion());
-    data.getModule().setId(attendanceDTO.getIdModule());
-    data.getModule().setVersion(attendanceDTO.getModuleVersion());
-    Student student = studentService.getStudentById(data.getStudent().getId());
-    data.setCreatedBy(student.getUser().getId());
+    data.setStudent(student);
+    Module module = new Module();
+    module.setId(attendanceDTO.getIdModule());
+    module.setVersion(attendanceDTO.getModuleVersion());
+    data.setModule(module);
+    data.setCreatedBy(student.getId());
     data.setCreatedAt(LocalDateTime.now());
     data.setIsVerified(false);
     data.setTrxNumber(TransactionNumberUtils.generateAttendanceTrxNumber());
@@ -62,14 +62,14 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   }
 
   @Override
-  public void verifAttendance(String id, String userId) throws Exception {
+  public void verifyAttendance(String id, String userId) throws Exception {
     validateNullId(id, "id");
     validateNullId(userId, "user id");
     Attendance attendance = attendanceDao.getAttendanceById(id);
     attendance.setIsVerified(true);
     attendance.setUpdatedBy(userId);
     attendance.setUpdatedAt(LocalDateTime.now());
-    attendanceDao.verifAttendance(attendance, null);
+    attendanceDao.verifyAttendance(attendance, null);
   }
 
   private void validateNullId(String id, String msg) throws Exception {
