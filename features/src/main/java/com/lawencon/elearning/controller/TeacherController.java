@@ -3,7 +3,6 @@ package com.lawencon.elearning.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,13 +52,13 @@ public class TeacherController {
     return WebResponseUtils.createWebResponse("Update Teacher Profile Success!", HttpStatus.OK);
   }
 
-  @PatchMapping
-  public ResponseEntity<?> updateIsActiveProfile() throws Exception {
-    return WebResponseUtils.createWebResponse("Update is active Profile to false Success!",
-        HttpStatus.OK);
-  }
+  // @PatchMapping
+  // public ResponseEntity<?> updateIsActiveProfile() throws Exception {
+  // return WebResponseUtils.createWebResponse("Update is active Profile to false Success!",
+  // HttpStatus.OK);
+  // }
 
-  @DeleteMapping
+  @PatchMapping
   public ResponseEntity<?> deleteTeacher(@RequestBody DeleteTeacherDTO deleteReq) throws Exception {
     teacherService.deleteTeacherById(deleteReq);
     return WebResponseUtils.createWebResponse("Delete Teacher Profile Success!", HttpStatus.OK);

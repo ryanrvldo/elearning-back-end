@@ -2,6 +2,7 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
+import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.DetailExam;
@@ -38,12 +41,22 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   private ValidationUtil validationUtil;
 
   @Override
-  public List<DetailExam> getListScoreAvg(String id) throws Exception {
+  public List<ScoreAverageResponseDTO> getListScoreAvg(String id) throws Exception {
     List<DetailExam> listDetail = dtlExamDao.getListScoreAvg(id);
     if (listDetail == null) {
       throw new DataIsNotExistsException("Data is not exist");
     }
-    return listDetail;
+    List<ScoreAverageResponseDTO> scoreAveragesDTO = new ArrayList<>();
+    listDetail.forEach(val -> {
+      ScoreAverageResponseDTO scoreAvg = new ScoreAverageResponseDTO();
+      scoreAvg.setAverageScore(val.getGrade());
+      scoreAvg.setCode((val.getExam().getModule().getCode()));
+      scoreAvg.setTitle(val.getExam().getModule().getTitle());
+      scoreAvg.setStartTime(val.getExam().getStartTime());
+      scoreAvg.setEndTime(val.getExam().getEndTime());
+      scoreAveragesDTO.add(scoreAvg);
+    });
+    return scoreAveragesDTO;
   }
 
   @Override
@@ -84,8 +97,26 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public List<DetailExam> getExamSubmission(String id) throws Exception {
-    return dtlExamDao.getExamSubmission(id);
+  public List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception {
+    List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getExamSubmission(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+
+    List<SubmissionsByExamResponseDTO> submissionByExamsDTO = new ArrayList<SubmissionsByExamResponseDTO>();
+
+    detailExams.forEach(val->{
+      SubmissionsByExamResponseDTO submission = new SubmissionsByExamResponseDTO();
+      submission.setId(val.getId());
+      submission.setCode(val.getTrxNumber());
+      submission.setFirstName(val.getStudent().getUser().getFirstName());
+      submission.setFirstName(val.getStudent().getUser().getLastName());
+      submission.setGrade(val.getGrade());
+      submission.setSubmittedDate(val.getTrxDate());
+
+      submissionByExamsDTO.add(submission);
+    });
+
+    return submissionByExamsDTO;
+
   }
 
   @Override

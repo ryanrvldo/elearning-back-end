@@ -1,18 +1,19 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.Module;
+import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -49,7 +50,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       listResult.add(dtlExam);
     });
 
-    return listResult;
+    return listResult.size() > 0 ? listResult : null;
   }
 
   @Override
@@ -131,12 +132,19 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       DetailExam dtlExam = new DetailExam();
       dtlExam.setId((String) objArr[0]);
       dtlExam.setTrxNumber((String) objArr[1]);
+
       User user = new User();
       user.setFirstName((String) objArr[2]);
       user.setLastName((String) objArr[3]);
+
+      Student student = new Student();
+      student.setUser(user);
+
       dtlExam.setGrade((Double) objArr[4]);
       Date inDate = (Date) objArr[5];
       dtlExam.setTrxDate(inDate.toLocalDate());
+      dtlExam.setStudent(student);
+
       listResult.add(dtlExam);
     });
     return listResult;

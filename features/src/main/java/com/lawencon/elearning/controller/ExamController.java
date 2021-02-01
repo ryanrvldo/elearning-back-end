@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.model.DetailExam;
+import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -57,7 +57,7 @@ public class ExamController {
    }
 
    @PatchMapping("/submission")
-   public ResponseEntity<?> updateScore(@RequestBody DetailExam body) throws Exception {
+   public ResponseEntity<?> updateScore(@RequestBody UpdateScoreRequestDTO body) throws Exception {
      examService.updateScoreAssignment(body.getId(), body.getGrade(), body.getUpdatedBy());
      return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
    }

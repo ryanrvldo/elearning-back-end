@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
+import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
+import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
-import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Module;
@@ -43,9 +46,8 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public List<Exam> getAllExams() throws Exception {
-    return Optional.ofNullable(examDao.getAllExams())
-        .orElseThrow(
-            () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
+    return Optional.ofNullable(examDao.getAllExams()).orElseThrow(
+        () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
   }
 
   @Override
@@ -92,15 +94,34 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException("id", id);
     }
-    return Optional.ofNullable(examDao.findExamById(id)).orElseThrow(
-        () -> new DataIsNotExistsException("id", id));
+    return Optional.ofNullable(examDao.findExamById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
-  public List<Exam> getExamsByModule(String moduleId) throws Exception {
+  public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
     validateNullId(moduleId, "Id Module");
-    return Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
+    List<Exam> exams = Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
         () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
+
+    List<ExamsModuleResponseDTO> examsModuleDTO = new ArrayList<ExamsModuleResponseDTO>();
+
+    for (Exam val : exams) {
+      ExamsModuleResponseDTO examModule = new ExamsModuleResponseDTO();
+      examModule.setId(val.getId());
+      examModule.setCode(val.getTrxNumber());
+      examModule.setDescription(val.getDescription());
+      examModule.setType(val.getType());
+      examModule.setStartTime(val.getStartTime());
+      examModule.setEndTime(val.getEndTime());
+      examModule.setFileId(examModule.getFileId());
+
+      examsModuleDTO.add(examModule);
+    }
+
+    return examsModuleDTO;
+
+
   }
 
   @Override
@@ -121,13 +142,13 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public List<DetailExam> getListScoreAvg(String studentId) throws Exception {
+  public List<ScoreAverageResponseDTO> getListScoreAvg(String studentId) throws Exception {
     validateNullId(studentId, "Student Id");
     return dtlExamService.getListScoreAvg(studentId);
   }
 
   @Override
-  public List<DetailExam> getExamSubmissions(String examId) throws Exception {
+  public List<SubmissionsByExamResponseDTO> getExamSubmissions(String examId) throws Exception {
     validateNullId(examId, "Exam Id");
     return dtlExamService.getExamSubmission(examId);
   }

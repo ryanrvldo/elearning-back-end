@@ -47,7 +47,7 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
         "description",
         "type", "startTime", "endTime", "file.id", "version");
 
-    return listResult;
+    return listResult.size() > 0 ? listResult : null;
   }
 
   @Override

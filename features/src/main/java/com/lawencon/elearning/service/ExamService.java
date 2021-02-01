@@ -2,7 +2,9 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.model.DetailExam;
+import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.Exam;
 
 /**
@@ -19,7 +21,7 @@ public interface ExamService {
 
   Exam findExamById(String id) throws Exception;
 
-  List<Exam> getExamsByModule(String id) throws Exception;
+  List<ExamsModuleResponseDTO> getExamsByModule(String id) throws Exception;
 
   Long getCountData() throws Exception;
 
@@ -33,9 +35,9 @@ public interface ExamService {
 
   void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception;
 
-  List<DetailExam> getListScoreAvg(String studentId) throws Exception;
+  List<ScoreAverageResponseDTO> getListScoreAvg(String studentId) throws Exception;
 
-  List<DetailExam> getExamSubmissions(String examId) throws Exception;
+  List<SubmissionsByExamResponseDTO> getExamSubmissions(String examId) throws Exception;
 
 
 }

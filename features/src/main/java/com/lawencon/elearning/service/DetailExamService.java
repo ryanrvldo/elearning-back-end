@@ -2,6 +2,8 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.util.Callback;
 
@@ -11,7 +13,7 @@ import com.lawencon.util.Callback;
 
 public interface DetailExamService {
 
-  List<DetailExam> getListScoreAvg(String id) throws Exception;
+  List<ScoreAverageResponseDTO> getListScoreAvg(String id) throws Exception;
 
   List<DetailExam> getListScoreReport(String id) throws Exception;
 
@@ -25,7 +27,7 @@ public interface DetailExamService {
 
   void updateScoreStudent(String id, Double score, String userId) throws Exception;
 
-  List<DetailExam> getExamSubmission(String id) throws Exception;
+  List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception;
 
   void sendStudentExam(MultipartFile multiPartFile, String content, String body) throws Exception;
 }
