@@ -424,8 +424,7 @@ success
     "files": [
       {
         "id": "",
-        "name": "",
-        "extensions": ""
+        "name": ""
       }
     ],
     "schedule": {

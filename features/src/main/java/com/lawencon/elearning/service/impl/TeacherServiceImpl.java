@@ -1,14 +1,8 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
@@ -19,7 +13,6 @@ import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
@@ -28,6 +21,13 @@ import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -137,7 +137,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       throw new DataIsNotExistsException("Id", id);
     }
 
-    List<Experience> experiences = experienceService.getAllByTeacherId(id);
+    List<ExperienceResponseDto> experiences = experienceService.getAllByTeacherId(id);
 
     TeacherResponseDTO teacherResponse = new TeacherResponseDTO(teacher.getUser().getFirstName(),
         teacher.getUser().getLastName(), teacher.getUser().getEmail(), teacher.getCreatedAt(),

@@ -11,7 +11,6 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
-import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
@@ -24,7 +23,7 @@ import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @Service
@@ -65,7 +64,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     Module module = new Module();
     module.setId(teacherExam.getModuleId());
     module.setVersion(teacherExam.getModuleVersion());
-    
+
     Exam exam = new Exam();
     exam.setModule(module);
     exam.setDescription(teacherExam.getDescription());

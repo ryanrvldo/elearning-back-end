@@ -3,12 +3,14 @@ package com.lawencon.elearning.dto;
 import com.lawencon.elearning.model.FileType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Rian Rivaldo
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class FileResponseDto {
 
   public String id;

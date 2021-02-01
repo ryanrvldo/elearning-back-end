@@ -18,7 +18,7 @@ public interface ExperienceService {
 
   Experience getByCode(String code) throws Exception;
 
-  List<Experience> getAllByTeacherId(String teacherId) throws Exception;
+  List<ExperienceResponseDto> getAllByTeacherId(String teacherId) throws Exception;
 
   ExperienceResponseDto updateExperience(ExperienceUpdateRequestDto experienceRequest)
       throws Exception;

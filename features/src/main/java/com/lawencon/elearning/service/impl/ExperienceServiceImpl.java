@@ -13,6 +13,7 @@ import com.lawencon.elearning.util.ValidationUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,14 +67,16 @@ public class ExperienceServiceImpl extends BaseServiceImpl implements Experience
   }
 
   @Override
-  public List<Experience> getAllByTeacherId(String teacherId) throws Exception {
+  public List<ExperienceResponseDto> getAllByTeacherId(String teacherId) throws Exception {
     validationUtil.validateUUID(teacherId);
 
     List<Experience> experiences = experienceDao.findAllByTeacherId(teacherId);
     if (experiences.isEmpty()) {
       return null;
     }
-    return experiences;
+    return experiences.stream()
+        .map(this::mapEntityToResponse)
+        .collect(Collectors.toList());
   }
 
   @Override

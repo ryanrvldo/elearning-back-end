@@ -1,10 +1,10 @@
 package com.lawencon.elearning.dto.teacher;
 
-import java.util.List;
-import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.lawencon.elearning.model.Experience;
+import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
+import java.util.List;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
@@ -17,6 +17,6 @@ public class TeacherProfileDTO {
 
   @NotNull
   private TeacherResponseDTO teacher;
-  private List<Experience> experiences;
+  private List<ExperienceResponseDto> experiences;
 
 }

@@ -1,10 +1,11 @@
 package com.lawencon.elearning.dao.impl;
 
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
+import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -25,8 +26,9 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
   @Override
   public User findByUsername(String username) throws Exception {
     String query = buildQueryOf(
-        "SELECT u.id, u.email, u.username, u.password, u.isActive, r.id AS roleId, u.role.code, u.role.name ",
+        "SELECT u.id, u.email, u.username, u.password, u.isActive, r.id AS roleId, u.role.code, u.role.name, u.userPhoto.id ",
         "FROM User AS u INNER JOIN Role AS r ON r.id = u.role.id ",
+        "LEFT JOIN File f ON f.id = u.userPhoto.id ",
         "WHERE u.username = ?1 "
     );
     Object[] objArr = createQuery(query, Object[].class).setParameter(1, username)
@@ -43,6 +45,10 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     role.setCode((String) objArr[6]);
     role.setName((String) objArr[7]);
     user.setRole(role);
+
+    File file = new File();
+    file.setId((String) objArr[8]);
+    user.setUserPhoto(file);
     return user;
   }
 
