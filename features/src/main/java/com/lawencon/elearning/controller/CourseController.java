@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
@@ -32,10 +33,10 @@ public class CourseController {
         HttpStatus.OK);
   }
 
-  @PostMapping("register/{student}/{course}")
-  public ResponseEntity<?> registerCourse(@PathVariable("student") String student,
-      @PathVariable("course") String course) throws Exception {
-    courseService.registerCourse(student, course);
+  @PostMapping("register")
+  public ResponseEntity<?> registerCourse(@RequestParam("studentId") String studentId,
+      @RequestParam("courseId") String courseId) throws Exception {
+    courseService.registerCourse(studentId, courseId);
     return WebResponseUtils.createWebResponse("Register Course Success", HttpStatus.OK);
   }
   

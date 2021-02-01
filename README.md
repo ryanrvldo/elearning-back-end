@@ -185,20 +185,20 @@ error
   "result": [
     {
       "id": "",
-      "courseCode": "",
-      "courseName": "",
+      "code": "",
+      "typeName": "",
       "capacity": "",
       "periodStart": "",
       "periodEnd": "",
+      "categoryName": "",
       "teacher": {
         "id": "",
         "code": "",
         "firstName": "",
         "lastName": "",
-        "tittle": "",
+        "title": "",
         "photoId": ""
-      },
-      "courseCategory": ""
+      }
     }
   ]
 }

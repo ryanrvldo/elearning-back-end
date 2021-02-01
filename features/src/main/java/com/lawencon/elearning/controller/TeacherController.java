@@ -65,4 +65,9 @@ public class TeacherController {
     return WebResponseUtils.createWebResponse("Delete Teacher Profile Success!", HttpStatus.OK);
   }
 
+  @GetMapping("/dashboard/{id}")
+  public ResponseEntity<?> getTeacherCourse(@PathVariable("id") String id) throws Exception {
+    return WebResponseUtils.createWebResponse(teacherService.getTeacherDashboard(id),
+        HttpStatus.OK);
+  }
 }

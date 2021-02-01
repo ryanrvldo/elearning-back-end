@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import java.util.Map;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
@@ -28,6 +29,8 @@ public interface CourseService {
   List<CourseResponseDTO> getMyCourse(String id) throws Exception;
 
   List<CourseResponseDTO> getCourseForAdmin() throws Exception;
+
+  Map<Course, Integer> getTeacherCourse(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 

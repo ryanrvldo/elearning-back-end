@@ -3,11 +3,13 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
@@ -16,10 +18,12 @@ import com.lawencon.elearning.dto.teacher.TeacherResponseDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
@@ -43,6 +47,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Autowired
   private ValidationUtil validUtil;
+
+  @Autowired
+  private CourseService courseService;
 
 
   @Override
@@ -207,6 +214,25 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException(msg, id);
     }
+  }
+
+  @Override
+  public List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception {
+    Map<Course, Integer> resultMap = courseService.getTeacherCourse(id);
+    List<DashboardTeacherDTO> listResult = new ArrayList<>();
+    resultMap.keySet().forEach(course -> {
+      DashboardTeacherDTO dashboard = new DashboardTeacherDTO();
+      dashboard.setId(course.getId());
+      dashboard.setCode(course.getCode());
+      dashboard.setName(course.getCourseType().getName());
+      dashboard.setDescription(course.getDescription());
+      dashboard.setCapacity(course.getCapacity());
+      dashboard.setTotalStudent(resultMap.get(course));
+      dashboard.setPeriodEnd(course.getPeriodEnd());
+      dashboard.setPeriodStart(course.getPeriodStart());
+      listResult.add(dashboard);
+    });
+    return listResult;
   }
 
 }

@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import java.util.Map;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
 
@@ -23,6 +24,8 @@ public interface CourseDao {
   List<Course> getMyCourse(String id) throws Exception;
 
   List<Course> getCourseForAdmin() throws Exception;
+
+  Map<Course, Integer> getTeacherCourse(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 

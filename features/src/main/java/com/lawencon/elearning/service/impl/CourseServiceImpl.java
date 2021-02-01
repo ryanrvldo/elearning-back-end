@@ -2,6 +2,7 @@ package com.lawencon.elearning.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -12,6 +13,7 @@ import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
+import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
@@ -169,21 +171,29 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     List<CourseResponseDTO> responseList = new ArrayList<>();
     listCourse.forEach(val -> {
       CourseResponseDTO courseDto = new CourseResponseDTO();
-      courseDto.setCourseId(val.getId());
-      courseDto.setCourseCode(val.getCode());
+      courseDto.setId(val.getId());
+      courseDto.setCode(val.getCode());
       courseDto.setTypeName(val.getCourseType().getName());
-      courseDto.setCourseCapacity(val.getCapacity());
+      courseDto.setCapacity(val.getCapacity());
       courseDto.setCourseStatus(val.getStatus());
       courseDto.setCourseDescription(val.getDescription());
-      courseDto.setCoursePeriodStart(val.getPeriodStart());
-      courseDto.setCoursePeriodEnd(val.getPeriodEnd());
-      courseDto.setTeacherId(val.getTeacher().getId());
-      courseDto.setTeacherCode(val.getTeacher().getCode());
-      courseDto.setUserFirstName(val.getTeacher().getUser().getFirstName());
-      courseDto.setUserLastName(val.getTeacher().getUser().getLastName());
-      courseDto.setTeacherTittle(val.getTeacher().getTitleDegree());
-      courseDto.setCategoryCode(val.getCategory().getCode());
+      courseDto.setPeriodStart(val.getPeriodStart());
+      courseDto.setPeriodEnd(val.getPeriodEnd());
+
+      TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
+      teacherDTO.setId(val.getTeacher().getId());
+      teacherDTO.setCode(val.getTeacher().getCode());
+      teacherDTO.setFirstName(val.getTeacher().getUser().getFirstName());
+      teacherDTO.setLastName(val.getTeacher().getUser().getLastName());
+      teacherDTO.setTittle(val.getTeacher().getTitleDegree());
+      if (null == val.getTeacher().getUser().getUserPhoto().getId()) {
+        teacherDTO.setPhotoId("");
+      } else {
+        teacherDTO.setPhotoId(val.getTeacher().getUser().getUserPhoto().getId());
+      }
+      courseDto.setTeacher(teacherDTO);
       courseDto.setCategoryName(val.getCategory().getName());
+
       responseList.add(courseDto);
     });
     return responseList;
@@ -201,5 +211,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     return listStudent;
 
+  }
+
+  @Override
+  public Map<Course, Integer> getTeacherCourse(String id) throws Exception {
+    return courseDao.getTeacherCourse(id);
   }
 }

@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
@@ -34,6 +35,5 @@ public interface TeacherService {
 
   Teacher findByIdForCourse(String id) throws Exception;
 
-
-
+  List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception;
 }

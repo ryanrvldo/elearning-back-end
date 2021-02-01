@@ -1,5 +1,11 @@
 package com.lawencon.elearning.util;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Random;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.MediaType;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.dao.CourseDao;
@@ -20,20 +26,13 @@ import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 /**
  * Uncomment component annotation for init data to database
  *
  * @author Rian Rivaldo
  */
-@Component
+// @Component
 public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner {
 
   @Autowired
@@ -91,7 +90,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
     user.setPassword(encoderUtils.getHashPassword("superAdmin"));
     user.setEmail("superadmin@lawerning.com");
     user.setRole(role);
+    begin();
     userDao.createUser(user);
+    commit();
   }
 
   private void initRoles() throws Exception {
@@ -123,7 +124,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
 
     Role role = roleDao.findByCode("RL-002");
     user.setRole(role);
+    begin();
     userDao.createUser(user);
+    commit();
   }
 
   private void initStudent() throws Exception {
@@ -139,7 +142,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
 
       Role role = roleDao.findByCode("RL-004");
       user.setRole(role);
+      begin();
       userDao.createUser(user);
+      commit();
 
       Student student = new Student();
       student.setCode("ST-00" + i);
@@ -151,7 +156,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       }
       student.setUser(user);
       student.setCreatedBy(adminUser.getId());
+      begin();
       studentDao.insertStudent(student, null);
+      commit();
     }
   }
 
@@ -168,7 +175,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       user.setRole(role);
       user.setCreatedAt(LocalDateTime.now());
       user.setCreatedBy(adminUser.getId());
+      begin();
       userDao.createUser(user);
+      commit();
 
       Gender gender;
       if (i % 2 == 0) {
@@ -184,7 +193,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       teacher.setCreatedAt(LocalDateTime.now());
       teacher.setCreatedBy(adminUser.getId());
       teacher.setUser(user);
+      begin();
       teacherDao.saveTeacher(teacher, null);
+      commit();
     }
   }
 
@@ -243,14 +254,13 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
 
   private void initStudentCourse() throws Exception {
     List<Student> studentList = studentDao.findAll();
-    int totalStudent = studentList.size();
     List<Course> courses = courseDao.getListCourse();
     int totalCourse = courses.size();
     Random random = new Random();
     for (Student student : studentList) {
       for (int j = 0; j < totalCourse; j++) {
-        studentDao.updateStudentProfile(student, () -> student.getCourses()
-            .add(courses.get(random.nextInt(totalCourse - 1))));
+        studentDao.updateStudentProfile(student,
+            () -> student.getCourses().add(courses.get(random.nextInt(totalCourse - 1))));
       }
     }
   }
