@@ -1,9 +1,13 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
+import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
+import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
+import com.lawencon.elearning.dto.module.ModuleResponseDTO;
+import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.Module;
 
 /**
  * @author : Galih Dika Permana
@@ -13,11 +17,11 @@ public interface CourseService {
 
   List<Course> getListCourse() throws Exception;
 
-  void insertCourse(Course course) throws Exception;
+  void insertCourse(CourseCreateRequestDTO courseDTO) throws Exception;
 
-  void updateCourse(Course course) throws Exception;
+  void updateCourse(CourseUpdateRequestDTO courseDTO) throws Exception;
 
-  void deleteCourse(String id) throws Exception;
+  void deleteCourse(CourseDeleteRequestDTO courseDTO) throws Exception;
 
   List<CourseResponseDTO> getCurrentAvailableCourse() throws Exception;
 
@@ -29,5 +33,8 @@ public interface CourseService {
 
   void registerCourse(String student, String course) throws Exception;
 
-  List<Module> getDetailCourse(String id) throws Exception;
+  List<ModuleResponseDTO> getDetailCourse(String id) throws Exception;
+
+  List<StudentByCourseResponseDTO> getStudentByCourseId(String id) throws Exception;
+
 }

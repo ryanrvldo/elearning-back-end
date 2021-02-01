@@ -65,4 +65,11 @@ public class StudentController {
     return WebResponseUtils.createWebResponse("Delete Success", HttpStatus.OK);
   }
 
+  @PostMapping("register/{student}/{course}")
+  public ResponseEntity<?> registerCourse(@PathVariable("student") String student,
+      @PathVariable("course") String course) throws Exception {
+    studentService.RegisterCourse(student, course);
+    return WebResponseUtils.createWebResponse("Success Register Course", HttpStatus.CREATED);
+  }
+
 }

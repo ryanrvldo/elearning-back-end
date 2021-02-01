@@ -2,6 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
+import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.model.CourseCategory;
 
@@ -17,7 +18,7 @@ public interface CourseCategoryService {
 
   void updateCourseCategory(CourseCategoryUpdateRequestDTO courseCategory) throws Exception;
 
-  void deleteCourseCategory(String id) throws Exception;
+  void deleteCourseCategory(CourseCategoryDeleteRequestDTO courseCategoryDTO) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 }

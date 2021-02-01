@@ -191,4 +191,8 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     }
   }
 
+  public void RegisterCourse(String student, String course) throws Exception {
+    courseService.registerCourse(student, course);
+  }
+
 }

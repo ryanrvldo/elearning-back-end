@@ -22,20 +22,19 @@ public class ModuleController {
   @Autowired
   private ModuleService moduleService;
 
-  @GetMapping("/modules/{id}")
+  @GetMapping("/module/course/{id}")
   public ResponseEntity<?> getDetailCourse(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(moduleService.getDetailCourse(id), HttpStatus.OK);
   }
 
   @GetMapping("/module/{id}")
   public ResponseEntity<?> getDetailModule(@PathVariable("id") String id) throws Exception {
-    return WebResponseUtils.createWebResponse(moduleService.getDetailCourse(id), HttpStatus.OK);
+    return WebResponseUtils.createWebResponse(moduleService.getModuleByIdCustom(id), HttpStatus.OK);
   }
 
   @PostMapping("/module")
-  public ResponseEntity<?> insertModule(@RequestBody List<ModulRequestDTO> data)
-      throws Exception {
-      moduleService.insertModule(data);
-      return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.OK);
+  public ResponseEntity<?> insertModule(@RequestBody List<ModulRequestDTO> data) throws Exception {
+    moduleService.insertModule(data);
+    return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.OK);
   }
 }

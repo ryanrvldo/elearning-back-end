@@ -36,4 +36,6 @@ public interface StudentService {
 
   List<StudentByCourseResponseDTO> getListStudentByIdCourse(String idCourse) throws Exception;
 
+  void RegisterCourse(String student, String course) throws Exception;
+
 }

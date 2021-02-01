@@ -39,7 +39,11 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public List<DetailExam> getListScoreAvg(String id) throws Exception {
-    return dtlExamDao.getListScoreAvg(id);
+    List<DetailExam> listDetail = dtlExamDao.getListScoreAvg(id);
+    if (listDetail == null) {
+      throw new DataIsNotExistsException("Data is not exist");
+    }
+    return listDetail;
   }
 
   @Override

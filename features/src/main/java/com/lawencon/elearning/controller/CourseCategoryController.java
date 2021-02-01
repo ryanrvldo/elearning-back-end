@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
+import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.service.CourseCategoryService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -35,7 +35,7 @@ public class CourseCategoryController {
   public ResponseEntity<?> insertCourseCategory(@RequestBody CourseCategoryCreateRequestDTO data)
       throws Exception {
     courseCategoryService.insertCourseCategory(data);
-    return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.CREATED);
   }
 
   @PutMapping
@@ -45,10 +45,11 @@ public class CourseCategoryController {
     return WebResponseUtils.createWebResponse("Update data success", HttpStatus.OK);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteCourseCategoryById(@RequestParam("id") String id)
+  @DeleteMapping
+  public ResponseEntity<?> deleteCourseCategoryById(
+      @RequestBody CourseCategoryDeleteRequestDTO data)
       throws Exception {
-    courseCategoryService.deleteCourseCategory(id);
+    courseCategoryService.deleteCourseCategory(data);
     return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
 
   }

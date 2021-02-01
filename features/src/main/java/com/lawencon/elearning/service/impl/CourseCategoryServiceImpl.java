@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
+import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.CourseCategory;
@@ -57,25 +58,33 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
     if (courseCategories == null) {
       throw new DataIsNotExistsException("data is not exist");
     }
-    setupUpdatedValue(courseCategory,
-        () -> courseCategories);
+    setupUpdatedValue(courseCategory, () -> courseCategories);
     courseCategoryDao.updateCourseCategory(courseCategory, null);
   }
 
   @Override
-  public void deleteCourseCategory(String id) throws Exception {
-    CourseCategory courseCategory = courseCategoryDao.getCategoryById(id);
-    if (courseCategory == null) {
-      throw new DataIsNotExistsException("data is not exist");
+  public void deleteCourseCategory(CourseCategoryDeleteRequestDTO courseCategoryDTO)
+      throws Exception {
+
+    try {
+      begin();
+      courseCategoryDao.deleteCourseCategory(courseCategoryDTO.getId());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      if (e.getMessage().equals("ID Not Found")) {
+        throw new DataIsNotExistsException("id", courseCategoryDTO.getId());
+      }
+      begin();
+      updateIsActive(courseCategoryDTO.getId(), courseCategoryDTO.getUpdateBy());
+      commit();
     }
-    courseCategoryDao.deleteCourseCategory(id);
+
   }
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-    begin();
     courseCategoryDao.updateIsActive(id, userId);
-    commit();
   }
 
 }
