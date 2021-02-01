@@ -66,25 +66,29 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
+
       DetailExam dtlExam = new DetailExam();
-      dtlExam.setGrade((Double) objArr[0]);
       Module mdl = new Module();
+      Course course = new Course();
+      Exam exam = new Exam();
+
+      dtlExam.setGrade((Double) objArr[0]);
       mdl.setCode((String) objArr[1]);
       mdl.setTitle((String) objArr[2]);
-      Course course = new Course();
       course.setDescription((String) objArr[3]);
       course.setCode((String) objArr[4]);
-      Exam exam = new Exam();
       Timestamp inTime = (Timestamp) objArr[5];
       exam.setStartTime(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[5];
+      inTime = (Timestamp) objArr[6];
       exam.setEndTime(inTime.toLocalDateTime());
+
+      mdl.setCourse(course);
       exam.setModule(mdl);
       dtlExam.setExam(exam);
       listResult.add(dtlExam);
     });
 
-    return listResult;
+    return listResult.size() > 0 ? listResult : null;
   }
 
   @Override

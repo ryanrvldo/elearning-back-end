@@ -13,6 +13,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -60,8 +61,24 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public List<DetailExam> getListScoreReport(String id) throws Exception {
-    return dtlExamDao.getListScoreReport(id);
+  public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
+    List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getListScoreReport(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+    
+    List<ScoreReportDTO> scoreReports = new ArrayList<ScoreReportDTO>();
+
+    for (DetailExam detail : detailExams) {
+      ScoreReportDTO dataScore = new ScoreReportDTO();
+      dataScore.setCourseCode(detail.getExam().getModule().getCourse().getCode());
+      dataScore.setCourseDescription(detail.getExam().getModule().getCourse().getDescription());
+      dataScore.setModuleCode(detail.getExam().getModule().getCode());
+      dataScore.setModuleTitle(detail.getExam().getModule().getDescription());
+      dataScore.setExamStart(detail.getExam().getStartTime());
+      dataScore.setExamEnd(detail.getExam().getEndTime());
+      dataScore.setGrade(detail.getGrade());
+      scoreReports.add(dataScore);
+    }
+    return scoreReports;
   }
 
   @Override

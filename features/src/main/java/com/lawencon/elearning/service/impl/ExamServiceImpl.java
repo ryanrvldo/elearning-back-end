@@ -14,6 +14,7 @@ import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
+import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
@@ -174,6 +175,14 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     validateNullId("Teacher Id", teacherId);
 
     dtlExamService.updateScoreStudent(id, newScore, teacherId);
+  }
+
+  @Override
+  public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
+    validateNullId(id, "id");
+
+    return Optional.ofNullable(dtlExamService.getListScoreReport(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   private void validateNullId(String id, String msg) throws Exception {

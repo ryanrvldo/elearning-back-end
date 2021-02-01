@@ -24,4 +24,8 @@ public class TeacherForAdminDTO {
 
   private Long version;
 
+  private String firstName;
+
+  private String lastName;
+
 }

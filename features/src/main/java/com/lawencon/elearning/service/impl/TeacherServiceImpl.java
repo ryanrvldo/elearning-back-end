@@ -1,5 +1,12 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
@@ -21,13 +28,6 @@ import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -72,12 +72,14 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     listTeachers.forEach(val -> {
       TeacherForAdminDTO teacherAdminDTO = new TeacherForAdminDTO();
       teacherAdminDTO.setId(val.getId());
-      teacherAdminDTO.setActive(val.getIsActive());
       teacherAdminDTO.setCode(val.getCode());
       teacherAdminDTO.setPhone(val.getPhone());
       teacherAdminDTO.setGender(val.getGender());
       teacherAdminDTO.setUsername(val.getUser().getUsername());
       teacherAdminDTO.setVersion(val.getVersion());
+      teacherAdminDTO.setFirstName(val.getUser().getFirstName());
+      teacherAdminDTO.setLastName(val.getUser().getLastName());
+
       listResult.add(teacherAdminDTO);
     });
 
