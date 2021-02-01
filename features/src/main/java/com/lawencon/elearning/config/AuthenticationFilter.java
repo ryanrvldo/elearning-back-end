@@ -73,7 +73,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
           .append(String.format("{\"token\":\"%s\",", token))
           .append(String.format("\"userId\":\"%s\",", user.getId()))
           .append(String.format("\"username\":\"%s\",", user.getUsername()))
-          .append(String.format("\"roleId\":\"%s\"}}", user.getRole().getId()));
+          .append("\"role\":")
+          .append(String.format("{\"id\":\"%s\",", user.getRole().getId()))
+          .append(String.format("\"code\":\"%s\",", user.getRole().getCode()))
+          .append(String.format("\"name\":\"%s\",", user.getRole().getName()))
+          .append(String.format("\"version\":\"%s\",", user.getRole().getVersion()))
+          .append("}}}");
     } catch (Exception e) {
       e.printStackTrace();
       response.getWriter()

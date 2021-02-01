@@ -41,7 +41,12 @@ success
     "token": "",
     "userId": "",
     "username": "",
-    "roleCode": ""
+    "role": {
+      "id": "",
+      "code": "",
+      "name": "",
+      "version": ""
+    }
   }
 }
 ```
