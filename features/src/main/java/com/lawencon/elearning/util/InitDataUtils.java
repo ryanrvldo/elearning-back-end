@@ -75,7 +75,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
     initCourseTypes();
     initCourses();
     initStudentCourse();
-    // initFile();
+    initFile();
   }
 
   private void initSuperAdmin() throws Exception {
