@@ -1,5 +1,9 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -7,10 +11,7 @@ import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.EncoderUtils;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  * @author Rian Rivaldo
@@ -24,6 +25,9 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   @Autowired
   private EncoderUtils encoderUtils;
 
+  @Autowired
+  private ValidationUtil validationUtil;
+
   @Override
   public void addUser(User user) throws Exception {
     user.setCreatedAt(LocalDateTime.now());
@@ -34,9 +38,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
   @Override
   public User getById(String id) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
+    validationUtil.validateUUID(id);
     return Optional.ofNullable(userDao.findById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
@@ -61,6 +63,18 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     begin();
     userDao.updateActivateStatus(id, status);
     commit();
+  }
+
+  @Override
+  public String getUserRoleId(String userId) throws Exception {
+    User user = getById(userId);
+    String id = userDao.getUserRoleId(user.getId());
+    if (id == null) {
+      return null;
+    } else if (id != null && id.trim().isEmpty()) {
+      throw new DataIsNotExistsException("user id", userId);
+    }
+    return id;
   }
 
 }

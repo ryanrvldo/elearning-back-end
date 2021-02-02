@@ -1,10 +1,5 @@
 package com.lawencon.elearning.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,6 +16,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * @author Rian Rivaldo
@@ -60,18 +60,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         .signWith(key)
         .setSubject(authResult.getName())
         .setExpiration(
-            Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant())
-        )
+            Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant()))
         .compact();
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     try {
       User user = userService.getByUsername(authResult.getName());
+      String userRoleId = userService.getUserRoleId(user.getId());
       response.getWriter()
           .append(String.format("{\"code\":%d,", HttpStatus.OK.value()))
           .append("\"result\":")
           .append(String.format("{\"token\":\"%s\",", token))
           .append(String.format("\"userId\":\"%s\",", user.getId()))
+          .append(String.format("\"userRoleId\":\"%s\",", userRoleId))
           .append(String.format("\"username\":\"%s\",", user.getUsername()))
           .append(String.format("\"photoId\":\"%s\",", user.getUserPhoto().getId()))
           .append("\"role\":")

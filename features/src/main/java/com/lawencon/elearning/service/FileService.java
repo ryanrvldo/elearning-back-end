@@ -1,10 +1,9 @@
 package com.lawencon.elearning.service;
 
-import com.lawencon.elearning.dto.FileResponseDto;
-import com.lawencon.elearning.model.File;
 import java.util.List;
-import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.model.File;
 
 /**
  * @author Rian Rivaldo
@@ -18,6 +17,6 @@ public interface FileService {
 
   File getFileById(String id) throws Exception;
 
-  void updateFile(Map<String, Object> requestPart) throws Exception;
+  void updateFile(MultipartFile file, String content) throws Exception;
 
 }

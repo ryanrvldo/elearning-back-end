@@ -1,10 +1,6 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.model.File;
-import com.lawencon.elearning.service.FileService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.service.FileService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author Rian Rivaldo
@@ -29,17 +28,20 @@ public class FileController {
   private FileService fileService;
 
   @PostMapping(value = "/file")
-  public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @RequestPart("content") String content)
+  public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file,
+      @RequestPart("content") String content)
       throws Exception {
 
-    return WebResponseUtils.createWebResponse(fileService.createFile(file, content), HttpStatus.CREATED);
+    return WebResponseUtils.createWebResponse(fileService.createFile(file, content),
+        HttpStatus.CREATED);
   }
 
   @PostMapping(value = "/files")
   public ResponseEntity<?> uploadMultipleFile(@RequestPart("files") List<MultipartFile> files,
       @RequestPart("content") String content)
       throws Exception {
-    return WebResponseUtils.createWebResponse(fileService.createMultipleFile(files, content), HttpStatus.CREATED);
+    return WebResponseUtils.createWebResponse(fileService.createMultipleFile(files, content),
+        HttpStatus.CREATED);
   }
 
   @GetMapping(value = {"/file/{id}"})
@@ -51,10 +53,11 @@ public class FileController {
         .body(new ByteArrayResource(file.getData()));
   }
 
-  @PatchMapping(value = {"file/{id}"})
-  public ResponseEntity<?> updateFile(@RequestPart Map<String, Object> requestPart)
+  @PatchMapping(value = {"file"})
+  public ResponseEntity<?> updateFile(@RequestPart("file") MultipartFile file,
+      @RequestPart("content") String content)
       throws Exception {
-    fileService.updateFile(requestPart);
+    fileService.updateFile(file, content);
     return WebResponseUtils.createWebResponse("File has been updated successfully.", HttpStatus.OK);
   }
 

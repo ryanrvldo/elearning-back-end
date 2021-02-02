@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -46,6 +48,8 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Autowired
   private UserService userService;
 
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
+
   @Override
   public List<AttendanceResponseDTO> getAttendanceList(String idCourse, String idModule)
       throws Exception {
@@ -53,8 +57,8 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
     validateNullId(idCourse, "course id");
     Optional.ofNullable(moduleService.getModuleById(idModule))
         .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
-    // Optional.ofNullable(courseService.getById(idCourse))
-    // .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
+    Optional.ofNullable(courseService.getCourseById(idCourse))
+        .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
     List<Attendance> listResult = attendanceDao.getAttendanceList(idCourse, idModule);
     List<AttendanceResponseDTO> listDTO = new ArrayList<>();
     for (Attendance attendance : listResult) {
@@ -67,6 +71,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
       attendanceDTO.setAttendanceVersion(attendance.getVersion());
       listDTO.add(attendanceDTO);
     }
+    logger.info(String.valueOf(listDTO.size()));
     return listDTO;
   }
 

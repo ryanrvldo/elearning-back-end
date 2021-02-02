@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.file;
 
 import com.lawencon.elearning.model.FileType;
 import lombok.AllArgsConstructor;

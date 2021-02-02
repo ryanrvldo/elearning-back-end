@@ -1,26 +1,27 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.FileDao;
-import com.lawencon.elearning.dto.FileRequestDto;
-import com.lawencon.elearning.dto.FileResponseDto;
+import com.lawencon.elearning.dto.file.FileCreateRequestDto;
+import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.dto.file.FileUpdateRequestDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  * @author Rian Rivaldo
@@ -30,6 +31,9 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
   @Autowired
   private FileDao fileDao;
+
+  @Autowired
+  private ValidationUtil validationUtil;
 
   @Override
   public FileResponseDto createFile(MultipartFile file, String content) throws Exception {
@@ -52,8 +56,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
   @Override
   public File getFileById(String id) throws Exception {
-    Optional.ofNullable(id)
-        .orElseThrow(() -> new IllegalRequestException("id", id));
+    validationUtil.validateUUID(id);
     begin();
     File file = Optional.ofNullable(fileDao.findById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
@@ -62,26 +65,32 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
   }
 
   @Override
-  public void updateFile(Map<String, Object> requestPart) throws Exception {
-    String fileId = (String) requestPart.get("id");
-    String userId = (String) requestPart.get("userId");
-    MultipartFile requestFile = (MultipartFile) requestPart.get("file");
+  public void updateFile(MultipartFile file, String content) throws Exception {
+    if (file == null) {
+      throw new IllegalRequestException("File is not inputted!");
+    }
+    ObjectMapper objectMapper = new ObjectMapper();
+    FileUpdateRequestDto requestContent;
+    try {
+      requestContent = objectMapper.readValue(content, FileUpdateRequestDto.class);
+    } catch (JsonProcessingException e) {
+      throw new IllegalRequestException("Invalid file content.");
+    }
 
-    File prevFile = getFileById(fileId);
+    File prevFile = getFileById(requestContent.getId());
     File newFile = new File();
     newFile.setCreatedAt(prevFile.getCreatedAt());
     newFile.setCreatedBy(prevFile.getCreatedBy());
     newFile.setUpdatedAt(LocalDateTime.now());
-    newFile.setUpdatedBy(userId);
+    newFile.setUpdatedBy(requestContent.getUserId());
     newFile.setVersion(prevFile.getVersion());
     newFile.setTrxNumber(prevFile.getTrxNumber());
     newFile.setTrxDate(prevFile.getTrxDate());
     newFile.setType(prevFile.getType());
-
-    newFile.setName(requestFile.getOriginalFilename());
-    newFile.setContentType(requestFile.getContentType());
-    newFile.setData(requestFile.getBytes());
-    newFile.setSize(requestFile.getSize());
+    newFile.setName(file.getOriginalFilename());
+    newFile.setContentType(file.getContentType());
+    newFile.setData(file.getBytes());
+    newFile.setSize(file.getSize());
     fileDao.updateFile(newFile, null);
   }
 
@@ -96,9 +105,9 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     }
 
     ObjectMapper objectMapper = new ObjectMapper();
-    FileRequestDto fileRequestDto;
+    FileCreateRequestDto fileRequestDto;
     try {
-      fileRequestDto = objectMapper.readValue(content, FileRequestDto.class);
+      fileRequestDto = objectMapper.readValue(content, FileCreateRequestDto.class);
     } catch (JsonProcessingException jsonException) {
       throw new IllegalRequestException("Invalid file content.");
     }
@@ -128,8 +137,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
         file.getType(),
         file.getSize(),
         file.getContentType(),
-        file.getVersion()
-    );
+        file.getVersion());
   }
 
 }

@@ -1,4 +1,4 @@
-package com.lawencon.elearning.dto;
+package com.lawencon.elearning.dto.file;
 
 import javax.validation.constraints.NotBlank;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.Data;
  * @author Rian Rivaldo
  */
 @Data
-public class FileRequestDto {
+public class FileCreateRequestDto {
 
   @NotBlank
   String type;

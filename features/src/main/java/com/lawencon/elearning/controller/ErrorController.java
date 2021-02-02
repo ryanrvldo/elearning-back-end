@@ -1,9 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.WebResponseDTO;
-import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
-import com.lawencon.elearning.util.WebResponseUtils;
 import javax.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import com.lawencon.elearning.dto.WebResponseDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author Rian Rivaldo
@@ -21,6 +21,7 @@ public class ErrorController {
   @ExceptionHandler(value = {ConstraintViolationException.class, DataIsNotExistsException.class,
       IllegalRequestException.class})
   public ResponseEntity<WebResponseDTO<String>> validationHandler(Exception e) {
+    e.printStackTrace();
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 

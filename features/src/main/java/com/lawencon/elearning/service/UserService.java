@@ -17,4 +17,6 @@ public interface UserService {
 
   void updateActivateStatus(String id, boolean status) throws Exception;
 
+  String getUserRoleId(String userId) throws Exception;
+
 }

@@ -2,7 +2,9 @@ package com.lawencon.elearning.dto.subject;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -10,17 +12,19 @@ import lombok.Data;
  *
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateSubjectCategoryRequestDTO {
 
   @NotBlank
   @Size(max = 50)
   private String code;
 
-  private String description;
-
   @NotBlank
   @Size(max = 100)
   private String subjectName;
+
+  private String description;
 
   @NotBlank
   private String createdBy;

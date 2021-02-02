@@ -10,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
-import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
+import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
@@ -152,8 +152,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
             .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
     Optional.ofNullable(subjectCategoryService.getById(data.getSubjectId()))
         .orElseThrow(() -> new DataIsNotExistsException("id subject", data.getSubjectId()));
-    // Optional.ofNullable(courseDao.getCourseById(course.getId()))
-    // .orElseThrow(() -> new DataIsNotExistsException("id course", course.getId()));
     Schedule schedule = new Schedule();
     schedule.setId(data.getIdSchedule());
     schedule.setCode(scheduleDb.getCode());
@@ -221,7 +219,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
     DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id);
     List<ModuleResponseDTO> listModule = getModuleListByIdCourse(id);
-    detailCourse.setListModule(listModule);
+    detailCourse.setModules(listModule);
     return detailCourse;
   }
 

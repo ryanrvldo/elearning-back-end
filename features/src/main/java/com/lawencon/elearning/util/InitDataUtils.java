@@ -339,23 +339,23 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       experience.setCreatedAt(LocalDateTime.now());
       experience.setDescription("lorem ipsum blabla " + experience.getTitle());
       experience.setStartDate(LocalDate.now().plusDays(i));
-      experience.setEndDate(LocalDate.now().plusDays(i+25));
+      experience.setEndDate(LocalDate.now().plusDays(i + 25));
       List<Teacher> teacher = teacherDao.getAllTeachers();
       experience.setTeacher(teacher.get(i - 1));
       experienceDao.create(experience);
     }
   }
 
-  private void initSchedule() throws Exception{
+  private void initSchedule() throws Exception {
     User adminUser = userDao.findByUsername("admin");
     for (int i = 1; i <= 10; i++) {
       Schedule schedule = new Schedule();
       schedule.setCreatedAt(LocalDateTime.now());
       schedule.setCreatedBy(adminUser.getId());
-      schedule.setCode("Schedule-00"+i);
+      schedule.setCode("Schedule-00" + i);
       schedule.setDate(LocalDate.now());
       schedule.setStartTime(LocalTime.now());
-      schedule.setEndTime(LocalTime.now().plusHours(i+2));
+      schedule.setEndTime(LocalTime.now().plusHours(i + 2));
       List<Teacher> teacher = teacherDao.getAllTeachers();
       schedule.setTeacher(teacher.get(i - 1));
       begin();
@@ -407,8 +407,8 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
     User adminUser = userDao.findByUsername("admin");
     for (int i = 1; i <= 10; i++) {
       Module module = new Module();
-      module.setCode("Module-00"+i);
-      module.setTitle("Module Title-00" +i);
+      module.setCode("Module-00" + i);
+      module.setTitle("Module Title-00" + i);
       module.setDescription("Lorem Ipsum bla bla bla bla" + module.getTitle());
       List<Schedule> schedule = scheduleDao.getAllSchedules();
       module.setSchedule(schedule.get(i - 1));
@@ -426,6 +426,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
 
   private void initModuleFile() throws Exception {
     List<Module> moduleList = moduleDao.getListModule();
+    begin();
     List<File> file = fileDao.getAllFile();
     int totalFile = file.size();
     Random random = new Random();
@@ -435,6 +436,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
             () -> module.getFiles().add(file.get(random.nextInt(totalFile - 1))));
       }
     }
+    commit();
   }
 
 }

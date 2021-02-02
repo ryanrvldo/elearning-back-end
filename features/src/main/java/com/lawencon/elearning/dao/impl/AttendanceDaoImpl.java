@@ -32,13 +32,14 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
   @Override
   public List<Attendance> getAttendanceList(String idCourse, String idModule) throws Exception {
     String query = buildQueryOf(
-        "SELECT COALESCE(a.id, '0'), COALESCE(a.created_at, '0001-01-01 00:00') as att_time, ",
+        "SELECT DISTINCT COALESCE(a.id, '0') AS attendance_id, COALESCE(a.created_at, '0001-01-01 00:00') as att_time, ",
         "COALESCE(a.VERSION, 0) as att_version, COALESCE(a.is_verified, FALSE) as att_verify, ",
-        "u.first_name, u.last_name ",
+        "u.first_name, u.last_name, s.id AS student_id ",
         "FROM tb_r_attendances a ", "RIGHT JOIN tb_m_students s ON s.id = a.id_student ",
         "INNER JOIN tb_m_users u ON u.id = s.id_user ",
         "INNER JOIN student_course sc ON sc.id_student = s.id ", "WHERE sc.id_course = ?1 ",
-        "AND a.id_module = ?2 ", "OR a.id_module IS NULL ");
+        "AND a.id_module = ?2 ", "OR a.id_module IS NULL ",
+        "ORDER BY attendance_id DESC");
     List<?> listObj = createNativeQuery(query).setParameter(1, idCourse).setParameter(2, idModule)
         .getResultList();
     List<Attendance> listResult = new ArrayList<>();
@@ -55,6 +56,7 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
       user.setFirstName((String) objArr[4]);
       user.setLastName((String) objArr[5]);
       Student student = new Student();
+      student.setId((String) objArr[6]);
       student.setUser(user);
       attendance.setStudent(student);
       listResult.add(attendance);

@@ -23,7 +23,6 @@ import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
-import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -35,8 +34,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private CourseDao courseDao;
-  @Autowired
-  private ModuleService moduleService;
 
   @Autowired
   private StudentService studentService;
