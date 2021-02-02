@@ -25,11 +25,13 @@ public interface CourseDao {
 
   List<Course> getCourseForAdmin() throws Exception;
 
-  Map<Course, Integer> getTeacherCourse(String id) throws Exception;
+  Map<Course, Integer[]> getTeacherCourse(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 
   void registerCourse(String course, String student) throws Exception;
 
   Course getCourseById(String id) throws Exception;
+
+  Integer getTotalStudentByIdCourse(String id) throws Exception;
 }

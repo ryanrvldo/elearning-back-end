@@ -16,6 +16,7 @@ public class DashboardTeacherDTO {
   private String description;
   private Integer capacity;
   private Integer totalStudent;
+  private Integer totalModule;
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime periodStart;
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

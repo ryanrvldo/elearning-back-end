@@ -220,7 +220,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception {
-    Map<Course, Integer> resultMap = courseService.getTeacherCourse(id);
+    Map<Course, Integer[]> resultMap = courseService.getTeacherCourse(id);
     List<DashboardTeacherDTO> listResult = new ArrayList<>();
     resultMap.keySet().forEach(course -> {
       DashboardTeacherDTO dashboard = new DashboardTeacherDTO();
@@ -229,7 +229,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       dashboard.setName(course.getCourseType().getName());
       dashboard.setDescription(course.getDescription());
       dashboard.setCapacity(course.getCapacity());
-      dashboard.setTotalStudent(resultMap.get(course));
+      dashboard.setTotalStudent(resultMap.get(course)[0]);
+      dashboard.setTotalModule(resultMap.get(course)[1]);
       dashboard.setPeriodEnd(course.getPeriodEnd());
       dashboard.setPeriodStart(course.getPeriodStart());
       listResult.add(dashboard);

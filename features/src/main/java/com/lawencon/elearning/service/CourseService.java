@@ -30,7 +30,7 @@ public interface CourseService {
 
   List<CourseResponseDTO> getCourseForAdmin() throws Exception;
 
-  Map<Course, Integer> getTeacherCourse(String id) throws Exception;
+  Map<Course, Integer[]> getTeacherCourse(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 
@@ -39,5 +39,7 @@ public interface CourseService {
   DetailCourseResponseDTO getDetailCourse(String id) throws Exception;
 
   List<StudentByCourseResponseDTO> getStudentByCourseId(String id) throws Exception;
+
+  Course getCourseById(String id) throws Exception;
 
 }

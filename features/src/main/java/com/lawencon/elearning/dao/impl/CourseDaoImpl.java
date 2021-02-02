@@ -54,7 +54,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
         "LEFT JOIN tb_r_files AS f ON u.id_photo = f.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
-        "WHERE current_timestamp < c.period_end AND current_timestamp < c.period_start").toString();
+        "WHERE current_timestamp < c.period_end AND current_timestamp < c.period_start");
     List<?> listObj = createNativeQuery(sql).getResultList();
 
     List<Course> listResult = new ArrayList<>();
@@ -113,7 +113,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
         "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
-        "INNER JOIN tb_m_students AS s ON sc.id_student = s.id WHERE sc.id_student = ?").toString();
+        "INNER JOIN tb_m_students AS s ON sc.id_student = s.id WHERE sc.id_student = ?");
     List<Course> listResult = new ArrayList<>();
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
@@ -156,7 +156,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-    String sql = buildQueryOf("UPDATE tb_m_courses SET is_active = FALSE").toString();
+    String sql = buildQueryOf("UPDATE tb_m_courses SET is_active = FALSE");
     updateNativeSQL(sql, id, userId);
   }
 
@@ -168,7 +168,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
         "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
         "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
-        "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id").toString();
+        "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id");
     List<?> listObj = createNativeQuery(sql).getResultList();
     List<Course> listResult = new ArrayList<>();
 
@@ -214,8 +214,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public void registerCourse(String course, String student) throws Exception {
     String sql =
-        buildQueryOf("INSERT INTO student_course (id_student,id_course) ", "VALUES ", "(?1,?2)")
-            .toString();
+        buildQueryOf("INSERT INTO student_course (id_student,id_course) ", "VALUES ", "(?1,?2)");
 
     createNativeQuery(sql).setParameter(1, student).setParameter(2, course).executeUpdate();
   }
@@ -226,10 +225,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public Map<Course, Integer> getTeacherCourse(String id) throws Exception {
+  public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS type_name, c.capacity ,c.description, ",
-        "(SELECT count(*) FROM student_course sc WHERE sc.id_course = c.id) AS student ,c.period_start ,c.period_end ",
+        "(SELECT count(*) FROM student_course sc WHERE sc.id_course = c.id) AS student ,",
+        "(SELECT count(*) FROM tb_m_modules m WHERE m.id_course = c.id) AS modul ,c.period_start ,c.period_end ",
         "FROM tb_m_courses AS c ",
         "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type ",
         "INNER JOIN tb_m_course_categories AS cc ON cc.id = c.id_category ",
@@ -237,7 +237,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN student_course AS sc ON sc.id_course = c.id ", "WHERE t.id = ?1 ",
         "group by course_id , course_code ,type_name , c.capacity  , c.description, c.period_start , c.period_end ");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
-    Map<Course, Integer> courseMap = new HashMap<Course, Integer>();
+    Map<Course, Integer[]> courseMap = new HashMap<>();
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
       Course course = new Course();
@@ -252,17 +252,30 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setDescription((String) objArr[4]);
 
       BigInteger bigInteger = (BigInteger) objArr[5];
-
       Integer totalStudent = bigInteger.intValue();
 
-      Timestamp inTime = (Timestamp) objArr[6];
+      bigInteger = (BigInteger) objArr[6];
+      Integer totalModule = bigInteger.intValue();
+
+      Timestamp inTime = (Timestamp) objArr[7];
       course.setPeriodStart(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[7];
+      inTime = (Timestamp) objArr[8];
       course.setPeriodEnd(inTime.toLocalDateTime());
 
-      courseMap.put(course, totalStudent);
+      Integer[] value = {totalStudent, totalModule};
+
+      courseMap.put(course, value);
     });
     return courseMap;
+  }
+
+  @Override
+  public Integer getTotalStudentByIdCourse(String id) throws Exception {
+    String sql =
+        buildQueryOf("SELECT count(*) FROM student_course sc WHERE sc.id_course = ?1");
+    BigInteger bigInteger =
+        (BigInteger) createNativeQuery(sql).setParameter(1, id).getSingleResult();
+    return bigInteger.intValue();
   }
 
 }

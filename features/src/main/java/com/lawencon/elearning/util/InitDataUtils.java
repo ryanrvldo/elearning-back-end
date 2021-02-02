@@ -8,7 +8,6 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dao.CourseCategoryDao;
@@ -47,7 +46,7 @@ import com.lawencon.elearning.model.User;
  *
  * @author Rian Rivaldo
  */
-@Component
+// @Component
 public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner {
 
   @Autowired
@@ -419,8 +418,6 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       module.setSubject(subject.get(i - 1));
       module.setCreatedAt(LocalDateTime.now());
       module.setCreatedBy(adminUser.getId());
-      // List<File> file = fileDao.getAllFile();
-      // module.setFiles();
       begin();
       moduleDao.insertModule(module, null);
       commit();

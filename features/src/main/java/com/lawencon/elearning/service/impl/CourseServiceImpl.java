@@ -183,6 +183,11 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
+    detailDTO.setCapacity(course.getCapacity());
+    detailDTO.setTotalStudent(courseDao.getTotalStudentByIdCourse(id));
+    detailDTO.setDescription(course.getDescription());
+    detailDTO.setPeriodStart(course.getPeriodStart());
+    detailDTO.setPeriodEnd(course.getPeriodEnd());
     return detailDTO;
   }
 
@@ -234,13 +239,19 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public Map<Course, Integer> getTeacherCourse(String id) throws Exception {
+  public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
     validateNullId(id, "id");
-    Map<Course, Integer> listCourse = courseDao.getTeacherCourse(id);
+    Map<Course, Integer[]> listCourse = courseDao.getTeacherCourse(id);
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
     return listCourse;
+  }
+
+  @Override
+  public Course getCourseById(String id) throws Exception {
+    validateNullId(id, "id");
+    return courseDao.getCourseById(id);
   }
 
   private void validateNullId(String id, String msg) throws Exception {
@@ -248,4 +259,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throw new IllegalRequestException(msg, id);
     }
   }
+
+
 }
