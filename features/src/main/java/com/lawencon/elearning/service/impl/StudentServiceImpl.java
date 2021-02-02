@@ -50,6 +50,10 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     validationUtil.validate(data);
     Student student = new Student();
     student.setCode(data.getCode());
+    student.setPhone(data.getPhone());
+    student.setGender(Gender.valueOf(data.getGender()));
+    student.setCreatedBy(data.getCreatedBy());
+
     User user = new User();
     user.setFirstName(data.getFirstName());
     user.setLastName(data.getLastName());
@@ -58,14 +62,13 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     user.setPassword(data.getPassword());
     user.setCreatedAt(LocalDateTime.now());
     user.setCreatedBy(data.getCreatedBy());
+
     Role role = new Role();
     role.setId(data.getRoleId());
     role.setVersion(data.getRoleVersion());
     user.setRole(role);
     student.setUser(user);
-    student.setPhone(data.getPhone());
-    student.setGender(Gender.valueOf(data.getGender()));
-    student.setCreatedBy(data.getCreatedBy());
+
     try {
       begin();
       userService.addUser(user);
@@ -103,7 +106,8 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Override
   public void updateStudentProfile(Student data) throws Exception {
     validateNullId(data.getId(), "id");
-    setupUpdatedValue(data, () -> studentDao.getStudentById(data.getId()));
+    setupUpdatedValue(data, () -> Optional.ofNullable(studentDao.getStudentById(data.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id", data.getId())));
     studentDao.updateStudentProfile(data, null);
   }
 
@@ -171,15 +175,15 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       throws Exception {
     List<Student> listStudent = studentDao.getListStudentByIdCourse(idCourse);
     List<StudentByCourseResponseDTO> listDto = new ArrayList<>();
-    for (int i = 0; i < listStudent.size(); i++) {
+    for (Student element : listStudent) {
       StudentByCourseResponseDTO studentDto = new StudentByCourseResponseDTO();
-      studentDto.setId(listStudent.get(i).getId());
-      studentDto.setCode(listStudent.get(i).getCode());
-      studentDto.setEmail(listStudent.get(i).getUser().getEmail());
-      studentDto.setFirstName(listStudent.get(i).getUser().getFirstName());
-      studentDto.setLastName((listStudent.get(i).getUser().getLastName()));
-      studentDto.setGender(String.valueOf(listStudent.get(i).getGender()));
-      studentDto.setPhone(listStudent.get(i).getPhone());
+      studentDto.setId(element.getId());
+      studentDto.setCode(element.getCode());
+      studentDto.setEmail(element.getUser().getEmail());
+      studentDto.setFirstName(element.getUser().getFirstName());
+      studentDto.setLastName((element.getUser().getLastName()));
+      studentDto.setGender(String.valueOf(element.getGender()));
+      studentDto.setPhone(element.getPhone());
       listDto.add(studentDto);
     }
     return listDto;
@@ -193,6 +197,12 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   public void RegisterCourse(String student, String course) throws Exception {
     courseService.registerCourse(student, course);
+  }
+
+  @Override
+  public List<Student> getAllStudentByCourseId(String idCourse) throws Exception {
+    return Optional.ofNullable(studentDao.getListStudentByIdCourse(idCourse))
+        .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
   }
 
 }

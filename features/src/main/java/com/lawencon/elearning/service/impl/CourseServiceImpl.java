@@ -12,7 +12,6 @@ import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
-import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -184,11 +183,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
-    List<ModuleResponseDTO> listDetailCourse = moduleService.getDetailCourse(id);
-    detailDTO.setListModule(listDetailCourse);
-    if (listDetailCourse.isEmpty()) {
-      throw new DataIsNotExistsException("Data is empty");
-    }
     return detailDTO;
   }
 

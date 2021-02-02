@@ -38,4 +38,6 @@ public interface StudentService {
 
   void RegisterCourse(String student, String course) throws Exception;
 
+  List<Student> getAllStudentByCourseId(String idCourse) throws Exception;
+
 }

@@ -48,7 +48,7 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public void updateSchedule(Schedule data) throws Exception {
     validateNullId(data.getId(), "Id");
-    scheduleDao.saveSchedule(data, null);
+    scheduleDao.updateSchedule(data, null);
   }
 
   @Override

@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.FileResponseDto;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
@@ -17,13 +19,17 @@ import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.ScheduleService;
+import com.lawencon.elearning.service.SubjectCategoryService;
+import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -44,7 +50,16 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   private ValidationUtil validationUtil;
 
   @Autowired
+  private FileService fileService;
+
+  @Autowired
+  private TeacherService teacherService;
+
+  @Autowired
   private CourseService courseService;
+
+  @Autowired
+  private SubjectCategoryService subjectCategoryService;
 
   @Override
   public Module getModuleById(String id) throws Exception {
@@ -54,7 +69,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public List<ModuleResponseDTO> getDetailCourse(String idCourse) throws Exception {
+  public List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse) throws Exception {
     List<Module> listResult = moduleDao.getDetailCourse(idCourse);
     if (listResult.isEmpty()) {
       throw new DataIsNotExistsException("There is no module yet");
@@ -80,32 +95,37 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public void insertModule(List<ModulRequestDTO> data) throws Exception {
-    for (int i = 0; i < data.size(); i++) {
-      validationUtil.validate(data.get(i));
+    for (ModulRequestDTO element : data) {
+      validationUtil.validate(element);
       Schedule schedule = new Schedule();
-      schedule.setCreatedBy(data.get(i).getScheduleRequestDTO().getScheduleCreatedBy());
-      schedule.setDate(data.get(i).getScheduleRequestDTO().getScheduleDate());
-      schedule.setEndTime(data.get(i).getScheduleRequestDTO().getScheduleEnd());
-      schedule.setStartTime(data.get(i).getScheduleRequestDTO().getScheduleStart());
+      schedule.setCreatedBy(element.getScheduleRequestDTO().getScheduleCreatedBy());
+      schedule.setDate(element.getScheduleRequestDTO().getScheduleDate());
+      schedule.setEndTime(element.getScheduleRequestDTO().getScheduleEnd());
+      schedule.setStartTime(element.getScheduleRequestDTO().getScheduleStart());
+
       Teacher teacher = new Teacher();
-      teacher.setId(data.get(i).getScheduleRequestDTO().getTeacherId());
-      teacher.setVersion(data.get(i).getScheduleRequestDTO().getTeacherVersion());
+      teacher.setId(element.getScheduleRequestDTO().getTeacherId());
+      teacher.setVersion(element.getScheduleRequestDTO().getTeacherVersion());
       schedule.setTeacher(teacher);
+
       Module module = new Module();
       module.setSchedule(schedule);
-      Course course = new Course();
-      course.setId(data.get(i).getCourseId());
-      course.setVersion(data.get(i).getCourseVersion());
-      module.setCourse(course);
-      SubjectCategory subject = new SubjectCategory();
-      subject.setId(data.get(i).getSubjectId());
-      subject.setVersion(data.get(i).getSubjectVersion());
-      module.setSubject(subject);
-      module.setCode(data.get(i).getModuleCode());
+      module.setCode(element.getModuleCode());
       module.setCreatedAt(LocalDateTime.now());
-      module.setCreatedBy(data.get(i).getModuleCreatedBy());
-      module.setDescription(data.get(i).getModuleDescription());
-      module.setTitle(data.get(i).getModuleTittle());
+      module.setCreatedBy(element.getModuleCreatedBy());
+      module.setDescription(element.getModuleDescription());
+      module.setTitle(element.getModuleTittle());
+
+      Course course = new Course();
+      course.setId(element.getCourseId());
+      course.setVersion(element.getCourseVersion());
+      module.setCourse(course);
+
+      SubjectCategory subject = new SubjectCategory();
+      subject.setId(element.getSubjectId());
+      subject.setVersion(element.getSubjectVersion());
+      module.setSubject(subject);
+
       try {
         begin();
         scheduleService.saveSchedule(schedule);
@@ -122,29 +142,48 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public void updateModule(UpdateModuleDTO data) throws Exception {
     validationUtil.validate(data);
+    Optional.ofNullable(moduleDao.getModuleById(data.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id module", data.getId()));
+    Optional.ofNullable(teacherService.findTeacherById(data.getScheduleRequestDTO().getTeacherId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id teacher",
+            data.getScheduleRequestDTO().getTeacherId()));
+    Schedule scheduleDb =
+        Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
+            .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
+    Optional.ofNullable(subjectCategoryService.getById(data.getSubjectId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id subject", data.getSubjectId()));
+    // Optional.ofNullable(courseDao.getCourseById(course.getId()))
+    // .orElseThrow(() -> new DataIsNotExistsException("id course", course.getId()));
     Schedule schedule = new Schedule();
+    schedule.setId(data.getIdSchedule());
+    schedule.setCode(scheduleDb.getCode());
     schedule.setCreatedBy(data.getScheduleRequestDTO().getScheduleCreatedBy());
     schedule.setDate(data.getScheduleRequestDTO().getScheduleDate());
     schedule.setEndTime(data.getScheduleRequestDTO().getScheduleEnd());
     schedule.setStartTime(data.getScheduleRequestDTO().getScheduleStart());
+
     Teacher teacher = new Teacher();
     teacher.setId(data.getScheduleRequestDTO().getTeacherId());
     teacher.setVersion(data.getScheduleRequestDTO().getTeacherVersion());
     schedule.setTeacher(teacher);
+
     Module module = new Module();
     module.setSchedule(schedule);
+    module.setCode(data.getModuleCode());
+    module.setId(data.getId());
+    module.setUpdatedBy(data.getUpdatedBy());
+
     Course course = new Course();
     course.setId(data.getCourseId());
     course.setVersion(data.getCourseVersion());
     module.setCourse(course);
+
     SubjectCategory subject = new SubjectCategory();
     subject.setId(data.getSubjectId());
     subject.setVersion(data.getSubjectVersion());
     module.setSubject(subject);
-    module.setCode(data.getModuleCode());
-    module.setId(data.getId());
-    module.setUpdatedBy(data.getUpdatedBy());
-    setupUpdatedValue(module, () -> moduleDao.getModuleById(data.getId()));
+
+    scheduleService.updateSchedule(schedule);
     moduleDao.updateModule(module, null);
   }
 
@@ -178,8 +217,49 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
+  @Override
   public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
-    return courseService.getDetailCourse(id);
+    DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id);
+    List<ModuleResponseDTO> listModule = getModuleListByIdCourse(id);
+    detailCourse.setListModule(listModule);
+    return detailCourse;
+  }
+
+  @Override
+  public void saveLesson(List<MultipartFile> multiPartFiles, String content, String idModule)
+      throws Exception {
+    if (content == null) {
+      throw new IllegalRequestException("Content cannot be empty!");
+    }
+    if (idModule == null) {
+      throw new IllegalRequestException("Id module cannot be empty!");
+    }
+    Optional.ofNullable(moduleDao.getModuleById(idModule))
+        .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
+    for (MultipartFile file : multiPartFiles) {
+      FileResponseDto fileResponseDTO = fileService.createFile(file, content);
+      begin();
+      moduleDao.insertLesson(idModule, fileResponseDTO.getId());
+      commit();
+    }
+  }
+
+  @Override
+  public List<File> getLessonFile(String idModule) throws Exception {
+    validateNullId(idModule, "module id");
+    Optional.ofNullable(moduleDao.getModuleById(idModule))
+        .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
+    System.out.println(idModule);
+    List<String> idFile = moduleDao.getLessonByIdModule(idModule);
+    if (idFile.isEmpty()) {
+      throw new DataIsNotExistsException("There is no file yet");
+    }
+    List<File> lessonFiles = new ArrayList<>();
+    for (String id : idFile) {
+      File file = fileService.getFileById(id);
+      lessonFiles.add(file);
+    }
+    return lessonFiles;
   }
 
   private void validateNullId(String id, String msg) throws Exception {

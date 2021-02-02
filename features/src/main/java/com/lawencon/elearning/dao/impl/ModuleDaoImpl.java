@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
@@ -40,7 +41,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
 
   @Override
   public void updateModule(Module data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
   @Override
@@ -71,6 +72,19 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   public void insertLesson(String idModule, String idFile) throws Exception {
     createNativeQuery("INSERT INTO module_files VALUES (?1, ?2)").setParameter(1, idModule)
         .setParameter(2, idFile).executeUpdate();
+  }
+
+  @Override
+  public List<String> getLessonByIdModule(String idModule) throws Exception {
+    String query = ("SELECT id_file, id_module FROM module_files WHERE id_module = ?");
+    List<?> listObj = createNativeQuery(query).setParameter(1, idModule).getResultList();
+    List<String> listIdFile = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      String idFile = (String) objArr[0];
+      listIdFile.add(idFile);
+    });
+    return listIdFile;
   }
 
 }

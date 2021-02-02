@@ -50,7 +50,8 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
     subject.setDescription(data.getDescription());
     subject.setSubjectName(data.getSubjectName());
     subject.setUpdatedBy(data.getUpdatedBy());
-    setupUpdatedValue(subject, () -> subjectCategoryDao.getById(data.getId()));
+    setupUpdatedValue(subject, () -> Optional.ofNullable(subjectCategoryDao.getById(data.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id", data.getId())));
     subjectCategoryDao.updateSubject(subject, before);
   }
 

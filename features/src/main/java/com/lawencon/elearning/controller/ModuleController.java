@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
+import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -55,4 +58,19 @@ public class ModuleController {
     moduleService.updateModule(data);
     return WebResponseUtils.createWebResponse("Update data success", HttpStatus.OK);
   }
+  
+  @PostMapping("/lesson")
+  public ResponseEntity<?> insertLesson(@RequestPart("file") List<MultipartFile> multiPartFiles,
+      @RequestPart("content") String content, @RequestPart("idModule") String idModule)
+      throws Exception {
+    moduleService.saveLesson(multiPartFiles, content, idModule);
+    return WebResponseUtils.createWebResponse("Insert lesson success", HttpStatus.OK);
+  }
+  
+  @GetMapping("lesson/{idModule}")
+  public ResponseEntity<?> getLesson(@PathVariable("idModule") String idModule) throws Exception {
+    List<File> fileLesson = moduleService.getLessonFile(idModule);
+    return WebResponseUtils.createWebResponse(fileLesson, HttpStatus.OK);
+  }
+
 }

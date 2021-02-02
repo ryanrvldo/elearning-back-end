@@ -2,7 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
-import com.lawencon.elearning.model.Attendance;
+import com.lawencon.elearning.dto.AttendanceResponseDTO;
 
 /**
  * 
@@ -11,7 +11,7 @@ import com.lawencon.elearning.model.Attendance;
  */
 public interface AttendanceService {
 
-  List<Attendance> getAttendanceList(String idModule) throws Exception;
+  List<AttendanceResponseDTO> getAttendanceList(String idCourse, String idModule) throws Exception;
 
   void createAttendance(AttendanceRequestDTO data) throws Exception;
 

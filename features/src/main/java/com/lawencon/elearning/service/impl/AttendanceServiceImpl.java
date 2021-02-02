@@ -2,18 +2,24 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
+import com.lawencon.elearning.dto.AttendanceResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Attendance;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.AttendanceService;
+import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.ModuleService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -31,41 +37,70 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Autowired
   private ValidationUtil validationUtil;
 
+  @Autowired
+  private ModuleService moduleService;
+
+  @Autowired
+  private CourseService courseService;
+
+  @Autowired
+  private UserService userService;
+
   @Override
-  public List<Attendance> getAttendanceList(String idModule) throws Exception {
+  public List<AttendanceResponseDTO> getAttendanceList(String idCourse, String idModule)
+      throws Exception {
     validateNullId(idModule, "module id");
-    List<Attendance> listResult = attendanceDao.getAttendanceList(idModule);
-    if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("There is no attendance yet");
+    validateNullId(idCourse, "course id");
+    Optional.ofNullable(moduleService.getModuleById(idModule))
+        .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
+    // Optional.ofNullable(courseService.getById(idCourse))
+    // .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
+    List<Attendance> listResult = attendanceDao.getAttendanceList(idCourse, idModule);
+    List<AttendanceResponseDTO> listDTO = new ArrayList<>();
+    for (Attendance attendance : listResult) {
+      AttendanceResponseDTO attendanceDTO = new AttendanceResponseDTO();
+      attendanceDTO.setAttendanceId(attendance.getId());
+      attendanceDTO.setFirstName(attendance.getStudent().getUser().getFirstName());
+      attendanceDTO.setLastName(attendance.getStudent().getUser().getLastName());
+      attendanceDTO.setAttendanceTime(attendance.getCreatedAt());
+      attendanceDTO.setAttendanceIsVerified(attendance.getIsVerified());
+      attendanceDTO.setAttendanceVersion(attendance.getVersion());
+      listDTO.add(attendanceDTO);
     }
-    return listResult;
+    return listDTO;
   }
 
   @Override
   public void createAttendance(AttendanceRequestDTO attendanceDTO) throws Exception {
     validationUtil.validate(attendanceDTO);
-    Student student = new Student();
-    student.setId(attendanceDTO.getIdStudent());
-    student.setVersion(attendanceDTO.getStudentVersion());
     Attendance data = new Attendance();
-    data.setStudent(student);
-    Module module = new Module();
-    module.setId(attendanceDTO.getIdModule());
-    module.setVersion(attendanceDTO.getModuleVersion());
-    data.setModule(module);
-    data.setCreatedBy(student.getId());
     data.setCreatedAt(LocalDateTime.now());
     data.setIsVerified(false);
     data.setTrxNumber(TransactionNumberUtils.generateAttendanceTrxNumber());
     data.setTrxDate(LocalDate.now());
+
+    Student student = new Student();
+    student.setId(attendanceDTO.getIdStudent());
+    student.setVersion(attendanceDTO.getStudentVersion());
+    data.setStudent(student);
+    data.setCreatedBy(student.getId());
+
+    Module module = new Module();
+    module.setId(attendanceDTO.getIdModule());
+    module.setVersion(attendanceDTO.getModuleVersion());
+    data.setModule(module);
+
     attendanceDao.createAttendance(data, null);
   }
 
   @Override
   public void verifyAttendance(String id, String userId) throws Exception {
-    validateNullId(id, "id");
+    validateNullId(id, "attendance id");
     validateNullId(userId, "user id");
-    Attendance attendance = attendanceDao.getAttendanceById(id);
+    Attendance attendance = Optional.ofNullable(attendanceDao.getAttendanceById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("attendance id", id));
+    Optional.ofNullable(userService.getById(userId))
+        .orElseThrow(() -> new DataIsNotExistsException("user id", userId));
     attendance.setIsVerified(true);
     attendance.setUpdatedBy(userId);
     attendance.setUpdatedAt(LocalDateTime.now());

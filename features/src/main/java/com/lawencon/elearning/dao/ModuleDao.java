@@ -26,4 +26,6 @@ public interface ModuleDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
+  List<String> getLessonByIdModule(String idModule) throws Exception;
+
 }
