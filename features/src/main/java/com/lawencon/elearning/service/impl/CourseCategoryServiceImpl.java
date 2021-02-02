@@ -1,5 +1,6 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -7,6 +8,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO;
+import com.lawencon.elearning.dto.course.category.CourseCategoryResponseDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.CourseCategory;
@@ -26,12 +28,23 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   private ValidationUtil validateUtil;
 
   @Override
-  public List<CourseCategory> getListCourseCategory() throws Exception {
+  public List<CourseCategoryResponseDTO> getListCourseCategory() throws Exception {
     List<CourseCategory> courseCategories = courseCategoryDao.getListCourseCategory();
     if (courseCategories == null) {
       throw new DataIsNotExistsException("Data is not exist");
     }
-    return courseCategories;
+
+    List<CourseCategoryResponseDTO> courseCategoryResponse = new ArrayList<>();
+    for (CourseCategory courseCategory : courseCategories) {
+      CourseCategoryResponseDTO response = new CourseCategoryResponseDTO();
+      response.setId(courseCategory.getId());
+      response.setCode(courseCategory.getCode());
+      response.setName(courseCategory.getName());
+      response.setVersion(courseCategory.getVersion());
+      courseCategoryResponse.add(response);
+    }
+
+    return courseCategoryResponse;
   }
 
   @Override

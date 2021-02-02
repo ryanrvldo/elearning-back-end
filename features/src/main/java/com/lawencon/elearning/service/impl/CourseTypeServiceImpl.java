@@ -1,11 +1,13 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseTypeDao;
 import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
+import com.lawencon.elearning.dto.course.type.CourseTypeResponseDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.CourseType;
@@ -25,12 +27,24 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   private ValidationUtil validateUtil;
 
   @Override
-  public List<CourseType> getListCourseType() throws Exception {
+  public List<CourseTypeResponseDTO> getListCourseType() throws Exception {
     List<CourseType> courseTypes = courseTypeDao.getListCourseType();
+
     if (courseTypes == null) {
       throw new DataIsNotExistsException("Data is not exist");
     }
-    return courseTypes;
+    List<CourseTypeResponseDTO> responses = new ArrayList<CourseTypeResponseDTO>();
+
+    for (CourseType ct : courseTypes) {
+      CourseTypeResponseDTO response = new CourseTypeResponseDTO();
+      response.setId(ct.getId());
+      response.setCode(ct.getCode());
+      response.setName(ct.getName());
+      response.setVersion(ct.getVersion());
+      responses.add(response);
+    }
+
+    return responses;
   }
 
   @Override

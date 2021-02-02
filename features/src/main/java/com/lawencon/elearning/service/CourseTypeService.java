@@ -2,8 +2,8 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
+import com.lawencon.elearning.dto.course.type.CourseTypeResponseDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
-import com.lawencon.elearning.model.CourseType;
 
 /**
  * @author : Galih Dika Permana
@@ -11,7 +11,7 @@ import com.lawencon.elearning.model.CourseType;
 
 public interface CourseTypeService {
 
-  List<CourseType> getListCourseType() throws Exception;
+  List<CourseTypeResponseDTO> getListCourseType() throws Exception;
 
   void insertCourseType(CourseTypeCreateRequestDTO courseType) throws Exception;
 

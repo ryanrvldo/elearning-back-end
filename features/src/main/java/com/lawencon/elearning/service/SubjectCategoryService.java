@@ -3,8 +3,8 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
+import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
 import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
-import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.util.Callback;
 
 /**
@@ -14,7 +14,7 @@ import com.lawencon.util.Callback;
  */
 public interface SubjectCategoryService {
 
-  List<SubjectCategory> getAllSubject() throws Exception;
+  List<SubjectCategoryResponseDTO> getAllSubject() throws Exception;
 
   void updateSubject(UpdateSubjectCategoryRequestDTO data, Callback before) throws Exception;
 
@@ -24,6 +24,6 @@ public interface SubjectCategoryService {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  SubjectCategory getById(String id) throws Exception;
+  SubjectCategoryResponseDTO getById(String id) throws Exception;
 
 }

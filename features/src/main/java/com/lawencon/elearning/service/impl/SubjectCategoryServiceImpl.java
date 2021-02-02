@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
+import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
 import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
@@ -32,12 +34,23 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   private ValidationUtil validationUtil;
 
   @Override
-  public List<SubjectCategory> getAllSubject() throws Exception {
+  public List<SubjectCategoryResponseDTO> getAllSubject() throws Exception {
     List<SubjectCategory> listResult =  subjectCategoryDao.getAllSubject();
     if (listResult.isEmpty()) {
       throw new DataIsNotExistsException("No Subject Category Yet");
     }
-    return listResult;
+
+    List<SubjectCategoryResponseDTO> subjectResponses = new ArrayList<SubjectCategoryResponseDTO>();
+
+    for (SubjectCategory subject : listResult) {
+      SubjectCategoryResponseDTO subjectResponse = new SubjectCategoryResponseDTO();
+      subjectResponse.setId(subject.getId());
+      subjectResponse.setCode(subject.getCode());
+      subjectResponse.setName(subject.getSubjectName());
+      subjectResponse.setVersion(subject.getVersion());
+      subjectResponses.add(subjectResponse);
+    }
+    return subjectResponses;
   }
 
   @Override
@@ -91,10 +104,18 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public SubjectCategory getById(String id) throws Exception {
+  public SubjectCategoryResponseDTO getById(String id) throws Exception {
     validateNullId(id, "id");
-    return Optional.ofNullable(subjectCategoryDao.getById(id))
+    SubjectCategory subject = Optional.ofNullable(subjectCategoryDao.getById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
+
+    SubjectCategoryResponseDTO subjectResponse = new SubjectCategoryResponseDTO();
+    subjectResponse.setId(subject.getId());
+    subjectResponse.setCode(subject.getCode());
+    subjectResponse.setName(subject.getSubjectName());
+    subjectResponse.setVersion(subject.getVersion());
+    return subjectResponse;
+
   }
 
   private void validateNullId(String id, String msg) throws Exception {

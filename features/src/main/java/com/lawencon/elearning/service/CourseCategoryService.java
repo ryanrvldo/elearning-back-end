@@ -3,8 +3,8 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO;
+import com.lawencon.elearning.dto.course.category.CourseCategoryResponseDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
-import com.lawencon.elearning.model.CourseCategory;
 
 /**
  * @author : Galih Dika Permana
@@ -12,7 +12,7 @@ import com.lawencon.elearning.model.CourseCategory;
 
 public interface CourseCategoryService {
 
-  List<CourseCategory> getListCourseCategory() throws Exception;
+  List<CourseCategoryResponseDTO> getListCourseCategory() throws Exception;
 
   void insertCourseCategory(CourseCategoryCreateRequestDTO courseCategory) throws Exception;
 
