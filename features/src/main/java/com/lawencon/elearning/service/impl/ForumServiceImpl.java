@@ -94,11 +94,15 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   }
 
   @Override
-  public void deleteForum(String id) throws Exception {
+  public void deleteForum(String id, String userId) throws Exception {
     validateNullId(id, "Id");
-    begin();
-    forumDao.deleteForum(id);
-    commit();
+    if (forumDao.checkByForumIdAndUserId(id, userId) > 0) {
+      begin();
+      forumDao.deleteForum(id);
+      commit();
+    } else {
+      throw new IllegalRequestException("User Id", userId);
+    }
 
   }
 

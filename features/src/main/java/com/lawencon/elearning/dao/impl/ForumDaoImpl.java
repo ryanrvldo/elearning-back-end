@@ -88,6 +88,14 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
     deleteById(id);
   }
 
+  @Override
+  public Long checkByForumIdAndUserId(String id, String userId) throws Exception {
+    String sql =
+        buildQueryOf("SELECT COUNT(*) FROM tb_r_forums WHERE id=?1 AND created_by=?2").toString();
+    return Long.valueOf(createNativeQuery(sql).setParameter(1, id).setParameter(2, userId)
+        .getSingleResult().toString());
+  }
+
 
 
 }

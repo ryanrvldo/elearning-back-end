@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.forum.ForumRequestDTO;
 import com.lawencon.elearning.service.ForumService;
@@ -37,9 +38,10 @@ public class ForumController {
     return WebResponseUtils.createWebResponse("Add post success!", HttpStatus.CREATED);
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<?> deleteDiscussion(@PathVariable("id") String id) throws Exception {
-    forumService.deleteForum(id);
+  @DeleteMapping
+  public ResponseEntity<?> deleteDiscussion(@RequestParam("id") String id,
+      @RequestParam("userId") String userId) throws Exception {
+    forumService.deleteForum(id, userId);
     return WebResponseUtils.createWebResponse("Post has been removed", HttpStatus.OK);
   }
 }

@@ -15,7 +15,6 @@ import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
-import com.lawencon.elearning.dto.teacher.TeacherResponseDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
@@ -141,15 +140,16 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
     List<ExperienceResponseDto> experiences = experienceService.getAllByTeacherId(id);
 
-    TeacherResponseDTO teacherResponse = new TeacherResponseDTO(teacher.getUser().getFirstName(),
-        teacher.getUser().getLastName(), teacher.getUser().getEmail(), teacher.getCreatedAt(),
-        teacher.getGender(), null == teacher.getUser().getUserPhoto().getId() ? ""
-            : teacher.getUser().getUserPhoto().getId());
-
     TeacherProfileDTO teacherProfile = new TeacherProfileDTO();
-    teacherProfile.setTeacher(teacherResponse);
+    teacherProfile.setId(id);
+    teacherProfile.setFirstName(teacher.getUser().getFirstName());
+    teacherProfile.setLastName(teacher.getUser().getLastName());
+    teacherProfile.setEmail(teacher.getUser().getEmail());
+    teacherProfile.setCreatedAt(teacher.getCreatedAt());
+    teacherProfile.setGender(teacher.getGender());
+    teacherProfile.setPhotoId(null == teacher.getUser().getUserPhoto().getId() ? ""
+        : teacher.getUser().getUserPhoto().getId());
     teacherProfile.setExperiences(experiences);
-
     return teacherProfile;
   }
 

@@ -17,7 +17,7 @@ public interface ForumService {
 
   void updateForum(Forum data) throws Exception;
 
-  void deleteForum(String id) throws Exception;
+  void deleteForum(String id, String userId) throws Exception;
 
   Forum findForumById(String id) throws Exception;
 

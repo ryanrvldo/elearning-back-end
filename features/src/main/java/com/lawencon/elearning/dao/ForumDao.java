@@ -18,8 +18,9 @@ public interface ForumDao {
 
   void deleteForum(String id) throws Exception;
 
-
   Forum findForumById(String id) throws Exception;
 
   List<Forum> getByModuleId(String moduleId) throws Exception;
+
+  Long checkByForumIdAndUserId(String id, String userId) throws Exception;
 }
