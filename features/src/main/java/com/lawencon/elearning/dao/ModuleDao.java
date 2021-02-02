@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.util.Callback;
 /**
@@ -28,6 +29,6 @@ public interface ModuleDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  List<String> getLessonByIdModule(String idModule) throws Exception;
+  List<FileResponseDto> getLessonByIdModule(String idModule) throws Exception;
 
 }

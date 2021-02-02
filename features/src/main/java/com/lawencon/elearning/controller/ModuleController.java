@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
-import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -69,7 +69,7 @@ public class ModuleController {
   
   @GetMapping("lesson/{idModule}")
   public ResponseEntity<?> getLesson(@PathVariable("idModule") String idModule) throws Exception {
-    List<File> fileLesson = moduleService.getLessonFile(idModule);
+    List<FileResponseDto> fileLesson = moduleService.getLessonFile(idModule);
     return WebResponseUtils.createWebResponse(fileLesson, HttpStatus.OK);
   }
 

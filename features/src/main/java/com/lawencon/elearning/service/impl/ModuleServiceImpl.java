@@ -19,7 +19,6 @@ import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
@@ -82,6 +81,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       moduleDTO.setTittle(listResult.get(i).getTitle());
       moduleDTO.setDescription(listResult.get(i).getDescription());
       moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
+
       ScheduleResponseDTO scheduleDTO = new ScheduleResponseDTO();
       scheduleDTO.setId(listResult.get(i).getSchedule().getId());
       scheduleDTO.setDate(listResult.get(i).getSchedule().getDate());
@@ -152,6 +152,8 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
             .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
     Optional.ofNullable(subjectCategoryService.getById(data.getSubjectId()))
         .orElseThrow(() -> new DataIsNotExistsException("id subject", data.getSubjectId()));
+    Optional.ofNullable(courseService.getCourseById(data.getCourseId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id course", data.getCourseId()));
     Schedule schedule = new Schedule();
     schedule.setId(data.getIdSchedule());
     schedule.setCode(scheduleDb.getCode());
@@ -243,21 +245,13 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public List<File> getLessonFile(String idModule) throws Exception {
+  public List<FileResponseDto> getLessonFile(String idModule) throws Exception {
     validateNullId(idModule, "module id");
     Optional.ofNullable(moduleDao.getModuleById(idModule))
         .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
     System.out.println(idModule);
-    List<String> idFile = moduleDao.getLessonByIdModule(idModule);
-    if (idFile.isEmpty()) {
-      throw new DataIsNotExistsException("There is no file yet");
-    }
-    List<File> lessonFiles = new ArrayList<>();
-    for (String id : idFile) {
-      File file = fileService.getFileById(id);
-      lessonFiles.add(file);
-    }
-    return lessonFiles;
+    List<FileResponseDto> listFileDto = moduleDao.getLessonByIdModule(idModule);
+    return listFileDto;
   }
 
   private void validateNullId(String id, String msg) throws Exception {

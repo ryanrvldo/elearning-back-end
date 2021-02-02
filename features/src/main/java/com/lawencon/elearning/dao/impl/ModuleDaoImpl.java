@@ -1,11 +1,17 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ModuleDao;
+import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Module;
+import com.lawencon.elearning.model.Schedule;
+import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
 
@@ -25,13 +31,36 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   @Override
   public List<Module> getDetailCourse(String idCourse) throws Exception {
     String query = buildQueryOf(
-        "SELECT m.id as module_id, m.code, m.title, m.description, sc.subject_name, s.id as schedule_id, s.schedule_date, s.start_time, s.end_time ",
+        "SELECT m.id as module_id, m.code, m.title, m.description, sc.subject_name, s.id as schedule_id, ",
+        "s.schedule_date, s.start_time, s.end_time ",
         "FROM tb_m_modules m ", "INNER JOIN tb_m_subject_categories sc ON sc.id = m.id_subject ",
         "INNER JOIN tb_m_schedules s ON s.id = m.id_schedule ", "WHERE m.id_course = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, idCourse).getResultList();
-    return HibernateUtils.bMapperList(listObj, Module.class, "id", "code", "title", "description",
-        "subject.subjectName", "schedule.id", "schedule.date", "schedule.startTime",
-        "schedule.endTime");
+    List<Module> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      Module module = new Module();
+      module.setId((String) objArr[0]);
+      module.setCode((String) objArr[1]);
+      module.setTitle((String) objArr[2]);
+      module.setDescription((String) objArr[3]);
+
+      SubjectCategory subject = new SubjectCategory();
+      subject.setSubjectName((String) objArr[4]);
+      module.setSubject(subject);
+
+      Schedule schedule = new Schedule();
+      schedule.setId((String) objArr[5]);
+      Date inDate = (Date) objArr[6];
+      schedule.setDate(inDate.toLocalDate());
+      Time inTime = (Time) objArr[7];
+      schedule.setStartTime(inTime.toLocalTime());
+      inTime = (Time) objArr[8];
+      schedule.setEndTime(inTime.toLocalTime());
+      module.setSchedule(schedule);
+      listResult.add(module);
+    });
+    return listResult;
   }
 
   @Override
@@ -51,7 +80,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-    String query = "UPDATE from tb_m_modules SET is_active = false";
+    String query = "UPDATE tb_m_modules SET is_active = false";
     updateNativeSQL(query, id, userId);
   }
 
@@ -75,16 +104,24 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   }
 
   @Override
-  public List<String> getLessonByIdModule(String idModule) throws Exception {
-    String query = ("SELECT id_file, id_module FROM module_files WHERE id_module = ?");
+  public List<FileResponseDto> getLessonByIdModule(String idModule) throws Exception {
+    String query = buildQueryOf("SELECT f.id, f.name, f.type, f.size, f.content_type, f.version ",
+        "FROM module_files mf ", "INNER JOIN tb_r_files f ON f.id = mf.id_file ",
+        "WHERE id_module = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, idModule).getResultList();
-    List<String> listIdFile = new ArrayList<>();
+    List<FileResponseDto> listFileDto = new ArrayList<>();
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
-      String idFile = (String) objArr[0];
-      listIdFile.add(idFile);
+      FileResponseDto fileDto = new FileResponseDto();
+      fileDto.setId((String) objArr[0]);
+      fileDto.setFileName((String) objArr[1]);
+      fileDto.setFileType(FileType.valueOf(String.valueOf(objArr[2])));
+      fileDto.setSize((Long) objArr[3]);
+      fileDto.setContentType((String) objArr[4]);
+      fileDto.setVersion((Long) objArr[5]);
+      listFileDto.add(fileDto);
     });
-    return listIdFile;
+    return listFileDto;
   }
 
   public List<Module> getListModule() throws Exception {

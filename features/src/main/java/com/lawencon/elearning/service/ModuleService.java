@@ -4,10 +4,10 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
+import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
-import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Module;
 
 /**
@@ -35,6 +35,6 @@ public interface ModuleService {
 
   void saveLesson(List<MultipartFile> multiPartFiles, String content, String body) throws Exception;
 
-  List<File> getLessonFile(String idModule) throws Exception;
+  List<FileResponseDto> getLessonFile(String idModule) throws Exception;
 
 }

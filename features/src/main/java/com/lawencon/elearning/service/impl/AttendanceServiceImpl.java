@@ -2,6 +2,7 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.dto.AttendanceResponseDTO;
+import com.lawencon.elearning.error.AttendanceErrorException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Attendance;
@@ -78,24 +80,33 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Override
   public void createAttendance(AttendanceRequestDTO attendanceDTO) throws Exception {
     validationUtil.validate(attendanceDTO);
-    Attendance data = new Attendance();
-    data.setCreatedAt(LocalDateTime.now());
-    data.setIsVerified(false);
-    data.setTrxNumber(TransactionNumberUtils.generateAttendanceTrxNumber());
-    data.setTrxDate(LocalDate.now());
+    Module moduleDb = moduleService.getModuleByIdCustom(attendanceDTO.getIdModule());
+    if (LocalTime.now().isAfter(moduleDb.getSchedule().getEndTime())
+        && LocalDate.now().isAfter(moduleDb.getSchedule().getDate())) {
+      throw new AttendanceErrorException("You already late");
+    } else if (LocalTime.now().isBefore(moduleDb.getSchedule().getEndTime())
+        && LocalTime.now().isAfter(moduleDb.getSchedule().getStartTime())
+        && LocalDate.now().isEqual(moduleDb.getSchedule().getDate())) {
+      Attendance data = new Attendance();
+      data.setCreatedAt(LocalDateTime.now());
+      data.setIsVerified(false);
+      data.setTrxNumber(TransactionNumberUtils.generateAttendanceTrxNumber());
+      data.setTrxDate(LocalDate.now());
 
-    Student student = new Student();
-    student.setId(attendanceDTO.getIdStudent());
-    student.setVersion(attendanceDTO.getStudentVersion());
-    data.setStudent(student);
-    data.setCreatedBy(student.getId());
+      Student student = new Student();
+      student.setId(attendanceDTO.getIdStudent());
+      student.setVersion(attendanceDTO.getStudentVersion());
+      data.setStudent(student);
+      data.setCreatedBy(student.getId());
 
-    Module module = new Module();
-    module.setId(attendanceDTO.getIdModule());
-    module.setVersion(attendanceDTO.getModuleVersion());
-    data.setModule(module);
-
-    attendanceDao.createAttendance(data, null);
+      Module module = new Module();
+      module.setId(attendanceDTO.getIdModule());
+      module.setVersion(attendanceDTO.getModuleVersion());
+      data.setModule(module);
+      attendanceDao.createAttendance(data, null);
+    } else {
+      throw new AttendanceErrorException("You can't absent");
+    }
   }
 
   @Override

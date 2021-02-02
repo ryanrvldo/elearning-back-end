@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import com.lawencon.elearning.dto.WebResponseDTO;
+import com.lawencon.elearning.error.AttendanceErrorException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -53,6 +54,12 @@ public class ErrorController {
     e.printStackTrace();
     return WebResponseUtils
         .createWebResponse(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(value = {AttendanceErrorException.class})
+  public ResponseEntity<?> internalServerError(AttendanceErrorException e) {
+    e.printStackTrace();
+    return WebResponseUtils.createWebResponse(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
   }
 
 }
