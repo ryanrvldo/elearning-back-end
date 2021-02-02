@@ -1,29 +1,42 @@
 package com.lawencon.elearning.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import com.lawencon.base.BaseServiceImpl;
+import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CourseTypeDao;
+import com.lawencon.elearning.dao.ExperienceDao;
 import com.lawencon.elearning.dao.FileDao;
+import com.lawencon.elearning.dao.ForumDao;
+import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dao.RoleDao;
+import com.lawencon.elearning.dao.ScheduleDao;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dao.UserDao;
+import com.lawencon.elearning.model.Attendance;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
+import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.FileType;
+import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.model.Gender;
+import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Role;
+import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.Teacher;
@@ -34,7 +47,7 @@ import com.lawencon.elearning.model.User;
  *
  * @author Rian Rivaldo
  */
-// @Component
+@Component
 public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner {
 
   @Autowired
@@ -65,6 +78,21 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
   private SubjectCategoryDao subjectCategoryDao;
 
   @Autowired
+  private ExperienceDao experienceDao;
+
+  @Autowired
+  private ScheduleDao scheduleDao;
+
+  @Autowired
+  private AttendanceDao attendanceDao;
+
+  @Autowired
+  private ModuleDao moduleDao;
+
+  @Autowired
+  private ForumDao forumDao;
+
+  @Autowired
   private EncoderUtils encoderUtils;
 
   @Override
@@ -81,6 +109,13 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
     initCourses();
     initStudentCourse();
     initFile();
+    initSubjectCategory();
+    initExperience();
+    initSchedule();
+    initModule();
+    initAttendance();
+    initForum();
+    initModuleFile();
   }
 
   private void initSuperAdmin() throws Exception {
@@ -293,6 +328,115 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       subjectCategory.setCreatedAt(LocalDateTime.now());
       subjectCategory.setCreatedBy(adminUser.getId());
       subjectCategoryDao.addSubject(subjectCategory, null);
+    }
+  }
+
+  private void initExperience() throws Exception {
+    User adminUser = userDao.findByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      Experience experience = new Experience();
+      experience.setTitle("Experience-00" + i);
+      experience.setCreatedBy(adminUser.getId());
+      experience.setCreatedAt(LocalDateTime.now());
+      experience.setDescription("lorem ipsum blabla " + experience.getTitle());
+      experience.setStartDate(LocalDate.now().plusDays(i));
+      experience.setEndDate(LocalDate.now().plusDays(i+25));
+      List<Teacher> teacher = teacherDao.getAllTeachers();
+      experience.setTeacher(teacher.get(i - 1));
+      experienceDao.create(experience);
+    }
+  }
+
+  private void initSchedule() throws Exception{
+    User adminUser = userDao.findByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      Schedule schedule = new Schedule();
+      schedule.setCreatedAt(LocalDateTime.now());
+      schedule.setCreatedBy(adminUser.getId());
+      schedule.setCode("Schedule-00"+i);
+      schedule.setDate(LocalDate.now());
+      schedule.setStartTime(LocalTime.now());
+      schedule.setEndTime(LocalTime.now().plusHours(i+2));
+      List<Teacher> teacher = teacherDao.getAllTeachers();
+      schedule.setTeacher(teacher.get(i - 1));
+      begin();
+      scheduleDao.saveSchedule(schedule, null);
+      commit();
+    }
+  }
+
+  private void initAttendance() throws Exception {
+    User adminUser = userDao.findByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      Attendance attendance = new Attendance();
+      attendance.setCreatedAt(LocalDateTime.now());
+      attendance.setCreatedBy(adminUser.getId());
+      attendance.setTrxNumber("Attendance-00" + i);
+      attendance.setTrxDate(LocalDate.now());
+      attendance.setIsVerified(false);
+      List<Module> module = moduleDao.getListModule();
+      attendance.setModule(module.get(i - 1));
+      List<Student> student = studentDao.findAll();
+      attendance.setStudent(student.get(i - 1));
+      attendanceDao.createAttendance(attendance, null);
+    }
+  }
+
+  private void initForum() throws Exception {
+    User adminUser = userDao.findByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      Forum forum = new Forum();
+      forum.setCreatedAt(LocalDateTime.now());
+      forum.setCreatedBy(adminUser.getId());
+      forum.setTrxDate(LocalDate.now());
+      forum.setTrxNumber("Forum-00" + i);
+      forum.setContent("loremipsum bla bla bla" + forum.getTrxNumber());
+      List<Module> module = moduleDao.getListModule();
+      forum.setModule(module.get(i - 1));
+      if (i % 2 == 0) {
+        User user = userDao.findByUsername("student-00" + i);
+        forum.setUser(user);
+      } else {
+        User user = userDao.findByUsername("teacher-00" + i);
+        forum.setUser(user);
+      }
+      forumDao.saveForum(forum, null);
+    }
+  }
+
+  private void initModule() throws Exception {
+    User adminUser = userDao.findByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      Module module = new Module();
+      module.setCode("Module-00"+i);
+      module.setTitle("Module Title-00" +i);
+      module.setDescription("Lorem Ipsum bla bla bla bla" + module.getTitle());
+      List<Schedule> schedule = scheduleDao.getAllSchedules();
+      module.setSchedule(schedule.get(i - 1));
+      List<Course> course = courseDao.getListCourse();
+      module.setCourse(course.get(i - 1));
+      List<SubjectCategory> subject = subjectCategoryDao.getAllSubject();
+      module.setSubject(subject.get(i - 1));
+      module.setCreatedAt(LocalDateTime.now());
+      module.setCreatedBy(adminUser.getId());
+      // List<File> file = fileDao.getAllFile();
+      // module.setFiles();
+      begin();
+      moduleDao.insertModule(module, null);
+      commit();
+    }
+  }
+
+  private void initModuleFile() throws Exception {
+    List<Module> moduleList = moduleDao.getListModule();
+    List<File> file = fileDao.getAllFile();
+    int totalFile = file.size();
+    Random random = new Random();
+    for (Module module : moduleList) {
+      for (int i = 0; i < totalFile; i++) {
+        moduleDao.updateModule(module,
+            () -> module.getFiles().add(file.get(random.nextInt(totalFile - 1))));
+      }
     }
   }
 

@@ -1,10 +1,11 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.base.BaseDaoImpl;
 import com.lawencon.elearning.dao.FileDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.util.Callback;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -25,6 +26,11 @@ public class FileDaoImpl extends BaseDaoImpl<File> implements FileDao {
   @Override
   public void updateFile(File file, Callback beforeCallback) throws Exception {
     save(file, beforeCallback, null, true, true);
+  }
+
+  @Override
+  public List<File> getAllFile() throws Exception {
+    return getAll();
   }
 
 }

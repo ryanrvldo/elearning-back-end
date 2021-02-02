@@ -10,6 +10,8 @@ import com.lawencon.util.Callback;
  */
 public interface ModuleDao {
 
+  List<Module> getListModule() throws Exception;
+
   Module getModuleById(String id) throws Exception;
 
   Module getModuleByIdCustom(String id) throws Exception;

@@ -87,4 +87,8 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
     return listIdFile;
   }
 
+  public List<Module> getListModule() throws Exception {
+    return getAll();
+  }
+
 }
