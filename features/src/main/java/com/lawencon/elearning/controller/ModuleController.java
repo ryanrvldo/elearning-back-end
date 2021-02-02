@@ -30,7 +30,7 @@ public class ModuleController {
 
   @GetMapping("/course/{id}")
   public ResponseEntity<?> getDetailCourse(@PathVariable("id") String id) throws Exception {
-    return WebResponseUtils.createWebResponse(moduleService.getDetailCourse(id), HttpStatus.OK);
+    return WebResponseUtils.createWebResponse(moduleService.getDetailCourses(id), HttpStatus.OK);
   }
 
   @GetMapping("/{id}")

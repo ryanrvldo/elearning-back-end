@@ -17,6 +17,7 @@ import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
@@ -83,6 +84,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
+    validateNullId(id, "id");
     begin();
     dtlExamDao.updateIsActive(id, userId);
     commit();
@@ -90,17 +92,20 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void insertDetailExam(DetailExam dtlExam, Callback before) throws Exception {
+    validationUtil.validate(dtlExam);
     dtlExamDao.insertDetailExam(dtlExam, null);
   }
 
   @Override
   public void updateDetailExam(DetailExam dtlExam, Callback before) throws Exception {
+    validationUtil.validate(dtlExam);
     setupUpdatedValue(dtlExam, () -> dtlExamDao.getDetailById(dtlExam.getId()));
     dtlExamDao.updateDetailExam(dtlExam, null);
   }
 
   @Override
   public void deleteDetailExam(String id) throws Exception {
+    validateNullId(id, "id");
     begin();
     dtlExamDao.deleteDetailExam(id);
     commit();
@@ -108,6 +113,11 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void updateScoreStudent(String id, Double score, String userId) throws Exception {
+    validateNullId(id, "id");
+    if (score == null) {
+      throw new IllegalRequestException("Data must be input");
+    }
+    validateNullId(userId, "userId");
     begin();
     dtlExamDao.updateScoreStudent(id, score, userId);
     commit();
@@ -169,6 +179,10 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     dtlExamDao.sendStudentExam(detailExam);
   }
 
-
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
+  }
 
 }

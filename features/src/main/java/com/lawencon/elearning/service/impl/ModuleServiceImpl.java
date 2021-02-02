@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
+import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
@@ -19,6 +21,7 @@ import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -39,6 +42,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Autowired
   private ValidationUtil validationUtil;
+
+  @Autowired
+  private CourseService courseService;
 
   @Override
   public Module getModuleById(String id) throws Exception {
@@ -61,10 +67,12 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       moduleDTO.setTittle(listResult.get(i).getTitle());
       moduleDTO.setDescription(listResult.get(i).getDescription());
       moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
-      moduleDTO.setIdSchedule(listResult.get(i).getSchedule().getId());
-      moduleDTO.setScheduleDate(listResult.get(i).getSchedule().getDate());
-      moduleDTO.setStartTime((listResult.get(i).getSchedule().getStartTime()));
-      moduleDTO.setEndTime((listResult.get(i).getSchedule().getEndTime()));
+      ScheduleResponseDTO scheduleDTO = new ScheduleResponseDTO();
+      scheduleDTO.setId(listResult.get(i).getSchedule().getId());
+      scheduleDTO.setDate(listResult.get(i).getSchedule().getDate());
+      scheduleDTO.setStartTime(listResult.get(i).getSchedule().getStartTime());
+      scheduleDTO.setEndTime(listResult.get(i).getSchedule().getEndTime());
+      moduleDTO.setSchedule(scheduleDTO);
       listModuleDTO.add(moduleDTO);
     }
     return listModuleDTO;
@@ -168,6 +176,10 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     validateNullId(id, "id");
     return Optional.ofNullable(moduleDao.getModuleByIdCustom(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
+  }
+
+  public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
+    return courseService.getDetailCourse(id);
   }
 
   private void validateNullId(String id, String msg) throws Exception {

@@ -2,6 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
@@ -28,4 +29,5 @@ public interface ModuleService {
 
   void updateIsActive(String id, String userId) throws Exception;
 
+  DetailCourseResponseDTO getDetailCourses(String id) throws Exception;
 }

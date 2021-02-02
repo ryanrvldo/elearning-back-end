@@ -1,7 +1,6 @@
 package com.lawencon.elearning.dto.module;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
 import lombok.Data;
 
 /**
@@ -14,10 +13,7 @@ public class ModuleResponseDTO {
   private String code;
   private String tittle;
   private String description;
-  private String idSchedule;
-  private LocalDate scheduleDate;
-  private LocalTime startTime;
-  private LocalTime endTime;
   private String subjectName;
+  private ScheduleResponseDTO schedule;
 
 }

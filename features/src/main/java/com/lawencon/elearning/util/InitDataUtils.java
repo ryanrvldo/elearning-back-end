@@ -13,6 +13,7 @@ import com.lawencon.elearning.dao.CourseTypeDao;
 import com.lawencon.elearning.dao.FileDao;
 import com.lawencon.elearning.dao.RoleDao;
 import com.lawencon.elearning.dao.StudentDao;
+import com.lawencon.elearning.dao.SubjectCategoryDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.Course;
@@ -24,6 +25,7 @@ import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
+import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 
@@ -58,6 +60,9 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
 
   @Autowired
   private FileDao fileDao;
+
+  @Autowired
+  private SubjectCategoryDao subjectCategoryDao;
 
   @Autowired
   private EncoderUtils encoderUtils;
@@ -275,6 +280,19 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       file.setType(FileType.ASSIGNMENT);
       file.setSize(5);
       fileDao.create(file);
+    }
+  }
+
+  private void initSubjectCategory() throws Exception {
+    User adminUser = userDao.findByUsername("admin");
+    for (int i = 1; i <= 10; i++) {
+      SubjectCategory subjectCategory = new SubjectCategory();
+      subjectCategory.setCode("CT-00" + i);
+      subjectCategory.setSubjectName("Subject Category-0" + i);
+      subjectCategory.setDescription("lorem ipsum bla bla " + subjectCategory.getCode());
+      subjectCategory.setCreatedAt(LocalDateTime.now());
+      subjectCategory.setCreatedBy(adminUser.getId());
+      subjectCategoryDao.addSubject(subjectCategory, null);
     }
   }
 

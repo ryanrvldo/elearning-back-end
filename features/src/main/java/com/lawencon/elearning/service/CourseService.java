@@ -6,7 +6,7 @@ import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
-import com.lawencon.elearning.dto.module.ModuleResponseDTO;
+import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.model.Course;
 
@@ -36,7 +36,7 @@ public interface CourseService {
 
   void registerCourse(String student, String course) throws Exception;
 
-  List<ModuleResponseDTO> getDetailCourse(String id) throws Exception;
+  DetailCourseResponseDTO getDetailCourse(String id) throws Exception;
 
   List<StudentByCourseResponseDTO> getStudentByCourseId(String id) throws Exception;
 
