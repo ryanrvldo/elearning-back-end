@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.util.Callback;
 
@@ -18,7 +19,7 @@ public interface ExamDao {
 
   Exam findExamById(String moduleId) throws Exception;
 
-  List<Exam> getExamsByModule(String id) throws Exception;
+  List<ExamsModuleResponseDTO> getExamsByModule(String id) throws Exception;
 
   Long getCountData() throws Exception;
 

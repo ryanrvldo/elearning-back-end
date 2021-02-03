@@ -2,7 +2,6 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +78,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
     Exam exam = new Exam();
     exam.setModule(module);
+    exam.setTitle(teacherExam.getTitle());
     exam.setDescription(teacherExam.getDescription());
     exam.setStartTime(teacherExam.getStartTime());
     exam.setEndTime(teacherExam.getEndTime());
@@ -114,28 +114,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   @Override
   public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
     validateNullId(moduleId, "Id Module");
-    List<Exam> exams = Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
+    validateUtil.validateUUID(moduleId);
+    return Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
         () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
-
-    List<ExamsModuleResponseDTO> examsModuleDTO = new ArrayList<ExamsModuleResponseDTO>();
-
-    for (Exam val : exams) {
-      ExamsModuleResponseDTO examModule = new ExamsModuleResponseDTO();
-      examModule.setId(val.getId());
-      examModule.setCode(val.getTrxNumber());
-      examModule.setDescription(val.getDescription());
-      examModule.setType(val.getType());
-      examModule.setStartTime(val.getStartTime());
-      examModule.setEndTime(val.getEndTime());
-      examModule.setFileId(val.getFile().getId());
-      examModule.setFileName(val.getFile().getName());
-
-      examsModuleDTO.add(examModule);
-    }
-
-    return examsModuleDTO;
-
-
   }
 
   @Override

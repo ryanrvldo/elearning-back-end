@@ -17,14 +17,23 @@ import lombok.NoArgsConstructor;
 public class ExamsModuleResponseDTO {
 
   private String id;
+
+  private String title;
+
   private String code;
   private String description;
   private ExamType type;
+
   @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
   private LocalDateTime startTime;
+
   @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
   private LocalDateTime endTime;
+
   private String fileId;
+
+  private Long version;
+
   private String fileName;
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ExamDao;
+import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
@@ -36,8 +37,8 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
   }
 
   @Override
-  public List<Exam> getExamsByModule(String moduleId) throws Exception {
-    String sql2 = buildQueryOf("SELECT tre.id AS exam_id, tre.trx_number , ",
+  public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
+    String sql2 = buildQueryOf("SELECT tre.id AS exam_id, tre.exam_title , tre.trx_number , ",
         "tre.description , tre.\"type\" , tre.start_time , ",
         "tre.end_time, tre.id_file AS file_id, tre.VERSION, ",
         "trf.\"name\" AS file_name FROM tb_r_exams tre ",
@@ -46,9 +47,10 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
     
     List<?> listObj = createNativeQuery(sql2).setParameter(1, moduleId).getResultList();
 
-    List<Exam> listResult = HibernateUtils.bMapperList(listObj, Exam.class, "id", "trxNumber",
+    List<ExamsModuleResponseDTO> listResult =
+        HibernateUtils.bMapperList(listObj, ExamsModuleResponseDTO.class, "id", "title", "code",
         "description",
-        "type", "startTime", "endTime", "file.id", "version", "file.name");
+            "type", "startTime", "endTime", "fileId", "version", "fileName");
 
     return listResult.size() > 0 ? listResult : null;
   }
