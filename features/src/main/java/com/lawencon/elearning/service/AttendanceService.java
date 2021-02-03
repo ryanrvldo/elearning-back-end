@@ -16,4 +16,6 @@ public interface AttendanceService {
   void createAttendance(AttendanceRequestDTO data) throws Exception;
 
   void verifyAttendance(String id, String userId) throws Exception;
+
+  String checkAttendanceStatus(String idModule, String idStudent) throws Exception;
 }

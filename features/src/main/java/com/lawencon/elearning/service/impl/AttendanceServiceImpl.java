@@ -6,8 +6,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -23,6 +21,7 @@ import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.AttendanceService;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ModuleService;
+import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -50,7 +49,8 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Autowired
   private UserService userService;
 
-  private Logger logger = LoggerFactory.getLogger(this.getClass());
+  @Autowired
+  private StudentService studentService;
 
   @Override
   public List<AttendanceResponseDTO> getAttendanceList(String idCourse, String idModule)
@@ -73,14 +73,13 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
       attendanceDTO.setAttendanceVersion(attendance.getVersion());
       listDTO.add(attendanceDTO);
     }
-    logger.info(String.valueOf(listDTO.size()));
     return listDTO;
   }
 
   @Override
   public void createAttendance(AttendanceRequestDTO attendanceDTO) throws Exception {
     validationUtil.validate(attendanceDTO);
-    Module moduleDb = moduleService.getModuleByIdCustom(attendanceDTO.getIdModule());
+    Module moduleDb = moduleService.getModuleById(attendanceDTO.getIdModule());
     if (LocalTime.now().isAfter(moduleDb.getSchedule().getEndTime())
         && LocalDate.now().isAfter(moduleDb.getSchedule().getDate())) {
       throw new AttendanceErrorException("You already late");
@@ -93,15 +92,16 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
       data.setTrxNumber(TransactionNumberUtils.generateAttendanceTrxNumber());
       data.setTrxDate(LocalDate.now());
 
+      Student studentDb = studentService.getStudentById(attendanceDTO.getIdStudent());
       Student student = new Student();
       student.setId(attendanceDTO.getIdStudent());
-      student.setVersion(attendanceDTO.getStudentVersion());
+      student.setVersion(studentDb.getVersion());
       data.setStudent(student);
       data.setCreatedBy(student.getId());
 
       Module module = new Module();
       module.setId(attendanceDTO.getIdModule());
-      module.setVersion(attendanceDTO.getModuleVersion());
+      module.setVersion(moduleDb.getVersion());
       data.setModule(module);
       attendanceDao.createAttendance(data, null);
     } else {
@@ -127,6 +127,28 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException(msg, id);
     }
+  }
+
+  @Override
+  public String checkAttendanceStatus(String idModule, String idStudent) throws Exception {
+    validateNullId(idModule, "module id");
+    validateNullId(idStudent, "student id");
+    Optional.ofNullable(studentService.getStudentById(idStudent))
+        .orElseThrow(() -> new DataIsNotExistsException("student id", idStudent));
+    Optional.ofNullable(moduleService.getModuleById(idModule))
+        .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
+    Attendance attendance = attendanceDao.checkAttendanceStatus(idModule, idStudent);
+    System.out.println(attendance);
+    if (null == attendance) {
+      return "0";
+    } else {
+      if (attendance.getIsVerified() == false) {
+        return "1";
+      } else if (attendance.getIsVerified() == true) {
+        return "2";
+      }
+    }
+    return "0";
   }
 
 }

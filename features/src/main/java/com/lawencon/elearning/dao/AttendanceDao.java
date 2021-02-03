@@ -19,4 +19,6 @@ public interface AttendanceDao {
 
   void verifyAttendance(Attendance data, Callback before) throws Exception;
 
+  Attendance checkAttendanceStatus(String idModule, String idStudent) throws Exception;
+
 }

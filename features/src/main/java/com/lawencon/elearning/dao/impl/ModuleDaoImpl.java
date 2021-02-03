@@ -116,9 +116,9 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
       fileDto.setId((String) objArr[0]);
       fileDto.setFileName((String) objArr[1]);
       fileDto.setFileType(FileType.valueOf(String.valueOf(objArr[2])));
-      fileDto.setSize((Long) objArr[3]);
+      fileDto.setSize(Long.valueOf(objArr[3].toString()));
       fileDto.setContentType((String) objArr[4]);
-      fileDto.setVersion((Long) objArr[5]);
+      fileDto.setVersion(Long.valueOf(objArr[5].toString()));
       listFileDto.add(fileDto);
     });
     return listFileDto;

@@ -20,8 +20,23 @@ import com.lawencon.elearning.util.WebResponseUtils;
 @RestController
 @RequestMapping("/attendance")
 public class AttendanceController {
+
   @Autowired
   private AttendanceService attendanceService;
+
+  @GetMapping("/status")
+  public ResponseEntity<?> checkAttendanceStatus(@RequestParam("idModule") String idModule,
+      @RequestParam("idStudent") String idStudent) throws Exception {
+    return WebResponseUtils.createWebResponse(
+        attendanceService.checkAttendanceStatus(idModule, idStudent), HttpStatus.OK);
+  }
+
+  @GetMapping
+  public ResponseEntity<?> getListAttendance(@RequestParam("idCourse") String idCourse,
+      @RequestParam("idModule") String idModule) throws Exception {
+    return WebResponseUtils
+        .createWebResponse(attendanceService.getAttendanceList(idCourse, idModule), HttpStatus.OK);
+  }
 
   @PostMapping("/student")
   public ResponseEntity<?> createAttendance(@RequestBody AttendanceRequestDTO body)
@@ -35,14 +50,6 @@ public class AttendanceController {
       @RequestParam("userId") String userId) throws Exception {
     attendanceService.verifyAttendance(id, userId);
     return WebResponseUtils.createWebResponse("Verify data success", HttpStatus.OK);
-  }
-
-  @GetMapping
-  public ResponseEntity<?> getListAttendance(@RequestParam("idCourse") String idCourse,
-      @RequestParam("idModule") String idModule) throws Exception {
-    return WebResponseUtils
-        .createWebResponse(attendanceService.getAttendanceList(idCourse, idModule),
-        HttpStatus.OK);
   }
 
 }

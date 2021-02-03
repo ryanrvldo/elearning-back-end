@@ -69,4 +69,22 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
     return getById(id);
   }
 
+  @Override
+  public Attendance checkAttendanceStatus(String idModule, String idStudent) throws Exception {
+    String sql = buildQueryOf("SELECT a.is_verified, a.id ", "FROM tb_m_students s ",
+        "INNER JOIN tb_r_attendances a ON a.id_student = s.id ",
+        "WHERE s.id = ? AND a.id_module = ?");
+    List<?> listObj =
+        createNativeQuery(sql).setParameter(1, idStudent).setParameter(2, idModule).getResultList();
+    List<Attendance> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      Attendance att = new Attendance();
+      att.setIsVerified((boolean) objArr[0]);
+      att.setId((String) objArr[1]);
+      listResult.add(att);
+    });
+    return getResultModel(listResult);
+  }
+
 }
