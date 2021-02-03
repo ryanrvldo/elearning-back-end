@@ -135,7 +135,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
       submission.setId(val.getId());
       submission.setCode(val.getTrxNumber());
       submission.setFirstName(val.getStudent().getUser().getFirstName());
-      submission.setFirstName(val.getStudent().getUser().getLastName());
+      submission.setLastName(val.getStudent().getUser().getLastName());
       submission.setGrade(val.getGrade());
       submission.setSubmittedDate(val.getTrxDate());
 
@@ -154,6 +154,8 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
             .orElseThrow(() -> new DataIsNotExistsException("Id file not found!"));
     StudentExamDTO studentExamDTO = new ObjectMapper().readValue(body, StudentExamDTO.class);
     validationUtil.validate(studentExamDTO);
+    validationUtil.validateUUID(studentExamDTO.getExamId());
+    validationUtil.validateUUID(studentExamDTO.getStudentId());
 
     Exam exam = new Exam();
     exam.setId(studentExamDTO.getExamId());
@@ -167,7 +169,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     file.setId(fileResponseDTO.getId());
 
     DetailExam detailExam = new DetailExam();
-    detailExam.setCreatedBy(studentExamDTO.getCreatedBy());
+    detailExam.setCreatedBy(studentExamDTO.getStudentId());
     detailExam.setCreatedAt(LocalDateTime.now());
     detailExam.setTrxDate(LocalDate.now());
     detailExam.setTrxNumber(TransactionNumberUtils.generateDtlExamTrxNumber());

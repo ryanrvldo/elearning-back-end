@@ -68,6 +68,10 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     TeacherExamRequestDTO teacherExam =
         obj.readValue(body, TeacherExamRequestDTO.class);
     validateUtil.validate(teacherExam);
+    validateUtil.validateUUID(teacherExam.getModuleId());
+    if (teacherExam.getStartTime().compareTo(teacherExam.getEndTime()) > 0) {
+      throw new IllegalRequestException("End time cannot be greather than start Time");
+    }
 
     Module module = new Module();
     module.setId(teacherExam.getModuleId());
@@ -124,6 +128,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       examModule.setStartTime(val.getStartTime());
       examModule.setEndTime(val.getEndTime());
       examModule.setFileId(val.getFile().getId());
+      examModule.setFileName(val.getFile().getName());
 
       examsModuleDTO.add(examModule);
     }

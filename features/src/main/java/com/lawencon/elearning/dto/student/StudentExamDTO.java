@@ -25,6 +25,4 @@ public class StudentExamDTO {
   @Min(0)
   private Long studentVersion;
 
-  @NotBlank
-  private String createdBy;
 }
