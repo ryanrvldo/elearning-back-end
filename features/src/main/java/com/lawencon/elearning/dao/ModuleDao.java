@@ -2,6 +2,7 @@ package com.lawencon.elearning.dao;
 
 import java.util.List;
 import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.util.Callback;
 /**
@@ -18,6 +19,9 @@ public interface ModuleDao {
   Module getModuleByIdCustom(String id) throws Exception;
 
   List<Module> getDetailCourse(String idCourse) throws Exception;
+
+  List<ModuleResponseDTO> getDetailCourseStudent(String idCourse, String idStudent)
+      throws Exception;
 
   void insertModule(Module data, Callback before) throws Exception;
 

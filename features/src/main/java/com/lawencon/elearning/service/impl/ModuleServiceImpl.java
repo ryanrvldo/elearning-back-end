@@ -2,6 +2,8 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
-import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
@@ -68,29 +69,49 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse) throws Exception {
-    List<Module> listResult = moduleDao.getDetailCourse(idCourse);
-    if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("There is no module yet");
-    }
-    List<ModuleResponseDTO> listModuleDTO = new ArrayList<>();
-    for (int i = 0; i < listResult.size(); i++) {
-      ModuleResponseDTO moduleDTO = new ModuleResponseDTO();
-      moduleDTO.setId(listResult.get(i).getId());
-      moduleDTO.setCode(listResult.get(i).getCode());
-      moduleDTO.setTittle(listResult.get(i).getTitle());
-      moduleDTO.setDescription(listResult.get(i).getDescription());
-      moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
+  public List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse, String idStudent)
+      throws Exception {
+    if (idStudent == null || idStudent.trim().isEmpty()) {
+      List<Module> listResult = moduleDao.getDetailCourse(idCourse);
+      if (listResult.isEmpty()) {
+        throw new DataIsNotExistsException("There is no module yet");
+      }
+      List<ModuleResponseDTO> listModuleDTO = new ArrayList<>();
+      for (int i = 0; i < listResult.size(); i++) {
+        ModuleResponseDTO moduleDTO = new ModuleResponseDTO();
+        moduleDTO.setId(listResult.get(i).getId());
+        moduleDTO.setCode(listResult.get(i).getCode());
+        moduleDTO.setTittle(listResult.get(i).getTitle());
+        moduleDTO.setDescription(listResult.get(i).getDescription());
+        moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
 
-      ScheduleResponseDTO scheduleDTO = new ScheduleResponseDTO();
-      scheduleDTO.setId(listResult.get(i).getSchedule().getId());
-      scheduleDTO.setDate(listResult.get(i).getSchedule().getDate());
-      scheduleDTO.setStartTime(listResult.get(i).getSchedule().getStartTime());
-      scheduleDTO.setEndTime(listResult.get(i).getSchedule().getEndTime());
-      moduleDTO.setSchedule(scheduleDTO);
-      listModuleDTO.add(moduleDTO);
+        ScheduleResponseDTO scheduleDTO = new ScheduleResponseDTO();
+        scheduleDTO.setId(listResult.get(i).getSchedule().getId());
+        scheduleDTO.setDate(listResult.get(i).getSchedule().getDate());
+        scheduleDTO.setStartTime(listResult.get(i).getSchedule().getStartTime());
+        scheduleDTO.setEndTime(listResult.get(i).getSchedule().getEndTime());
+        moduleDTO.setSchedule(scheduleDTO);
+        listModuleDTO.add(moduleDTO);
+      }
+      Collections.sort(listModuleDTO, new Comparator<ModuleResponseDTO>() {
+        public int compare(ModuleResponseDTO module1, ModuleResponseDTO module2) {
+          return module1.getSchedule().getDate().compareTo(module2.getSchedule().getDate());
+        }
+      });
+      return listModuleDTO;
     }
-    return listModuleDTO;
+    else {
+      List<ModuleResponseDTO> listResult = moduleDao.getDetailCourseStudent(idCourse, idStudent);
+      if (listResult.isEmpty()) {
+        throw new DataIsNotExistsException("There is no module yet");
+      }
+      Collections.sort(listResult, new Comparator<ModuleResponseDTO>() {
+        public int compare(ModuleResponseDTO module1, ModuleResponseDTO module2) {
+          return module1.getSchedule().getDate().compareTo(module2.getSchedule().getDate());
+        }
+      });
+      return listResult;
+    }
   }
 
   @Override
@@ -217,13 +238,21 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
-  @Override
-  public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
-    DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id, "");
-    List<ModuleResponseDTO> listModule = getModuleListByIdCourse(id);
-    detailCourse.setModules(listModule);
-    return detailCourse;
-  }
+  // @Override
+  // <<<<<<< Updated upstream
+  // public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
+  // DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id, "");
+  // List<ModuleResponseDTO> listModule = getModuleListByIdCourse(id);
+  // =======
+  // public DetailCourseResponseDTO getDetailCourses(String idCourse, String idStudent)
+  // throws Exception {
+  // DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(idCourse);
+  // List<ModuleResponseDTO> listModule = getModuleListByIdCourse(idCourse, idStudent);
+  // System.out.println(listModule + "koskaoask");
+  // >>>>>>> Stashed changes
+  // detailCourse.setModules(listModule);
+  // return detailCourse;
+  // }
 
   @Override
   public void saveLesson(List<MultipartFile> multiPartFiles, String content, String idModule)

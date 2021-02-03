@@ -3,7 +3,6 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
-import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
@@ -21,7 +20,8 @@ public interface ModuleService {
 
   Module getModuleByIdCustom(String id) throws Exception;
 
-  List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse) throws Exception;
+  List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse, String idStudent)
+      throws Exception;
 
   void insertModule(List<ModulRequestDTO> data) throws Exception;
 
@@ -31,7 +31,7 @@ public interface ModuleService {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  DetailCourseResponseDTO getDetailCourses(String id) throws Exception;
+  // DetailCourseResponseDTO getDetailCourses(String idCourse, String idStudent) throws Exception;
 
   void saveLesson(List<MultipartFile> multiPartFiles, String content, String body) throws Exception;
 

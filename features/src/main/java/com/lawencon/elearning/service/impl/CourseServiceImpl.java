@@ -254,7 +254,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throws Exception {
     Course course = courseDao.getCourseById(courseId);
     List<ModuleResponseDTO> listModule = new ArrayList<>();
-    listModule = moduleService.getModuleListByIdCourse(courseId);
+    listModule = moduleService.getModuleListByIdCourse(courseId, "");
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
@@ -271,10 +271,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   private void setDataWithStudentId(String courseId, DetailCourseResponseDTO detailDTO,
       String studentId) throws Exception {
-    // List<ModuleResponseDTO> listModule = new ArrayList<>();
-    // listModule = moduleService.getModuleListByIdCourse(courseId,studentId);
-    // nunggu service yang baru kalo ada student idnya
-    // detailDTO setmodule with new listModule
+    List<ModuleResponseDTO> listModule = new ArrayList<>();
+    listModule = moduleService.getModuleListByIdCourse(courseId, studentId);
+    detailDTO.setModules(listModule);
   }
 
   private void validateNullId(String id, String msg) throws Exception {

@@ -13,12 +13,12 @@ public class ScheduleResponseDTO {
 
   private String id;
 
-  @JsonFormat(pattern = "dd LLL yyyy")
+  @JsonFormat(pattern = "dd MMM yyyy")
   private LocalDate date;
 
-  @JsonFormat(pattern = "dd LLL yyyy HH:mm:ss")
+  @JsonFormat(pattern = "HH:mm:ss")
   private LocalTime startTime;
 
-  @JsonFormat(pattern = "dd LLL yyyy HH:mm:ss")
+  @JsonFormat(pattern = "HH:mm:ss")
   private LocalTime endTime;
 }
