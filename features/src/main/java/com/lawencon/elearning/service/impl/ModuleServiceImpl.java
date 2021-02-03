@@ -219,7 +219,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
-    DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id);
+    DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id, "");
     List<ModuleResponseDTO> listModule = getModuleListByIdCourse(id);
     detailCourse.setModules(listModule);
     return detailCourse;

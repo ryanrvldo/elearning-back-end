@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
+import com.lawencon.elearning.dto.course.type.CourseTypeDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
 import com.lawencon.elearning.service.CourseTypeService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -47,8 +48,9 @@ public class CourseTypeController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity<?> deleteCourseTypeById(@RequestParam("id") String id) throws Exception {
-    courseTypeService.deleteCourseType(id);
+  public ResponseEntity<?> deleteCourseTypeById(@RequestParam("id") CourseTypeDeleteRequestDTO data)
+      throws Exception {
+    courseTypeService.deleteCourseType(data);
     return WebResponseUtils.createWebResponse("Delete data course type success", HttpStatus.OK);
   }
 }

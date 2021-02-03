@@ -33,6 +33,13 @@ public class CourseController {
         HttpStatus.OK);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<?> getDetailCourse(@PathVariable("id") String courseId,
+      @RequestParam("studentId") String studentId) throws Exception {
+    return WebResponseUtils.createWebResponse(courseService.getDetailCourse(courseId, studentId),
+        HttpStatus.OK);
+  }
+
   @PostMapping("register")
   public ResponseEntity<?> registerCourse(@RequestParam("studentId") String studentId,
       @RequestParam("courseId") String courseId) throws Exception {
@@ -42,7 +49,7 @@ public class CourseController {
   
   @GetMapping("{id}/student")
   public ResponseEntity<?> getStudentCourse(@PathVariable("id") String id) throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getMyCourse(id),
+    return WebResponseUtils.createWebResponse(courseService.getCourseByStudentId(id),
         HttpStatus.OK);
   }
 

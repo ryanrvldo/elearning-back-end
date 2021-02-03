@@ -31,11 +31,6 @@ public class ModuleController {
   @Autowired
   private ModuleService moduleService;
 
-  @GetMapping("/course/{id}")
-  public ResponseEntity<?> getDetailCourse(@PathVariable("id") String id) throws Exception {
-    return WebResponseUtils.createWebResponse(moduleService.getDetailCourses(id), HttpStatus.OK);
-  }
-
   @GetMapping("/{id}")
   public ResponseEntity<?> getDetailModule(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(moduleService.getModuleByIdCustom(id), HttpStatus.OK);

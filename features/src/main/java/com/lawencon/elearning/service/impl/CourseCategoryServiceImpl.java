@@ -11,6 +11,7 @@ import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO
 import com.lawencon.elearning.dto.course.category.CourseCategoryResponseDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.service.CourseCategoryService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -78,7 +79,7 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   @Override
   public void deleteCourseCategory(CourseCategoryDeleteRequestDTO courseCategoryDTO)
       throws Exception {
-
+    validateNullId(courseCategoryDTO.getId(), "id");
     try {
       begin();
       courseCategoryDao.deleteCourseCategory(courseCategoryDTO.getId());
@@ -98,6 +99,12 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
     courseCategoryDao.updateIsActive(id, userId);
+  }
+
+  private void validateNullId(String id, String msg) throws Exception {
+    if (id == null || id.trim().isEmpty()) {
+      throw new IllegalRequestException(msg, id);
+    }
   }
 
 }

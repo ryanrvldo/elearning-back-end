@@ -102,7 +102,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public List<Course> getMyCourse(String id) throws Exception {
+  public List<Course> getCourseByStudentId(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.period_start",
         " ,c.period_end ,t.id AS teacher_id ,t.code AS teacher_code,u.first_name ,u.last_name ,",

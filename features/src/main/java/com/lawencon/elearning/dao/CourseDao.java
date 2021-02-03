@@ -21,7 +21,7 @@ public interface CourseDao {
 
   List<Course> getCurrentAvailableCourse() throws Exception;
 
-  List<Course> getMyCourse(String id) throws Exception;
+  List<Course> getCourseByStudentId(String id) throws Exception;
 
   List<Course> getCourseForAdmin() throws Exception;
 

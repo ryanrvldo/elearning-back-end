@@ -26,7 +26,7 @@ public interface CourseService {
 
   List<CourseResponseDTO> getCurrentAvailableCourse() throws Exception;
 
-  List<CourseResponseDTO> getMyCourse(String id) throws Exception;
+  List<CourseResponseDTO> getCourseByStudentId(String id) throws Exception;
 
   List<CourseResponseDTO> getCourseForAdmin() throws Exception;
 
@@ -36,7 +36,7 @@ public interface CourseService {
 
   void registerCourse(String student, String course) throws Exception;
 
-  DetailCourseResponseDTO getDetailCourse(String id) throws Exception;
+  DetailCourseResponseDTO getDetailCourse(String courseId, String studentId) throws Exception;
 
   List<StudentByCourseResponseDTO> getStudentByCourseId(String id) throws Exception;
 

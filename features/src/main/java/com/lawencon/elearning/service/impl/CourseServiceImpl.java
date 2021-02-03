@@ -12,6 +12,7 @@ import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
+import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -23,6 +24,7 @@ import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -37,6 +39,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private StudentService studentService;
+
+  @Autowired
+  private ModuleService moduleService;
 
   @Autowired
   private ValidationUtil validateUtil;
@@ -142,16 +147,16 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    return mergeData(listCourse);
+    return insertData(listCourse);
   }
 
   @Override
-  public List<CourseResponseDTO> getMyCourse(String id) throws Exception {
-    List<Course> listCourse = courseDao.getMyCourse(id);
+  public List<CourseResponseDTO> getCourseByStudentId(String id) throws Exception {
+    List<Course> listCourse = courseDao.getCourseByStudentId(id);
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    return mergeData(listCourse);
+    return insertData(listCourse);
   }
 
   @Override
@@ -160,7 +165,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    return mergeData(listCourse);
+    return insertData(listCourse);
   }
 
 
@@ -173,22 +178,16 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     commit();
   }
 
-  public DetailCourseResponseDTO getDetailCourse(String id) throws Exception {
-    validateNullId(id, "id");
-    Course course = courseDao.getCourseById(id);
+  @Override
+  public DetailCourseResponseDTO getDetailCourse(String courseId, String studentId)
+      throws Exception {
+    validateNullId(courseId, "id");
     DetailCourseResponseDTO detailDTO = new DetailCourseResponseDTO();
-    detailDTO.setId(course.getId());
-    detailDTO.setCode(course.getCode());
-    detailDTO.setName(course.getCourseType().getName());
-    detailDTO.setCapacity(course.getCapacity());
-    detailDTO.setTotalStudent(courseDao.getTotalStudentByIdCourse(id));
-    detailDTO.setDescription(course.getDescription());
-    detailDTO.setPeriodStart(course.getPeriodStart());
-    detailDTO.setPeriodEnd(course.getPeriodEnd());
+    setData(courseId, detailDTO, studentId);
     return detailDTO;
   }
 
-  private List<CourseResponseDTO> mergeData(List<Course> listCourse) {
+  private List<CourseResponseDTO> insertData(List<Course> listCourse) {
     List<CourseResponseDTO> responseList = new ArrayList<>();
     listCourse.forEach(val -> {
       CourseResponseDTO courseDto = new CourseResponseDTO();
@@ -249,6 +248,33 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   public Course getCourseById(String id) throws Exception {
     validateNullId(id, "id");
     return courseDao.getCourseById(id);
+  }
+
+  private void setData(String courseId, DetailCourseResponseDTO detailDTO, String studentId)
+      throws Exception {
+    Course course = courseDao.getCourseById(courseId);
+    List<ModuleResponseDTO> listModule = new ArrayList<>();
+    listModule = moduleService.getModuleListByIdCourse(courseId);
+    detailDTO.setId(course.getId());
+    detailDTO.setCode(course.getCode());
+    detailDTO.setName(course.getCourseType().getName());
+    detailDTO.setCapacity(course.getCapacity());
+    detailDTO.setTotalStudent(courseDao.getTotalStudentByIdCourse(courseId));
+    detailDTO.setDescription(course.getDescription());
+    detailDTO.setPeriodStart(course.getPeriodStart());
+    detailDTO.setPeriodEnd(course.getPeriodEnd());
+    detailDTO.setModules(listModule);
+    if (studentId != null) {
+      setDataWithStudentId(courseId, detailDTO, studentId);
+    }
+  }
+
+  private void setDataWithStudentId(String courseId, DetailCourseResponseDTO detailDTO,
+      String studentId) throws Exception {
+    // List<ModuleResponseDTO> listModule = new ArrayList<>();
+    // listModule = moduleService.getModuleListByIdCourse(courseId,studentId);
+    // nunggu service yang baru kalo ada student idnya
+    // detailDTO setmodule with new listModule
   }
 
   private void validateNullId(String id, String msg) throws Exception {

@@ -163,7 +163,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     validateNullId(id, "id");
     Optional.ofNullable(studentDao.getStudentById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
-    List<CourseResponseDTO> listResult = courseService.getMyCourse(id);
+    List<CourseResponseDTO> listResult = courseService.getCourseByStudentId(id);
     if (listResult.isEmpty()) {
       throw new DataIsNotExistsException("You haven't select any course");
     }
