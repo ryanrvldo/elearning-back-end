@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.lawencon.elearning.model.ExamType;
 import lombok.Data;
 
 /**
@@ -23,13 +25,18 @@ public class TeacherExamRequestDTO {
   private String description;
 
   @NotNull
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime startTime;
 
   @NotNull
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endTime;
 
   @NotBlank
   private String createdBy;
+
+  @NotNull
+  private ExamType type;
 
 
 }

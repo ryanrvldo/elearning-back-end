@@ -1,5 +1,6 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
@@ -24,6 +26,7 @@ import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.service.FileService;
+import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -60,8 +63,10 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       throw new IllegalRequestException("Teacher Exam data cannot be empty!");
     }
     FileResponseDto fileResponseDTO = fileService.createFile(multiPartFile, content);
+    ObjectMapper obj = new ObjectMapper();
+    obj.registerModule(new JavaTimeModule());
     TeacherExamRequestDTO teacherExam =
-        new ObjectMapper().readValue(body, TeacherExamRequestDTO.class);
+        obj.readValue(body, TeacherExamRequestDTO.class);
     validateUtil.validate(teacherExam);
 
     Module module = new Module();
@@ -75,6 +80,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     exam.setEndTime(teacherExam.getEndTime());
     exam.setCreatedAt(LocalDateTime.now());
     exam.setCreatedBy(teacherExam.getCreatedBy());
+    exam.setTrxDate(LocalDate.now());
+    exam.setTrxNumber(TransactionNumberUtils.generateExamTrxNumber());
+    exam.setType(teacherExam.getType());
 
     File file = new File();
     file.setId(fileResponseDTO.getId());
@@ -115,7 +123,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       examModule.setType(val.getType());
       examModule.setStartTime(val.getStartTime());
       examModule.setEndTime(val.getEndTime());
-      examModule.setFileId(examModule.getFileId());
+      examModule.setFileId(val.getFile().getId());
 
       examsModuleDTO.add(examModule);
     }

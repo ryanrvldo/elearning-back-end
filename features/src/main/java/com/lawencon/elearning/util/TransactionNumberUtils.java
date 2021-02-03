@@ -13,6 +13,10 @@ public class TransactionNumberUtils {
     return String.format("AT-%s", System.currentTimeMillis());
   }
 
+  public static String generateExamTrxNumber() {
+    return String.format("EXM-%s", System.currentTimeMillis());
+  }
+
   public static String generateDtlExamTrxNumber() {
     return String.format("DT-%s", System.currentTimeMillis());
   }
