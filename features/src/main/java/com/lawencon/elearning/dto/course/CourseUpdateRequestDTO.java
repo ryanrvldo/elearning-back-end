@@ -15,4 +15,7 @@ public class CourseUpdateRequestDTO extends CourseCreateRequestDTO {
   private String id;
   @NotBlank
   private String updateBy;
+
+  @NotBlank
+  private String status;
 }

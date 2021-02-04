@@ -31,11 +31,10 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         "tmt.phone , tmt.gender , tmu.username , tmt.version FROM tb_m_teachers tmt ",
         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.is_active = true ");
 
-    List<Teacher> listResult = new ArrayList<>();
-
     List<?> listObj = createNativeQuery(sql).getResultList();
 
-    listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "id", "code", "user.firstName",
+    List<Teacher> listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "id", "code",
+        "user.firstName",
         "user.lastName", "phone", "gender", "user.username", "version");
 
     return listResult.size() > 0 ? listResult : null;

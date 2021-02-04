@@ -32,6 +32,5 @@ public class CourseCreateRequestDTO {
   private LocalDateTime periodEnd;
   @NotBlank
   private String createdBy;
-  @NotBlank
-  private String status;
+
 }

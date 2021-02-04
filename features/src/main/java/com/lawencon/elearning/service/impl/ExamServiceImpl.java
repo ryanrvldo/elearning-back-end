@@ -74,7 +74,6 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
     Module module = new Module();
     module.setId(teacherExam.getModuleId());
-    module.setVersion(teacherExam.getModuleVersion());
 
     Exam exam = new Exam();
     exam.setModule(module);

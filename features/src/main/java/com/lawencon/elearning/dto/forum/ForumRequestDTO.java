@@ -1,8 +1,8 @@
 package com.lawencon.elearning.dto.forum;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 /**
@@ -13,18 +13,12 @@ import lombok.Data;
 public class ForumRequestDTO {
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String userId;
 
-  @NotNull
-  @Min(0)
-  private Long versionUser;
-
   @NotBlank
+  @Size(min = 32, max = 36)
   private String moduleId;
-
-  @NotNull
-  @Min(0)
-  private Long versionModule;
 
   @NotNull
   private String content;

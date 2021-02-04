@@ -27,7 +27,7 @@ public class TeacherRequestDTO {
   @Size(max = 50)
   private String firstName;
 
-  @NotBlank
+  @Size(max = 50)
   private String lastName;
 
   @NotBlank
@@ -51,14 +51,13 @@ public class TeacherRequestDTO {
   @NotBlank
   private String roleId;
 
-  @NotNull
   @Min(0)
   private Long roleVersion;
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String createdBy;
 
-  @NotBlank
   @Size(max = 50)
   private String titleDegree;
 

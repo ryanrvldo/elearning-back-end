@@ -48,15 +48,11 @@ public class TeacherController {
   }
 
   @PutMapping
-  public ResponseEntity<?> updateTeacherProfile(@RequestBody UpdateTeacherRequestDTO body) {
+  public ResponseEntity<?> updateTeacherProfile(@RequestBody UpdateTeacherRequestDTO body)
+      throws Exception {
+    teacherService.updateTeacher(body);
     return WebResponseUtils.createWebResponse("Update Teacher Profile Success!", HttpStatus.OK);
   }
-
-  // @PatchMapping
-  // public ResponseEntity<?> updateIsActiveProfile() throws Exception {
-  // return WebResponseUtils.createWebResponse("Update is active Profile to false Success!",
-  // HttpStatus.OK);
-  // }
 
   @PatchMapping
   public ResponseEntity<?> deleteTeacher(@RequestBody DeleteTeacherDTO deleteReq) throws Exception {

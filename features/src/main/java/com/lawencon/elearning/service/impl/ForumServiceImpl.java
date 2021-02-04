@@ -2,7 +2,6 @@ package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +44,10 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
 
     User user = new User();
     user.setId(data.getUserId());
-    user.setVersion(data.getVersionUser());
 
     Module module = new Module();
     module.setId(data.getModuleId());
-    module.setVersion(data.getVersionModule());
+
     Forum forum = new Forum();
     forum.setContent(data.getContent());
     forum.setUser(user);
@@ -58,8 +56,8 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
     forum.setCreatedAt(LocalDateTime.now());
     forum.setCreatedBy(data.getUserId());
     forum.setTrxDate(LocalDate.now());
-
     forum.setTrxNumber(TransactionNumberUtils.generateForumTrxNumber());
+
     forumDao.saveForum(forum, null);
   }
 
@@ -79,17 +77,9 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   @Override
   public List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception {
     validateNullId(moduleId, "Id Module");
-    List<Forum> forums = forumDao.getByModuleId(moduleId);
-    List<ForumModuleResponseDTO> forumResponses = new ArrayList<>();
-
-    forums.forEach(val -> {
-      ForumModuleResponseDTO forumDTO = new ForumModuleResponseDTO(val.getId(), val.getTrxNumber(),
-          val.getContent(), val.getCreatedAt(), val.getUser().getId(), val.getUser().getFirstName(),
-          val.getUser().getLastName(), val.getUser().getRole().getCode(),
-          val.getUser().getUserPhoto().getId());
-      forumResponses.add(forumDTO);
-    });
-
+    List<ForumModuleResponseDTO> forumResponses =
+        Optional.ofNullable(forumDao.getByModuleId(moduleId))
+            .orElseThrow(() -> new DataIsNotExistsException("Module Id", moduleId));
     return forumResponses;
   }
 
@@ -97,9 +87,15 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   public void deleteForum(String id, String userId) throws Exception {
     validateNullId(id, "Id");
     if (forumDao.checkByForumIdAndUserId(id, userId) > 0) {
-      begin();
-      forumDao.deleteForum(id);
-      commit();
+      try {
+        begin();
+        forumDao.deleteForum(id);
+        commit();
+      } catch (Exception e) {
+        e.printStackTrace();
+        rollback();
+        throw e;
+      }
     } else {
       throw new IllegalRequestException("User Id", userId);
     }

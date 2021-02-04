@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import com.lawencon.elearning.dto.forum.ForumModuleResponseDTO;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.util.Callback;
 
@@ -20,7 +21,7 @@ public interface ForumDao {
 
   Forum findForumById(String id) throws Exception;
 
-  List<Forum> getByModuleId(String moduleId) throws Exception;
+  List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception;
 
   Long checkByForumIdAndUserId(String id, String userId) throws Exception;
 }

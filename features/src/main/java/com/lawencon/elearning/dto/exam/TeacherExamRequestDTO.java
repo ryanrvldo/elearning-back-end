@@ -2,9 +2,9 @@ package com.lawencon.elearning.dto.exam;
 
 import java.time.LocalDateTime;
 import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.model.ExamType;
 import lombok.Data;
@@ -16,10 +16,8 @@ import lombok.Data;
 public class TeacherExamRequestDTO {
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String moduleId;
-
-  @Min(0)
-  private Long moduleVersion;
 
   @NotBlank
   private String title;
@@ -38,6 +36,7 @@ public class TeacherExamRequestDTO {
   private LocalDateTime endTime;
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String createdBy;
 
   @NotNull

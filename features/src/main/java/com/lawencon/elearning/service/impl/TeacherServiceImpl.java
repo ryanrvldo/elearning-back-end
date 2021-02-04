@@ -162,6 +162,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     teacherDB.setTitleDegree(data.getTitleDegree());
     teacherDB.setGender(data.getGender());
     teacherDB.setUpdatedBy(data.getUpdatedBy());
+    teacherDB.setUpdatedAt(LocalDateTime.now());
 
     User user = new User();
     user.setFirstName(data.getFirstName());
@@ -171,6 +172,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     try {
       begin();
       userService.updateUser(user);
+      teacherDB.setUser(user);
       teacherDao.updateTeacher(teacherDB, null);
       commit();
     } catch (Exception e) {

@@ -67,7 +67,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     course.setPeriodStart(courseDTO.getPeriodStart());
     course.setPeriodEnd(courseDTO.getPeriodEnd());
 
-    course.setStatus(CourseStatus.valueOf(courseDTO.getStatus()));
+    course.setStatus(CourseStatus.REGISTRATION);
 
     CourseType courseType = new CourseType();
     courseType.setId(courseDTO.getCourseTypeId());
