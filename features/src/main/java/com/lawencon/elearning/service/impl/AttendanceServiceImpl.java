@@ -12,6 +12,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.dto.AttendanceResponseDTO;
+import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.error.AttendanceErrorException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
@@ -61,16 +62,31 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
         .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
     Optional.ofNullable(courseService.getCourseById(idCourse))
         .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
-    List<Attendance> listResult = attendanceDao.getAttendanceList(idCourse, idModule);
+    List<Attendance> listAttendance = attendanceDao.getAttendanceList(idModule);
+    List<StudentByCourseResponseDTO> listStudent =
+        studentService.getListStudentByIdCourse(idCourse);
+    if (listStudent.isEmpty()) {
+      throw new DataIsNotExistsException("No student register yet.");
+    }
     List<AttendanceResponseDTO> listDTO = new ArrayList<>();
-    for (Attendance attendance : listResult) {
+    for (StudentByCourseResponseDTO studentDTO : listStudent) {
       AttendanceResponseDTO attendanceDTO = new AttendanceResponseDTO();
-      attendanceDTO.setAttendanceId(attendance.getId());
-      attendanceDTO.setFirstName(attendance.getStudent().getUser().getFirstName());
-      attendanceDTO.setLastName(attendance.getStudent().getUser().getLastName());
-      attendanceDTO.setAttendanceTime(attendance.getCreatedAt());
-      attendanceDTO.setAttendanceIsVerified(attendance.getIsVerified());
-      attendanceDTO.setAttendanceVersion(attendance.getVersion());
+      attendanceDTO.setId(studentDTO.getId());
+      attendanceDTO.setCode(studentDTO.getCode());
+      attendanceDTO.setEmail(studentDTO.getEmail());
+      attendanceDTO.setFirstName(studentDTO.getFirstName());
+      attendanceDTO.setLastName(studentDTO.getLastName());
+      attendanceDTO.setGender(studentDTO.getGender());
+      attendanceDTO.setPhone(studentDTO.getPhone());
+
+      listAttendance.forEach(val -> {
+        if (val.getStudent().getId().equals(studentDTO.getId())) {
+          attendanceDTO.setAttendanceId(val.getId());
+          attendanceDTO.setAttendanceIsVerified(val.getIsVerified());
+          attendanceDTO.setAttendanceTime(val.getCreatedAt());
+          attendanceDTO.setAttendanceVersion(val.getVersion());
+        }
+      });
       listDTO.add(attendanceDTO);
     }
     return listDTO;

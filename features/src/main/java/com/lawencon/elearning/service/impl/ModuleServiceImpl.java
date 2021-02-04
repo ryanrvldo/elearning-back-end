@@ -28,6 +28,7 @@ import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.ScheduleService;
+import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.SubjectCategoryService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -61,6 +62,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Autowired
   private SubjectCategoryService subjectCategoryService;
 
+  @Autowired
+  private StudentService studentService;
+
   @Override
   public Module getModuleById(String id) throws Exception {
     validateNullId(id, "id");
@@ -71,6 +75,8 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse, String idStudent)
       throws Exception {
+    Optional.ofNullable(courseService.getCourseById(idCourse))
+        .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
     if (idStudent == null || idStudent.trim().isEmpty()) {
       List<Module> listResult = moduleDao.getDetailCourse(idCourse);
       if (listResult.isEmpty()) {
@@ -101,6 +107,8 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       return listModuleDTO;
     }
     else {
+      Optional.ofNullable(studentService.getStudentById(idStudent))
+          .orElseThrow(() -> new DataIsNotExistsException("student id", idStudent));
       List<ModuleResponseDTO> listResult = moduleDao.getDetailCourseStudent(idCourse, idStudent);
       if (listResult.isEmpty()) {
         throw new DataIsNotExistsException("There is no module yet");
@@ -238,22 +246,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
-  // @Override
-  // <<<<<<< Updated upstream
-  // public DetailCourseResponseDTO getDetailCourses(String id) throws Exception {
-  // DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(id, "");
-  // List<ModuleResponseDTO> listModule = getModuleListByIdCourse(id);
-  // =======
-  // public DetailCourseResponseDTO getDetailCourses(String idCourse, String idStudent)
-  // throws Exception {
-  // DetailCourseResponseDTO detailCourse = courseService.getDetailCourse(idCourse);
-  // List<ModuleResponseDTO> listModule = getModuleListByIdCourse(idCourse, idStudent);
-  // System.out.println(listModule + "koskaoask");
-  // >>>>>>> Stashed changes
-  // detailCourse.setModules(listModule);
-  // return detailCourse;
-  // }
-
   @Override
   public void saveLesson(List<MultipartFile> multiPartFiles, String content, String idModule)
       throws Exception {
@@ -280,6 +272,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
     System.out.println(idModule);
     List<FileResponseDto> listFileDto = moduleDao.getLessonByIdModule(idModule);
+    if (listFileDto.isEmpty()) {
+      throw new DataIsNotExistsException("No Lesson File Yet");
+    }
     return listFileDto;
   }
 

@@ -11,7 +11,7 @@ import com.lawencon.util.Callback;
  */
 public interface AttendanceDao {
 
-  List<Attendance> getAttendanceList(String idCourse, String idModule) throws Exception;
+  List<Attendance> getAttendanceList(String idModule) throws Exception;
 
   Attendance getAttendanceById(String id) throws Exception;
 
