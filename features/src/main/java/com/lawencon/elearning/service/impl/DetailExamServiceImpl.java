@@ -14,13 +14,14 @@ import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
+import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
-import com.lawencon.elearning.dto.student.StudentExamDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.FileService;
@@ -65,7 +66,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
     List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getListScoreReport(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
-    
+
     List<ScoreReportDTO> scoreReports = new ArrayList<ScoreReportDTO>();
 
     for (DetailExam detail : detailExams) {
@@ -128,9 +129,10 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getExamSubmission(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
 
-    List<SubmissionsByExamResponseDTO> submissionByExamsDTO = new ArrayList<SubmissionsByExamResponseDTO>();
+    List<SubmissionsByExamResponseDTO> submissionByExamsDTO =
+        new ArrayList<SubmissionsByExamResponseDTO>();
 
-    detailExams.forEach(val->{
+    detailExams.forEach(val -> {
       SubmissionsByExamResponseDTO submission = new SubmissionsByExamResponseDTO();
       submission.setId(val.getId());
       submission.setCode(val.getTrxNumber());
@@ -147,29 +149,32 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public void sendStudentExam(MultipartFile multiPartFile, String content, String body)
+  public void sendStudentExam(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception {
+    ObjectMapper objMapper = new ObjectMapper();
+    FileCreateRequestDto newRequestDto = new FileCreateRequestDto();
+    newRequestDto.setType(FileType.ASSIGNMENT.name());
+    newRequestDto.setUserId(studentId);
+    String content = objMapper.writeValueAsString(newRequestDto);
+
     FileResponseDto fileResponseDTO =
         Optional.ofNullable(fileService.createFile(multiPartFile, content))
             .orElseThrow(() -> new DataIsNotExistsException("Id file not found!"));
-    StudentExamDTO studentExamDTO = new ObjectMapper().readValue(body, StudentExamDTO.class);
-    validationUtil.validate(studentExamDTO);
-    validationUtil.validateUUID(studentExamDTO.getExamId());
-    validationUtil.validateUUID(studentExamDTO.getStudentId());
+
+    validationUtil.validateUUID(examId);
+    validationUtil.validateUUID(studentId);
 
     Exam exam = new Exam();
-    exam.setId(studentExamDTO.getExamId());
-    exam.setVersion(studentExamDTO.getExamVersion());
+    exam.setId(examId);
 
     Student student = new Student();
-    student.setId(studentExamDTO.getStudentId());
-    student.setVersion(studentExamDTO.getStudentVersion());
+    student.setId(studentId);
 
     File file = new File();
     file.setId(fileResponseDTO.getId());
 
     DetailExam detailExam = new DetailExam();
-    detailExam.setCreatedBy(studentExamDTO.getStudentId());
+    detailExam.setCreatedBy(studentId);
     detailExam.setCreatedAt(LocalDateTime.now());
     detailExam.setTrxDate(LocalDate.now());
     detailExam.setTrxNumber(TransactionNumberUtils.generateDtlExamTrxNumber());

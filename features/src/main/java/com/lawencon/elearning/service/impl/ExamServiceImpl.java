@@ -148,15 +148,12 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public void submitAssignemt(MultipartFile multiPartFile, String content, String body)
+  public void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception {
-    if (content == null) {
-      throw new IllegalRequestException("Content cannot be empty!");
-    }
-    if (body == null) {
+    if (examId == null && studentId == null) {
       throw new IllegalRequestException("Student Exam data cannot be empty!");
     }
-    dtlExamService.sendStudentExam(multiPartFile, content, body);
+    dtlExamService.sendStudentExam(multiPartFile, examId, studentId);
   }
 
   @Override

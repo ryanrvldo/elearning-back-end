@@ -1,5 +1,11 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.RoleDao;
 import com.lawencon.elearning.dto.role.RoleCreateRequestDto;
@@ -10,12 +16,6 @@ import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
@@ -52,13 +52,12 @@ public class RoleServiceImpl extends BaseServiceImpl implements RoleService {
   }
 
   @Override
-  public RoleResponseDto findByCode(String code) throws Exception {
+  public Role findByCode(String code) throws Exception {
     if (code.trim().isEmpty()) {
       throw new IllegalRequestException("code", code);
     }
-    Role role = Optional.ofNullable(roleDao.findByCode(code))
+    return Optional.ofNullable(roleDao.findByCode(code))
         .orElseThrow(() -> new DataIsNotExistsException("code", code));
-    return mapEntityToResponse(role);
   }
 
   @Override
@@ -90,8 +89,7 @@ public class RoleServiceImpl extends BaseServiceImpl implements RoleService {
         role.getName(),
         role.getVersion() + 1,
         role.getCreatedAt(),
-        role.getUpdatedAt()
-    );
+        role.getUpdatedAt());
   }
 
   private RoleResponseDto mapEntityToResponse(Role role) {
@@ -101,8 +99,7 @@ public class RoleServiceImpl extends BaseServiceImpl implements RoleService {
         role.getName(),
         role.getVersion(),
         role.getCreatedAt(),
-        role.getUpdatedAt()
-    );
+        role.getUpdatedAt());
   }
 
 }

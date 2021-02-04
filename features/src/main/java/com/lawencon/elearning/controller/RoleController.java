@@ -1,9 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.role.RoleCreateRequestDto;
-import com.lawencon.elearning.dto.role.RoleUpdateRequestDto;
-import com.lawencon.elearning.service.RoleService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.role.RoleCreateRequestDto;
+import com.lawencon.elearning.dto.role.RoleUpdateRequestDto;
+import com.lawencon.elearning.service.RoleService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author WILLIAM
@@ -32,11 +32,6 @@ public class RoleController {
   @GetMapping("/role/id/{id}")
   public ResponseEntity<?> getById(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(roleService.findById(id), HttpStatus.OK);
-  }
-
-  @GetMapping("/role/code/{code}")
-  public ResponseEntity<?> getByCode(@PathVariable("code") String code) throws Exception {
-    return WebResponseUtils.createWebResponse(roleService.findByCode(code), HttpStatus.OK);
   }
 
   @PostMapping(value = {"/role"})

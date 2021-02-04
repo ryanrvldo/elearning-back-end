@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,42 +25,43 @@ import com.lawencon.elearning.util.WebResponseUtils;
 @RequestMapping("/exam")
 public class ExamController {
 
-   @Autowired
-   private ExamService examService;
-  
-   @GetMapping("/average-scores/student/{id}")
-   public ResponseEntity<?> getAverageScore(@PathVariable("id") String id) throws Exception {
-     return WebResponseUtils.createWebResponse(examService.getListScoreAvg(id), HttpStatus.OK);
-   }
+  @Autowired
+  private ExamService examService;
 
-   @GetMapping("/module/{id}")
-   public ResponseEntity<?> getDetailModuleExam(@PathVariable("id") String id) throws Exception {
-     return WebResponseUtils.createWebResponse(examService.getExamsByModule(id), HttpStatus.OK);
-   }
+  @GetMapping("/average-scores/student/{id}")
+  public ResponseEntity<?> getAverageScore(@PathVariable("id") String id) throws Exception {
+    return WebResponseUtils.createWebResponse(examService.getListScoreAvg(id), HttpStatus.OK);
+  }
 
-   @GetMapping("/{id}/submission")
-   public ResponseEntity<?> getExamSubmission(@PathVariable("id") String id) throws Exception {
-     return WebResponseUtils.createWebResponse(examService.getExamSubmissions(id), HttpStatus.OK);
-   }
+  @GetMapping("/module/{id}")
+  public ResponseEntity<?> getDetailModuleExam(@PathVariable("id") String id) throws Exception {
+    return WebResponseUtils.createWebResponse(examService.getExamsByModule(id), HttpStatus.OK);
+  }
 
-   @PostMapping("/student")
-   public ResponseEntity<?> sendStudentExam(@RequestPart("file") MultipartFile multiPartFile,
-       @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
-     examService.submitAssignemt(multiPartFile, content, body);
-     return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
-   }
+  @GetMapping("/{id}/submission")
+  public ResponseEntity<?> getExamSubmission(@PathVariable("id") String id) throws Exception {
+    return WebResponseUtils.createWebResponse(examService.getExamSubmissions(id), HttpStatus.OK);
+  }
 
-   @PostMapping("/module")
-   public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
-       @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
-     examService.saveExam(multiPartFile, content, body);
-     return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
-   }
+  @PostMapping("/student")
+  public ResponseEntity<?> sendStudentExam(@RequestPart("file") MultipartFile multiPartFile,
+      @RequestParam("examId") String examId, @RequestParam("studentId") String studentId)
+      throws Exception {
+    examService.submitAssignemt(multiPartFile, examId, studentId);
+    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+  }
 
-   @PatchMapping("/submission")
-   public ResponseEntity<?> updateScore(@RequestBody UpdateScoreRequestDTO body) throws Exception {
-     examService.updateScoreAssignment(body.getId(), body.getGrade(), body.getUpdatedBy());
-     return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
-   }
+  @PostMapping("/module")
+  public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
+      @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
+    examService.saveExam(multiPartFile, content, body);
+    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+  }
+
+  @PatchMapping("/submission")
+  public ResponseEntity<?> updateScore(@RequestBody UpdateScoreRequestDTO body) throws Exception {
+    examService.updateScoreAssignment(body.getId(), body.getGrade(), body.getUpdatedBy());
+    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+  }
 
 }

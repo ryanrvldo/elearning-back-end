@@ -1,7 +1,5 @@
 package com.lawencon.elearning.config;
 
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.EncoderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -12,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.EncoderUtils;
 
 /**
  * @author Rian Rivaldo
@@ -61,7 +61,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("http://localhost:4200")
-            .allowedMethods(HttpMethod.POST.name(), HttpMethod.GET.name());
+            .allowedMethods(HttpMethod.POST.name(), HttpMethod.GET.name(), HttpMethod.PATCH.name(),
+                HttpMethod.PUT.name(), HttpMethod.DELETE.name());
       }
     };
   }

@@ -18,7 +18,7 @@ import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @RestController

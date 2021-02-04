@@ -35,7 +35,7 @@ public class CourseController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getDetailCourse(@PathVariable("id") String courseId,
-      @RequestParam("studentId") String studentId) throws Exception {
+      @RequestParam(name = "studentId", required = false) String studentId) throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getDetailCourse(courseId, studentId),
         HttpStatus.OK);
   }
@@ -46,7 +46,7 @@ public class CourseController {
     courseService.registerCourse(studentId, courseId);
     return WebResponseUtils.createWebResponse("Register Course Success", HttpStatus.OK);
   }
-  
+
   @GetMapping("{id}/student")
   public ResponseEntity<?> getStudentCourse(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getCourseByStudentId(id),

@@ -20,10 +20,12 @@ import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Role;
+import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
+import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -40,6 +42,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Autowired
   private ExperienceService experienceService;
+
+  @Autowired
+  private RoleService roleService;
 
   @Autowired
   private UserService userService;
@@ -95,13 +100,10 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     user.setPassword(data.getPassword());
     user.setEmail(data.getEmail());
 
-    Role role = new Role();
-    role.setId(data.getRoleId());
-    role.setVersion(data.getRoleVersion());
+    Role role = roleService.findByCode(Roles.TEACHER.getCode());
     user.setRole(role);
 
     Teacher teacher = new Teacher();
-    teacher.setUser(user);
     teacher.setCode(data.getCode());
     teacher.setPhone(data.getPhone());
     teacher.setGender(data.getGender());
@@ -112,6 +114,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     try {
       begin();
       userService.addUser(user);
+      teacher.setUser(user);
       teacherDao.saveTeacher(teacher, null);
       commit();
     } catch (Exception e) {
@@ -119,8 +122,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       rollback();
       throw e;
     }
-
-
   }
 
   @Override

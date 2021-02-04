@@ -22,7 +22,6 @@ public class ErrorController {
   @ExceptionHandler(value = {ConstraintViolationException.class, DataIsNotExistsException.class,
       IllegalRequestException.class})
   public ResponseEntity<WebResponseDTO<String>> validationHandler(Exception e) {
-    e.printStackTrace();
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
@@ -59,7 +58,7 @@ public class ErrorController {
   @ExceptionHandler(value = {AttendanceErrorException.class})
   public ResponseEntity<?> internalServerError(AttendanceErrorException e) {
     e.printStackTrace();
-    return WebResponseUtils.createWebResponse(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
+    return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
 }

@@ -1,9 +1,10 @@
 package com.lawencon.elearning.service;
 
+import java.util.List;
 import com.lawencon.elearning.dto.role.RoleCreateRequestDto;
 import com.lawencon.elearning.dto.role.RoleResponseDto;
 import com.lawencon.elearning.dto.role.RoleUpdateRequestDto;
-import java.util.List;
+import com.lawencon.elearning.model.Role;
 
 /**
  * @author Rian Rivaldo
@@ -14,7 +15,7 @@ public interface RoleService {
 
   RoleResponseDto findById(String id) throws Exception;
 
-  RoleResponseDto findByCode(String code) throws Exception;
+  Role findByCode(String code) throws Exception;
 
   List<RoleResponseDto> findAll() throws Exception;
 

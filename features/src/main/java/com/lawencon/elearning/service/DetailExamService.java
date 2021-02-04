@@ -30,5 +30,6 @@ public interface DetailExamService {
 
   List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception;
 
-  void sendStudentExam(MultipartFile multiPartFile, String content, String body) throws Exception;
+  void sendStudentExam(MultipartFile multiPartFile, String examId, String studentId)
+      throws Exception;
 }

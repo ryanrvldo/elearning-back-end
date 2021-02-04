@@ -20,7 +20,7 @@ import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 @Service
 public class ForumServiceImpl extends BaseServiceImpl implements ForumService {

@@ -9,7 +9,7 @@ import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.Exam;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 public interface ExamService {
@@ -32,7 +32,8 @@ public interface ExamService {
 
 
   // ----------------------- Detail Exam ------------------------
-  void submitAssignemt(MultipartFile multiPartFile, String content, String body) throws Exception;
+  void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
+      throws Exception;
 
   void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception;
 
