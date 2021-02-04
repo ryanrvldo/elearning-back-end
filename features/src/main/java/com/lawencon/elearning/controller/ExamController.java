@@ -50,13 +50,12 @@ public class ExamController {
     examService.submitAssignemt(multiPartFile, examId, studentId);
     return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
   }
-
-  @PostMapping("/module")
-  public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
-      @RequestPart("content") String content, @RequestPart("body") String body) throws Exception {
-    examService.saveExam(multiPartFile, content, body);
-    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
-  }
+   @PostMapping("/module")
+   public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
+       @RequestPart("body") String body) throws Exception {
+     examService.saveExam(multiPartFile, body);
+     return WebResponseUtils.createWebResponse("Insert Exam Success", HttpStatus.OK);
+   }
 
   @PatchMapping("/submission")
   public ResponseEntity<?> updateScore(@RequestBody UpdateScoreRequestDTO body) throws Exception {

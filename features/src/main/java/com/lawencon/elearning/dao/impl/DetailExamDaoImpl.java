@@ -1,18 +1,17 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.DetailExamDao;
+import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.Module;
-import com.lawencon.elearning.model.Student;
-import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
 
 /**
@@ -120,38 +119,21 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public List<DetailExam> getExamSubmission(String id) throws Exception {
+  public List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception {
     String sql =
         buildQueryOf(
-            "SELECT de.id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date ",
-            "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student =s.id ",
-            "INNER JOIN tb_m_users u ON s.id_user = u.id WHERE de.id_exam = ?1").toString();
+            "SELECT de.id AS submission_id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date , trf.id AS file_id , trf.name",
+            "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student = s.id ",
+            "INNER JOIN tb_m_users u ON s.id_user = u.id INNER JOIN tb_r_files trf on trf.id = de.id_file WHERE de.id_exam = ?1")
+                .toString();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-    List<DetailExam> listResult = new ArrayList<>();
+    List<SubmissionsByExamResponseDTO> listResult =
+        HibernateUtils.bMapperList(listObj, SubmissionsByExamResponseDTO.class, "id", "code",
+            "firstName", "lastName", "grade", "submittedDate", "fileId", "fileName");
 
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      DetailExam dtlExam = new DetailExam();
-      dtlExam.setId((String) objArr[0]);
-      dtlExam.setTrxNumber((String) objArr[1]);
-
-      User user = new User();
-      user.setFirstName((String) objArr[2]);
-      user.setLastName((String) objArr[3]);
-
-      Student student = new Student();
-      student.setUser(user);
-
-      dtlExam.setGrade((Double) objArr[4]);
-      Date inDate = (Date) objArr[5];
-      dtlExam.setTrxDate(inDate.toLocalDate());
-      dtlExam.setStudent(student);
-
-      listResult.add(dtlExam);
-    });
-    return listResult;
+    return listResult.size() > 0 ? listResult : null;
   }
 
   @Override

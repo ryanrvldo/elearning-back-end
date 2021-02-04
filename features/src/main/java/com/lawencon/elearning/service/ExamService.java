@@ -16,7 +16,7 @@ public interface ExamService {
 
   List<Exam> getAllExams() throws Exception;
 
-  void saveExam(MultipartFile multiPartFile, String content, String body) throws Exception;
+  void saveExam(MultipartFile multiPartFile, String body) throws Exception;
 
   void updateExam(Exam data) throws Exception;
 

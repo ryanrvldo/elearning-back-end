@@ -126,26 +126,9 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception {
-    List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getExamSubmission(id))
+    validationUtil.validateUUID(id);
+    return Optional.ofNullable(dtlExamDao.getExamSubmission(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
-
-    List<SubmissionsByExamResponseDTO> submissionByExamsDTO =
-        new ArrayList<SubmissionsByExamResponseDTO>();
-
-    detailExams.forEach(val -> {
-      SubmissionsByExamResponseDTO submission = new SubmissionsByExamResponseDTO();
-      submission.setId(val.getId());
-      submission.setCode(val.getTrxNumber());
-      submission.setFirstName(val.getStudent().getUser().getFirstName());
-      submission.setLastName(val.getStudent().getUser().getLastName());
-      submission.setGrade(val.getGrade());
-      submission.setSubmittedDate(val.getTrxDate());
-
-      submissionByExamsDTO.add(submission);
-    });
-
-    return submissionByExamsDTO;
-
   }
 
   @Override

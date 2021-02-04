@@ -11,20 +11,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ExamDao;
+import com.lawencon.elearning.dto.EmailSetupDTO;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
+import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.service.FileService;
+import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -47,6 +51,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   @Autowired
   private DetailExamService dtlExamService;
 
+  @Autowired
+  private MailUtils mailUtils;
+
   @Override
   public List<Exam> getAllExams() throws Exception {
     return Optional.ofNullable(examDao.getAllExams()).orElseThrow(
@@ -54,23 +61,27 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public void saveExam(MultipartFile multiPartFile, String content, String body) throws Exception {
-    if (content == null) {
-      throw new IllegalRequestException("Content cannot be empty!");
-    }
-    if (body == null) {
+  public void saveExam(MultipartFile multiPartFile, String body) throws Exception {
+
+    if (body == null && multiPartFile == null) {
       throw new IllegalRequestException("Teacher Exam data cannot be empty!");
     }
-    FileResponseDto fileResponseDTO = fileService.createFile(multiPartFile, content);
     ObjectMapper obj = new ObjectMapper();
     obj.registerModule(new JavaTimeModule());
-    TeacherExamRequestDTO teacherExam =
-        obj.readValue(body, TeacherExamRequestDTO.class);
+
+    TeacherExamRequestDTO teacherExam = obj.readValue(body, TeacherExamRequestDTO.class);
     validateUtil.validate(teacherExam);
     validateUtil.validateUUID(teacherExam.getModuleId());
     if (teacherExam.getStartTime().compareTo(teacherExam.getEndTime()) > 0) {
       throw new IllegalRequestException("End time cannot be greather than start Time");
     }
+
+    FileCreateRequestDto contentString = new FileCreateRequestDto();
+    contentString.setType(FileType.EXAM.toString());
+    contentString.setUserId(teacherExam.getCreatedBy());
+
+    String content = obj.writeValueAsString(contentString);
+    FileResponseDto fileResponseDTO = fileService.createFile(multiPartFile, content);
 
     Module module = new Module();
     module.setId(teacherExam.getModuleId());
@@ -92,6 +103,16 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     exam.setFile(file);
 
     examDao.saveExam(exam, null);
+    // SENGAJA DI COMMENT!
+    // String[] emailTo = {"ryanrumapea@gmail.com", "muhammadapry14@gmail.com",
+    // "williamgolden54@gmail.com", "galihdikapermana98@gmail.com",
+    // "farrelyudapraditya96@gmail.com", "dzakyfadhl@gmail.com"};
+    String[] emailTo = {"lawerning.acc@gmail.com"};
+    EmailSetupDTO email = new EmailSetupDTO();
+    email.setTo(emailTo);
+    email.setSubject("TEST SMTP");
+    email.setBody("ORANG ORANG TOLOL");
+    new EmailServiceImpl(mailUtils, email).start();
   }
 
   @Override

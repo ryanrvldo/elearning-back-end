@@ -21,5 +21,7 @@ public class SubmissionsByExamResponseDTO {
   private Double grade;
   @JsonFormat(pattern = "dd LLL yyyy")
   private LocalDate submittedDate;
+  private String fileId;
+  private String fileName;
 
 }
