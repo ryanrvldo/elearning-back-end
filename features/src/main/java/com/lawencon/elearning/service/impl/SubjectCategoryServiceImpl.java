@@ -81,26 +81,45 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public void deleteSubject(DeleteMasterRequestDTO data) throws Exception {
-    validateNullId(data.getId(), "id");
+  public void deleteSubject(String id) throws Exception {
+    validationUtil.validateUUID(id);
     try {
       begin();
-      subjectCategoryDao.deleteSubject(data.getId());
+      subjectCategoryDao.deleteSubject(id);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException(e.getMessage());
-      }
-      updateIsActive(data.getId(), data.getUpdatedBy());
+      rollback();
+      throw e;
     }
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    begin();
-    subjectCategoryDao.updateIsActive(id, userId);
-    commit();
+  public void setActiveFalse(DeleteMasterRequestDTO data) throws Exception {
+    validationUtil.validate(data);
+    try {
+      begin();
+      subjectCategoryDao.setActiveFalse(data.getId(), data.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+  }
+
+  @Override
+  public void setActiveTrue(DeleteMasterRequestDTO data) throws Exception {
+    validationUtil.validate(data);
+    try {
+      begin();
+      subjectCategoryDao.setActiveTrue(data.getId(), data.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
   }
 
   @Override

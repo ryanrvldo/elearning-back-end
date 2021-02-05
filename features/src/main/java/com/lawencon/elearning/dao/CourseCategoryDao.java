@@ -18,7 +18,9 @@ public interface CourseCategoryDao {
 
   void deleteCourseCategory(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void setIsActiveFalse(String id, String userId) throws Exception;
+
+  void setIsActiveTrue(String id, String userId) throws Exception;
 
   CourseCategory getCategoryById(String id) throws Exception;
 }

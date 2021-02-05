@@ -3,15 +3,17 @@ package com.lawencon.elearning.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
-import com.lawencon.elearning.dto.course.category.CourseCategoryDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.service.CourseCategoryService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -45,12 +47,25 @@ public class CourseCategoryController {
     return WebResponseUtils.createWebResponse("Update data success", HttpStatus.OK);
   }
 
-  @PatchMapping
-  public ResponseEntity<?> deleteCourseCategoryById(
-      @RequestBody CourseCategoryDeleteRequestDTO data)
+  @PatchMapping("/false")
+  public ResponseEntity<?> setIsActiveFalse(@RequestBody DeleteMasterRequestDTO data)
       throws Exception {
-    courseCategoryService.deleteCourseCategory(data);
-    return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
-
+    courseCategoryService.setIsActiveFalse(data);
+    return WebResponseUtils.createWebResponse("Update is active to false success", HttpStatus.OK);
   }
+
+  @PatchMapping("/true")
+  public ResponseEntity<?> setIsActiveTrue(@RequestBody DeleteMasterRequestDTO data)
+      throws Exception {
+    courseCategoryService.setIsActiveTrue(data);
+    return WebResponseUtils.createWebResponse("Update is active to true", HttpStatus.OK);
+  }
+
+  @DeleteMapping("/id/{id}")
+  public ResponseEntity<?> deleteCourseCategoryById(@PathVariable("id") String id)
+      throws Exception {
+    courseCategoryService.deleteCourseCategory(id);
+    return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
+  }
+
 }

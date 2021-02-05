@@ -39,7 +39,7 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
   @Override
   public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
     String sql2 = buildQueryOf("SELECT tre.id AS exam_id, tre.exam_title , tre.trx_number , ",
-        "tre.description , tre.\"type\" , tre.start_time , ",
+        "tre.description , tre.exam_type , tre.start_time , ",
         "tre.end_time, tre.id_file AS file_id, tre.VERSION, ",
         "trf.\"name\" AS file_name FROM tb_r_exams tre ",
         "INNER JOIN tb_r_files trf ON trf.id =tre.id_file WHERE ",

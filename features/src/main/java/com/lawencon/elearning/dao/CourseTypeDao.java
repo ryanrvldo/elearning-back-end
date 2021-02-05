@@ -17,7 +17,9 @@ public interface CourseTypeDao {
 
   void deleteCourseType(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void setActiveFalse(String id, String updatedBy) throws Exception;
+
+  void setActiveTrue(String id, String updatedBy) throws Exception;
 
   CourseType getTypeById(String id) throws Exception;
 }

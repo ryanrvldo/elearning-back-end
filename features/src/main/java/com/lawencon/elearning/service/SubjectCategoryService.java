@@ -20,9 +20,11 @@ public interface SubjectCategoryService {
 
   void addSubject(CreateSubjectCategoryRequestDTO data, Callback before) throws Exception;
 
-  void deleteSubject(DeleteMasterRequestDTO data) throws Exception;
+  void deleteSubject(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void setActiveFalse(DeleteMasterRequestDTO data) throws Exception;
+
+  void setActiveTrue(DeleteMasterRequestDTO data) throws Exception;
 
   SubjectCategoryResponseDTO getById(String id) throws Exception;
 

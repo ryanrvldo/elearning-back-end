@@ -42,9 +42,15 @@ public class SubjectCategoryDaoImpl extends CustomBaseDao<SubjectCategory>
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    String sql = "UPDATE tb_m_subject_categories SET is_active = false";
-    updateNativeSQL(sql, id, userId);
+  public void setActiveFalse(String id, String updatedBy) throws Exception {
+    String sql = "UPDATE tb_m_subject_categories SET is_active = FALSE";
+    updateNativeSQL(sql, id, updatedBy);
+  }
+
+  @Override
+  public void setActiveTrue(String id, String updatedBy) throws Exception {
+    String sql = "UPDATE tb_m_subject_categories SET is_active = TRUE";
+    updateNativeSQL(sql, id, updatedBy);
   }
 
 }

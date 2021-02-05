@@ -54,7 +54,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
      String sql = buildQueryOf(
          "SELECT tmt.id as id_techer, tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, ",
          "tmt.gender , tmu.id_photo, tmt.phone FROM tb_m_teachers tmt ",
-         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.id=? AND tmt.is_active = true")
+         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.id=?")
              .toString();
     
      List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
@@ -67,7 +67,13 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
+  public void setIsActiveTrue(String id, String userId) throws Exception {
+    String sql = "UPDATE tb_m_teachers SET is_active = TRUE";
+    updateNativeSQL(sql, id, userId);
+  }
+
+  @Override
+  public void setIsActiveFalse(String id, String userId) throws Exception {
     String sql = "UPDATE tb_m_teachers SET is_active = FALSE";
     updateNativeSQL(sql, id, userId);
   }
@@ -83,7 +89,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     String sql = buildQueryOf(
         "SELECT tmt.phone , tmt.gender ",
         "FROM tb_m_teachers tmt ",
-        "WHERE id_user = ?1 AND is_active = true").toString();
+        "WHERE id_user = ?1 ").toString();
 
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, userId).getResultList();
@@ -103,7 +109,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public Teacher findByIdForCourse(String id) throws Exception {
     String sql = buildQueryOf("SELECT tmt.id AS teacher_id , tmu.first_name , ",
         "tmu.last_name , tmt.title_degree, tmt.version FROM tb_m_teachers tmt ",
-        "INNER JOIN tb_m_users tmu ON tmu.id = tmt.id_user AND is_active = TRUE").toString();
+        "INNER JOIN tb_m_users tmu ON tmu.id = tmt.id_user").toString();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 

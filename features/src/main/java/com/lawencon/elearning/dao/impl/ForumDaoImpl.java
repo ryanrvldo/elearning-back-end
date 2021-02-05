@@ -45,7 +45,7 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
         "FROM tb_r_forums trf ",
         "INNER JOIN tb_m_users tmu ON trf.id_user = tmu.id  ",
         "INNER JOIN tb_m_roles tmr ON tmr.id = tmu.id_role  ",
-        "WHERE id_module =?1 ")
+        "WHERE id_module =?1 ORDER BY created_at")
         .toString();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();

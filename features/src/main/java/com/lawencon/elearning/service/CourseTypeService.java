@@ -1,8 +1,8 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
-import com.lawencon.elearning.dto.course.type.CourseTypeDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeResponseDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
 
@@ -18,7 +18,9 @@ public interface CourseTypeService {
 
   void updateCourseType(CourseTypeUpdateRequestDTO courseType) throws Exception;
 
-  void deleteCourseType(CourseTypeDeleteRequestDTO courseTypeDeleteDTO) throws Exception;
+  void deleteCourseType(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void setActiveFalse(DeleteMasterRequestDTO data) throws Exception;
+
+  void setActiveTrue(DeleteMasterRequestDTO data) throws Exception;
 }

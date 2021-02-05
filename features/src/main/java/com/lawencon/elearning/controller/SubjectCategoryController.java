@@ -3,6 +3,7 @@ package com.lawencon.elearning.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,10 +55,26 @@ public class SubjectCategoryController {
     return WebResponseUtils.createWebResponse("Update Subject Success", HttpStatus.OK);
   }
 
-  @PatchMapping
-  public ResponseEntity<?> deleteSubjectCategory(@RequestBody DeleteMasterRequestDTO body)
+  @PatchMapping("/false")
+  public ResponseEntity<?> setActiveFalse(@RequestBody DeleteMasterRequestDTO data)
       throws Exception {
-    subjectCategoryService.deleteSubject(body);
+    subjectCategoryService.setActiveFalse(data);
+    return WebResponseUtils.createWebResponse("Set isActive subject category to false Success",
+        HttpStatus.OK);
+  }
+
+  @PatchMapping("/true")
+  public ResponseEntity<?> setActiveTrue(@RequestBody DeleteMasterRequestDTO data)
+      throws Exception {
+    subjectCategoryService.setActiveTrue(data);
+    return WebResponseUtils.createWebResponse("Set isActive subject category to true Success",
+        HttpStatus.OK);
+  }
+
+  @DeleteMapping("/id/{id}")
+  public ResponseEntity<?> deleteSubjectCategory(@PathVariable("id") String id)
+      throws Exception {
+    subjectCategoryService.deleteSubject(id);
     return WebResponseUtils.createWebResponse("Delete Subject Success", HttpStatus.OK);
   }
 

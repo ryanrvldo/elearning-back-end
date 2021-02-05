@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
-import com.lawencon.elearning.dto.teacher.DeleteTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
@@ -56,10 +56,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   private CourseService courseService;
 
 
-  @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    teacherDao.updateIsActive(id, userId);
-  }
+
 
   @Override
   public List<Teacher> getAllTeachers() throws Exception {
@@ -180,23 +177,52 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public void deleteTeacherById(DeleteTeacherDTO deleteReq) throws Exception {
-    validateNullId(deleteReq.getId(), "Id");
+  public void deleteTeacherById(String teacherId) throws Exception {
+    validateNullId(teacherId, "Id");
+    validUtil.validateUUID(teacherId);
 
     try {
       begin();
-      teacherDao.deleteTeacherById(deleteReq.getId());
+      teacherDao.deleteTeacherById(teacherId);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException("Id");
-      }
-      begin();
-      updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy());
-      commit();
+      rollback();
+      throw e;
     }
   }
+
+  @Override
+  public void setIsActiveTrue(DeleteMasterRequestDTO deleteReq) throws Exception {
+    validUtil.validate(deleteReq);
+    validUtil.validateUUID(deleteReq.getId());
+    try {
+      begin();
+      teacherDao.setIsActiveTrue(deleteReq.getId(), deleteReq.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+  }
+
+  @Override
+  public void setIsActiveFalse(DeleteMasterRequestDTO deleteReq) throws Exception {
+    validUtil.validate(deleteReq);
+    validUtil.validateUUID(deleteReq.getId());
+    try {
+      begin();
+      teacherDao.setIsActiveFalse(deleteReq.getId(), deleteReq.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
+  }
+
 
   @Override
   public Teacher findByIdForCourse(String id) throws Exception {

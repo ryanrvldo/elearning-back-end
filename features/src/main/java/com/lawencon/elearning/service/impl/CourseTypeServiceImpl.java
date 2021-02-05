@@ -6,12 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseTypeDao;
+import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeCreateRequestDTO;
-import com.lawencon.elearning.dto.course.type.CourseTypeDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeResponseDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.service.CourseTypeService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -77,34 +76,46 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   }
 
   @Override
-  public void deleteCourseType(CourseTypeDeleteRequestDTO courseTypeDeleteDTO) throws Exception {
-    validateNullId(courseTypeDeleteDTO.getId(), "id");
+  public void deleteCourseType(String id) throws Exception {
+    validateUtil.validateUUID(id);
     try {
       begin();
-      courseTypeDao.deleteCourseType(courseTypeDeleteDTO.getId());
+      courseTypeDao.deleteCourseType(id);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException("id", courseTypeDeleteDTO.getId());
-      }
-      begin();
-      updateIsActive(courseTypeDeleteDTO.getId(), courseTypeDeleteDTO.getUpdateBy());
-      commit();
+      rollback();
+      throw e;
     }
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    begin();
-    courseTypeDao.updateIsActive(id, userId);
-    commit();
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
+  public void setActiveFalse(DeleteMasterRequestDTO data) throws Exception {
+    validateUtil.validate(data);
+    try {
+      begin();
+      courseTypeDao.setActiveFalse(data.getId(), data.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
     }
   }
+
+  @Override
+  public void setActiveTrue(DeleteMasterRequestDTO data) throws Exception {
+    validateUtil.validate(data);
+    try {
+      begin();
+      courseTypeDao.setActiveTrue(data.getId(), data.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+  }
+
 
 }
