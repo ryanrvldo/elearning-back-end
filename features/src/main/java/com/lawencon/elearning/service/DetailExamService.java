@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.util.Callback;
@@ -29,6 +30,9 @@ public interface DetailExamService {
   void updateScoreStudent(String id, Double score, String userId) throws Exception;
 
   List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception;
+
+  List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId, String studentId)
+      throws Exception;
 
   void sendStudentExam(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception;

@@ -14,8 +14,10 @@ import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentProfileDTO;
+import com.lawencon.elearning.dto.student.StudentReportDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
@@ -203,6 +205,30 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   public List<Student> getAllStudentByCourseId(String idCourse) throws Exception {
     return Optional.ofNullable(studentDao.getListStudentByIdCourse(idCourse))
         .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
+  }
+
+  @Override
+  public List<StudentReportDTO> getStudentExamReport(String studentId) throws Exception {
+    validateNullId(studentId, "id");
+    List<DetailExam> listDetail = studentDao.getStudentExamReport(studentId);
+    List<StudentReportDTO> listResult = new ArrayList<>();
+    if (listDetail.isEmpty()) {
+      throw new DataIsNotExistsException("id", studentId);
+    }
+    for (int i = 0; i < listDetail.size(); i++) {
+      StudentReportDTO studentDTO = new StudentReportDTO();
+      studentDTO.setCourseName(
+          listDetail.get(i).getExam().getModule().getCourse().getCourseType().getName());
+      studentDTO
+          .setModuleName(listDetail.get(i).getExam().getModule().getSubject().getSubjectName());
+      studentDTO.setExamType(listDetail.get(i).getExam().getExamType().toString());
+      studentDTO.setExamTitle(listDetail.get(i).getExam().getTitle());
+      studentDTO.setDateExam(listDetail.get(i).getExam().getTrxDate().toString());
+      studentDTO.setGrade(listDetail.get(i).getGrade());
+      listResult.add(studentDTO);
+    }
+
+    return listResult;
   }
 
 }

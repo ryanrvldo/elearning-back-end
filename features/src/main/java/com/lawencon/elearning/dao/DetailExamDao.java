@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.util.Callback;
@@ -25,6 +26,9 @@ public interface DetailExamDao {
   void updateScoreStudent(String id, Double score, String userId) throws Exception;
 
   List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception;
+
+  List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId, String studentId)
+      throws Exception;
 
   void sendStudentExam(DetailExam dtlExam) throws Exception;
 

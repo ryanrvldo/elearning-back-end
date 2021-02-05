@@ -16,6 +16,7 @@ import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
@@ -96,7 +97,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     exam.setCreatedBy(teacherExam.getCreatedBy());
     exam.setTrxDate(LocalDate.now());
     exam.setTrxNumber(TransactionNumberUtils.generateExamTrxNumber());
-    exam.setType(teacherExam.getType());
+    exam.setExamType(teacherExam.getType());
 
     File file = new File();
     file.setId(fileResponseDTO.getId());
@@ -169,6 +170,14 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
+  public List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId,
+      String studentId) throws Exception {
+    validateNullId(examId, "exam id");
+    validateNullId(studentId, "student id");
+    return dtlExamService.getStudentExamSubmission(examId, studentId);
+  }
+
+  @Override
   public void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception {
     if (examId == null && studentId == null) {
@@ -201,5 +210,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       throw new IllegalRequestException(msg, id);
     }
   }
+
+
 
 }

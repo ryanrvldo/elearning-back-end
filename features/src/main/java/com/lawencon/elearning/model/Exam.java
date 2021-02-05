@@ -36,7 +36,7 @@ public class Exam extends BaseTransaction {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private ExamType type;
+  private ExamType examType;
 
   @Column(name = "start_time", nullable = false)
   private LocalDateTime startTime;

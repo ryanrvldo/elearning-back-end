@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.DetailExamDao;
+import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.DetailExam;
@@ -137,6 +138,25 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
+  public List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId,
+      String studentId) throws Exception {
+    String sql = buildQueryOf(
+        "SELECT de.id AS detail_id ,f.id AS file_id,f.\"name\",de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date ",
+        "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student =s.id ",
+        "LEFT JOIN tb_r_files f ON de.id_file = f.id ",
+        "INNER JOIN tb_m_users u ON s.id_user = u.id WHERE de.id_exam = ?1 AND s.id = ?2");
+
+    List<?> listObj =
+        createNativeQuery(sql).setParameter(1, examId).setParameter(2, studentId).getResultList();
+
+    List<SubmissionStudentResponseDTO> listResult =
+        HibernateUtils.bMapperList(listObj, SubmissionStudentResponseDTO.class, "detailId",
+            "fileId", "fileName",
+            "code", "firstName", "lastName", "grade", "submittedDate");
+    return listResult.size() > 0 ? listResult : null;
+  }
+
+  @Override
   public void sendStudentExam(DetailExam dtlExam) throws Exception {
     save(dtlExam, null, null, true, true);
   }
@@ -145,5 +165,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   public DetailExam getDetailById(String id) throws Exception {
     return getById(id);
   }
+
+
 
 }

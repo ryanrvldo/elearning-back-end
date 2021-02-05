@@ -7,6 +7,7 @@ import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentProfileDTO;
+import com.lawencon.elearning.dto.student.StudentReportDTO;
 import com.lawencon.elearning.model.Student;
 
 /**
@@ -39,5 +40,7 @@ public interface StudentService {
   void RegisterCourse(String student, String course) throws Exception;
 
   List<Student> getAllStudentByCourseId(String idCourse) throws Exception;
+
+  List<StudentReportDTO> getStudentExamReport(String studentId) throws Exception;
 
 }

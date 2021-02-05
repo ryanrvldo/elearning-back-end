@@ -43,6 +43,13 @@ public class ExamController {
     return WebResponseUtils.createWebResponse(examService.getExamSubmissions(id), HttpStatus.OK);
   }
 
+  @GetMapping("/{examId}/submission/{studentId}")
+  public ResponseEntity<?> getStudentExamSubmission(@PathVariable("examId") String examId,
+      @PathVariable("studentId") String studentId) throws Exception {
+    return WebResponseUtils
+        .createWebResponse(examService.getStudentExamSubmission(examId, studentId), HttpStatus.OK);
+  }
+
   @PostMapping("/student")
   public ResponseEntity<?> sendStudentExam(@RequestPart("file") MultipartFile multiPartFile,
       @RequestParam("examId") String examId, @RequestParam("studentId") String studentId)

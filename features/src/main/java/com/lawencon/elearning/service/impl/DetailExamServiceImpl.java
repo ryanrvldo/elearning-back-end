@@ -13,6 +13,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
+import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
@@ -66,7 +67,6 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
     List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getListScoreReport(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
-
     List<ScoreReportDTO> scoreReports = new ArrayList<ScoreReportDTO>();
 
     for (DetailExam detail : detailExams) {
@@ -132,6 +132,15 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
+  public List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId,
+      String studentId) throws Exception {
+    validationUtil.validateUUID(studentId);
+    validationUtil.validateUUID(examId);
+    return Optional.ofNullable(dtlExamDao.getStudentExamSubmission(examId, studentId))
+        .orElseThrow(() -> new DataIsNotExistsException("id", examId));
+  }
+
+  @Override
   public void sendStudentExam(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception {
     ObjectMapper objMapper = new ObjectMapper();
@@ -174,5 +183,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
       throw new IllegalRequestException(msg, id);
     }
   }
+
+
 
 }
