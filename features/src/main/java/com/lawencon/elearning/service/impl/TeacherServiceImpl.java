@@ -184,6 +184,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     try {
       begin();
       teacherDao.deleteTeacherById(teacherId);
+      String idUser = teacherDao.getUserId(teacherId);
+      // delete user by id => delete(idUser);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -199,6 +201,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     try {
       begin();
       teacherDao.setIsActiveTrue(deleteReq.getId(), deleteReq.getUpdatedBy());
+      String idUser = teacherDao.getUserId(deleteReq.getId());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -214,6 +217,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     try {
       begin();
       teacherDao.setIsActiveFalse(deleteReq.getId(), deleteReq.getUpdatedBy());
+      String idUser = teacherDao.getUserId(deleteReq.getId());
       commit();
     } catch (Exception e) {
       e.printStackTrace();

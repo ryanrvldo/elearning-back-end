@@ -141,4 +141,10 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     return strings.size() > 0 ? strings : null;
   }
 
+  @Override
+  public String getUserId(String teacherId) throws Exception {
+    String sql = "SELECT id_user FROM tb_m_teachers WHERE id = ?1";
+    return (String) createNativeQuery(sql).setParameter(1, teacherId).getSingleResult();
+  }
+
 }

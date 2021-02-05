@@ -36,5 +36,7 @@ public interface TeacherDao {
 
   List<String> checkConstraint(String id) throws Exception;
 
+  String getUserId(String teacherId) throws Exception;
+
 
 }
