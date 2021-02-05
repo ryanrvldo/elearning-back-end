@@ -27,7 +27,7 @@ public interface DetailExamDao {
 
   List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception;
 
-  List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId, String studentId)
+  SubmissionStudentResponseDTO getStudentExamSubmission(String examId, String studentId)
       throws Exception;
 
   void sendStudentExam(DetailExam dtlExam) throws Exception;

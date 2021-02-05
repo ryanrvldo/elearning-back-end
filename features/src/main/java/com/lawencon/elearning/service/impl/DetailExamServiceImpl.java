@@ -47,6 +47,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public List<ScoreAverageResponseDTO> getListScoreAvg(String id) throws Exception {
+    validationUtil.validateUUID(id);
     List<DetailExam> listDetail = dtlExamDao.getListScoreAvg(id);
     if (listDetail == null) {
       throw new DataIsNotExistsException("Data is not exist");
@@ -66,6 +67,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
+    validationUtil.validateUUID(id);
     List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getListScoreReport(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
     List<ScoreReportDTO> scoreReports = new ArrayList<ScoreReportDTO>();
@@ -115,11 +117,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void updateScoreStudent(UpdateScoreRequestDTO data) throws Exception {
-    validateNullId(data.getId(), "id");
-    if (data.getGrade() == null) {
-      throw new IllegalRequestException("Data must be input");
-    }
-    validateNullId(data.getUpdatedBy(), "userId");
+    validationUtil.validate(data);
     DetailExam detailExam = dtlExamDao.getDetailById(data.getId());
     detailExam.setUpdatedBy(data.getUpdatedBy());
     detailExam.setGrade(data.getGrade());
@@ -134,12 +132,16 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId,
+  public SubmissionStudentResponseDTO getStudentExamSubmission(String examId,
       String studentId) throws Exception {
     validationUtil.validateUUID(studentId);
     validationUtil.validateUUID(examId);
-    return Optional.ofNullable(dtlExamDao.getStudentExamSubmission(examId, studentId))
-        .orElseThrow(() -> new DataIsNotExistsException("id", examId));
+    SubmissionStudentResponseDTO result =
+        dtlExamDao.getStudentExamSubmission(examId, studentId);
+    if (result == null) {
+      return null;
+    }
+    return result;
   }
 
   @Override

@@ -189,7 +189,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId,
+  public SubmissionStudentResponseDTO getStudentExamSubmission(String examId,
       String studentId) throws Exception {
     validateNullId(examId, "exam id");
     validateNullId(studentId, "student id");
@@ -207,11 +207,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public void updateScoreAssignment(UpdateScoreRequestDTO data) throws Exception {
-    validateNullId("id", data.getId());
-    if (data.getGrade() == null || data.getGrade() < 0) {
-      throw new IllegalRequestException("Bad request with score! cannot be empty or less than 0");
-    }
-    validateNullId("Teacher Id", data.getUpdatedBy());
+    validateUtil.validate(data);
 
     dtlExamService.updateScoreStudent(data);
   }

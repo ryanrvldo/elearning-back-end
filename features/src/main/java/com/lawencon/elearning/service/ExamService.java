@@ -43,7 +43,7 @@ public interface ExamService {
 
   List<SubmissionsByExamResponseDTO> getExamSubmissions(String examId) throws Exception;
 
-  List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId, String studentId)
+  SubmissionStudentResponseDTO getStudentExamSubmission(String examId, String studentId)
       throws Exception;
 
   List<ScoreReportDTO> getListScoreReport(String id) throws Exception;

@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,7 +135,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public List<SubmissionStudentResponseDTO> getStudentExamSubmission(String examId,
+  public SubmissionStudentResponseDTO getStudentExamSubmission(String examId,
       String studentId) throws Exception {
     String sql = buildQueryOf(
         "SELECT de.id AS detail_id ,f.id AS file_id,f.\"name\",de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date ",
@@ -145,10 +146,24 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
     List<?> listObj =
         createNativeQuery(sql).setParameter(1, examId).setParameter(2, studentId).getResultList();
 
-    List<SubmissionStudentResponseDTO> listResult =
-        HibernateUtils.bMapperList(listObj, SubmissionStudentResponseDTO.class, "detailId",
-            "fileId", "fileName", "code", "firstName", "lastName", "grade", "submittedDate");
-    return listResult.size() > 0 ? listResult : null;
+    SubmissionStudentResponseDTO submission = new SubmissionStudentResponseDTO();
+    if (listObj.isEmpty()) {
+      return null;
+    }
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      submission.setDetailId((String) objArr[0]);
+      submission.setFileId((String) objArr[1]);
+      submission.setFileName((String) objArr[2]);
+      submission.setCode((String) objArr[3]);
+      submission.setFirstName((String) objArr[4]);
+      submission.setLastName((String) objArr[5]);
+      submission.setGrade((Double) objArr[6]);
+      Date inDate = (Date) objArr[7];
+      submission.setSubmittedDate(inDate.toLocalDate());
+    });
+
+    return submission;
   }
 
   @Override
