@@ -149,9 +149,6 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     newRequestDto.setUserId(studentId);
     String content = objMapper.writeValueAsString(newRequestDto);
 
-    FileResponseDto fileResponseDTO =
-        Optional.ofNullable(fileService.createFile(multiPartFile, content))
-            .orElseThrow(() -> new DataIsNotExistsException("Id file not found!"));
 
     validationUtil.validateUUID(examId);
     validationUtil.validateUUID(studentId);
@@ -163,7 +160,6 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     student.setId(studentId);
 
     File file = new File();
-    file.setId(fileResponseDTO.getId());
 
     DetailExam detailExam = new DetailExam();
     detailExam.setCreatedBy(studentId);
@@ -175,7 +171,20 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     detailExam.setExam(exam);
     detailExam.setFile(file);
 
-    dtlExamDao.sendStudentExam(detailExam);
+    try {
+      begin();
+      FileResponseDto fileResponseDTO =
+          Optional.ofNullable(fileService.createFile(multiPartFile, content))
+              .orElseThrow(() -> new DataIsNotExistsException("Id file not found!"));
+      file.setId(fileResponseDTO.getId());
+      dtlExamDao.sendStudentExam(detailExam);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
   }
 
   private void validateNullId(String id, String msg) throws Exception {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,9 +57,9 @@ public class ModuleController {
   
   @PostMapping("/lesson")
   public ResponseEntity<?> insertLesson(@RequestPart("file") List<MultipartFile> multiPartFiles,
-      @RequestPart("content") String content, @RequestPart("idModule") String idModule)
+      @RequestParam("idUser") String idUser, @RequestParam("idModule") String idModule)
       throws Exception {
-    moduleService.saveLesson(multiPartFiles, content, idModule);
+    moduleService.saveLesson(multiPartFiles, idUser, idModule);
     return WebResponseUtils.createWebResponse("Insert lesson success", HttpStatus.OK);
   }
   

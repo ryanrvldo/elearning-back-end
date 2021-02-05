@@ -31,7 +31,7 @@ public interface ModuleService {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  void saveLesson(List<MultipartFile> multiPartFiles, String content, String body) throws Exception;
+  void saveLesson(List<MultipartFile> multiPartFiles, String idUser, String body) throws Exception;
 
   List<FileResponseDto> getLessonFile(String idModule) throws Exception;
 

@@ -158,7 +158,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
   @Override
   public void sendStudentExam(DetailExam dtlExam) throws Exception {
-    save(dtlExam, null, null, true, true);
+    save(dtlExam, null, null, false, false);
   }
 
   @Override

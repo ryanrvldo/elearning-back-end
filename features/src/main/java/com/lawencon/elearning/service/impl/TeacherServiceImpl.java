@@ -134,24 +134,13 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
     validateNullId(id, "Id");
-    Teacher teacher = teacherDao.findTeacherByIdCustom(id);
-    if (teacher == null) {
-      throw new DataIsNotExistsException("Id", id);
-    }
+    validUtil.validateUUID(id);
+    TeacherProfileDTO teacher = Optional.ofNullable(teacherDao.findTeacherByIdCustom(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
 
     List<ExperienceResponseDto> experiences = experienceService.getAllByTeacherId(id);
-
-    TeacherProfileDTO teacherProfile = new TeacherProfileDTO();
-    teacherProfile.setId(id);
-    teacherProfile.setFirstName(teacher.getUser().getFirstName());
-    teacherProfile.setLastName(teacher.getUser().getLastName());
-    teacherProfile.setEmail(teacher.getUser().getEmail());
-    teacherProfile.setCreatedAt(teacher.getCreatedAt());
-    teacherProfile.setGender(teacher.getGender());
-    teacherProfile.setPhotoId(null == teacher.getUser().getUserPhoto().getId() ? ""
-        : teacher.getUser().getUserPhoto().getId());
-    teacherProfile.setExperiences(experiences);
-    return teacherProfile;
+    teacher.setExperiences(experiences);
+    return teacher;
   }
 
   @Override

@@ -9,9 +9,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
@@ -20,6 +22,7 @@ import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
@@ -247,21 +250,31 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public void saveLesson(List<MultipartFile> multiPartFiles, String content, String idModule)
+  public void saveLesson(List<MultipartFile> multiPartFiles, String idUser, String idModule)
       throws Exception {
-    if (content == null) {
-      throw new IllegalRequestException("Content cannot be empty!");
+    validationUtil.validateUUID(idUser);
+    validationUtil.validateUUID(idModule);
+
+    if (multiPartFiles == null) {
+      throw new IllegalRequestException("File cannot be empty!");
     }
-    if (idModule == null) {
-      throw new IllegalRequestException("Id module cannot be empty!");
-    }
-    Optional.ofNullable(moduleDao.getModuleById(idModule))
-        .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
+
+    FileCreateRequestDto contentString = new FileCreateRequestDto();
+    contentString.setType(FileType.MODULE_LESSON.toString());
+    contentString.setUserId(idUser);
+    String content = new ObjectMapper().writeValueAsString(contentString);
+
     for (MultipartFile file : multiPartFiles) {
-      FileResponseDto fileResponseDTO = fileService.createFile(file, content);
-      begin();
-      moduleDao.insertLesson(idModule, fileResponseDTO.getId());
-      commit();
+      try {
+        begin();
+        FileResponseDto fileResponseDTO = fileService.createFile(file, content);
+        moduleDao.insertLesson(idModule, fileResponseDTO.getId());
+        commit();
+      } catch (Exception e) {
+        e.printStackTrace();
+        rollback();
+        throw e;
+      }
     }
   }
 

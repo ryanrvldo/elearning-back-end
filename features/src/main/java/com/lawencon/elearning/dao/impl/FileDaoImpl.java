@@ -15,7 +15,7 @@ public class FileDaoImpl extends BaseDaoImpl<File> implements FileDao {
 
   @Override
   public void create(File file) throws Exception {
-    save(file, null, null, true, true);
+    save(file, null, null, false, false);
   }
 
   @Override

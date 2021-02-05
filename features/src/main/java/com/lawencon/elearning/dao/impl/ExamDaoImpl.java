@@ -23,7 +23,7 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
 
   @Override
   public void saveExam(Exam data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
   @Override

@@ -21,7 +21,7 @@ public class SubmissionsByExamResponseDTO {
   private String firstName;
   private String lastName;
   private Double grade;
-  @JsonFormat(pattern = "dd LLL yyyy")
+  @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate submittedDate;
 
 }

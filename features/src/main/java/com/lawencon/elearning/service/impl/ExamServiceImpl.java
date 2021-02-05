@@ -70,7 +70,13 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     ObjectMapper obj = new ObjectMapper();
     obj.registerModule(new JavaTimeModule());
 
-    TeacherExamRequestDTO teacherExam = obj.readValue(body, TeacherExamRequestDTO.class);
+    TeacherExamRequestDTO teacherExam;
+    try {
+      teacherExam = obj.readValue(body, TeacherExamRequestDTO.class);
+    } catch (Exception e) {
+      throw new IllegalRequestException("Invalid create exam request.");
+    }
+
     validateUtil.validate(teacherExam);
     validateUtil.validateUUID(teacherExam.getModuleId());
     if (teacherExam.getStartTime().compareTo(teacherExam.getEndTime()) > 0) {
@@ -82,7 +88,6 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     contentString.setUserId(teacherExam.getCreatedBy());
 
     String content = obj.writeValueAsString(contentString);
-    FileResponseDto fileResponseDTO = fileService.createFile(multiPartFile, content);
 
     Module module = new Module();
     module.setId(teacherExam.getModuleId());
@@ -100,14 +105,27 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     exam.setExamType(teacherExam.getType());
 
     File file = new File();
-    file.setId(fileResponseDTO.getId());
     exam.setFile(file);
 
-    examDao.saveExam(exam, null);
+    try {
+      begin();
+      FileResponseDto fileResponseDTO =
+          Optional.ofNullable(fileService.createFile(multiPartFile, content))
+              .orElseThrow(() -> new DataIsNotExistsException("Wrong file submission"));
+      file.setId(fileResponseDTO.getId());
+      examDao.saveExam(exam, null);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
     // SENGAJA DI COMMENT!
     // String[] emailTo = {"ryanrumapea@gmail.com", "muhammadapry14@gmail.com",
     // "williamgolden54@gmail.com", "galihdikapermana98@gmail.com",
     // "farrelyudapraditya96@gmail.com", "dzakyfadhl@gmail.com"};
+
     String[] emailTo = {"lawerning.acc@gmail.com"};
     EmailSetupDTO email = new EmailSetupDTO();
     email.setTo(emailTo);

@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.util.Callback;
 
@@ -19,7 +20,7 @@ public interface TeacherDao {
 
   Teacher findTeacherById(String id) throws Exception;
 
-  Teacher findTeacherByIdCustom(String id) throws Exception;
+  TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 
