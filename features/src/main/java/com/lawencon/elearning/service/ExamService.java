@@ -3,6 +3,7 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
+import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
@@ -36,7 +37,7 @@ public interface ExamService {
   void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception;
 
-  void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception;
+  void updateScoreAssignment(UpdateScoreRequestDTO data) throws Exception;
 
   List<ScoreAverageResponseDTO> getListScoreAvg(String studentId) throws Exception;
 

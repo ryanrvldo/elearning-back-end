@@ -23,10 +23,8 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
   @Override
   public List<DetailExam> getListScoreAvg(String id) throws Exception {
-    String sql = buildQueryOf(
-        "select AVG(de.grade), m.code, m.title, e.start_time, e.end_time ",
-        "from tb_r_dtl_exams de ",
-        "inner join tb_r_exams e on e.id = de.id_exam ",
+    String sql = buildQueryOf("select AVG(de.grade), m.code, m.title, e.start_time, e.end_time ",
+        "from tb_r_dtl_exams de ", "inner join tb_r_exams e on e.id = de.id_exam ",
         "inner join tb_m_modules m on m.id = e.id_module where de.id_student = ?1 ",
         "group by m.code, m.title, e.start_time, e.end_time").toString();
     List<DetailExam> listResult = new ArrayList<>();
@@ -93,8 +91,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-    String sql =
-        buildQueryOf("UPDATE tb_r_dtl_exams SET is_active = FALSE").toString();
+    String sql = buildQueryOf("UPDATE tb_r_dtl_exams SET is_active = FALSE").toString();
     updateNativeSQL(sql, id, userId);
   }
 
@@ -114,19 +111,18 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   }
 
   @Override
-  public void updateScoreStudent(String id, Double score, String userId) throws Exception {
-    String sql = buildQueryOf("UPDATE tb_r_dtl_exams SET grade = ?1").toString();
-    updateNativeSQL(sql, id, userId, score.toString());
+  public void updateScoreStudent(DetailExam dtlExam, Callback before) throws Exception {
+    save(dtlExam, before, null, true, true);
+
   }
 
   @Override
   public List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception {
-    String sql =
-        buildQueryOf(
-            "SELECT de.id AS submission_id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date , trf.id AS file_id , trf.name",
-            "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student = s.id ",
-            "INNER JOIN tb_m_users u ON s.id_user = u.id INNER JOIN tb_r_files trf on trf.id = de.id_file WHERE de.id_exam = ?1")
-                .toString();
+    String sql = buildQueryOf(
+        "SELECT de.id AS submission_id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date , trf.id AS file_id , trf.name",
+        "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student = s.id ",
+        "INNER JOIN tb_m_users u ON s.id_user = u.id INNER JOIN tb_r_files trf on trf.id = de.id_file WHERE de.id_exam = ?1")
+            .toString();
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
@@ -151,8 +147,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
     List<SubmissionStudentResponseDTO> listResult =
         HibernateUtils.bMapperList(listObj, SubmissionStudentResponseDTO.class, "detailId",
-            "fileId", "fileName",
-            "code", "firstName", "lastName", "grade", "submittedDate");
+            "fileId", "fileName", "code", "firstName", "lastName", "grade", "submittedDate");
     return listResult.size() > 0 ? listResult : null;
   }
 

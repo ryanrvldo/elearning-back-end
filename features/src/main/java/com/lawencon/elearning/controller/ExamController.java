@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,17 +57,18 @@ public class ExamController {
     examService.submitAssignemt(multiPartFile, examId, studentId);
     return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
   }
-   @PostMapping("/module")
-   public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
-       @RequestPart("body") String body) throws Exception {
-     examService.saveExam(multiPartFile, body);
-     return WebResponseUtils.createWebResponse("Insert Exam Success", HttpStatus.OK);
-   }
 
-  @PatchMapping("/submission")
+  @PostMapping("/module")
+  public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
+      @RequestPart("body") String body) throws Exception {
+    examService.saveExam(multiPartFile, body);
+    return WebResponseUtils.createWebResponse("Insert Exam Success", HttpStatus.OK);
+  }
+
+  @PutMapping("/submission")
   public ResponseEntity<?> updateScore(@RequestBody UpdateScoreRequestDTO body) throws Exception {
-    examService.updateScoreAssignment(body.getId(), body.getGrade(), body.getUpdatedBy());
-    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+    examService.updateScoreAssignment(body);
+    return WebResponseUtils.createWebResponse("Update Success", HttpStatus.OK);
   }
 
 }

@@ -14,6 +14,7 @@ import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.dto.exam.TeacherExamRequestDTO;
+import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
@@ -205,14 +206,14 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public void updateScoreAssignment(String id, Double newScore, String teacherId) throws Exception {
-    validateNullId("id", id);
-    if (newScore == null || newScore < 0) {
+  public void updateScoreAssignment(UpdateScoreRequestDTO data) throws Exception {
+    validateNullId("id", data.getId());
+    if (data.getGrade() == null || data.getGrade() < 0) {
       throw new IllegalRequestException("Bad request with score! cannot be empty or less than 0");
     }
-    validateNullId("Teacher Id", teacherId);
+    validateNullId("Teacher Id", data.getUpdatedBy());
 
-    dtlExamService.updateScoreStudent(id, newScore, teacherId);
+    dtlExamService.updateScoreStudent(data);
   }
 
   @Override

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
+import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
@@ -113,15 +114,16 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   }
 
   @Override
-  public void updateScoreStudent(String id, Double score, String userId) throws Exception {
-    validateNullId(id, "id");
-    if (score == null) {
+  public void updateScoreStudent(UpdateScoreRequestDTO data) throws Exception {
+    validateNullId(data.getId(), "id");
+    if (data.getGrade() == null) {
       throw new IllegalRequestException("Data must be input");
     }
-    validateNullId(userId, "userId");
-    begin();
-    dtlExamDao.updateScoreStudent(id, score, userId);
-    commit();
+    validateNullId(data.getUpdatedBy(), "userId");
+    DetailExam detailExam = dtlExamDao.getDetailById(data.getId());
+    detailExam.setUpdatedBy(data.getUpdatedBy());
+    detailExam.setGrade(data.getGrade());
+    dtlExamDao.updateScoreStudent(detailExam, null);
   }
 
   @Override
