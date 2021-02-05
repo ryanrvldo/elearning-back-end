@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @Data
@@ -24,10 +24,10 @@ public class ExamsModuleResponseDTO {
   private String description;
   private ExamType type;
 
-  @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime startTime;
 
-  @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime endTime;
 
   private String fileId;

@@ -57,7 +57,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
 
 
-
   @Override
   public List<Teacher> getAllTeachers() throws Exception {
     return Optional.ofNullable(teacherDao.getAllTeachers())
@@ -96,6 +95,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     user.setUsername(data.getUsername());
     user.setPassword(data.getPassword());
     user.setEmail(data.getEmail());
+    user.setCreatedBy(data.getCreatedBy());
 
     Role role = roleService.findByCode(Roles.TEACHER.getCode());
     user.setRole(role);
@@ -185,7 +185,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       begin();
       teacherDao.deleteTeacherById(teacherId);
       String idUser = teacherDao.getUserId(teacherId);
-      // delete user by id => delete(idUser);
+      if (idUser != null) {
+        userService.deleteById(idUser);
+      }
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -202,6 +204,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       begin();
       teacherDao.setIsActiveTrue(deleteReq.getId(), deleteReq.getUpdatedBy());
       String idUser = teacherDao.getUserId(deleteReq.getId());
+      userService.updateActivateStatus(idUser, true);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -218,6 +221,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       begin();
       teacherDao.setIsActiveFalse(deleteReq.getId(), deleteReq.getUpdatedBy());
       String idUser = teacherDao.getUserId(deleteReq.getId());
+      userService.updateActivateStatus(idUser, false);
       commit();
     } catch (Exception e) {
       e.printStackTrace();

@@ -51,19 +51,19 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
 
-     String sql = buildQueryOf(
-         "SELECT tmt.id as id_techer, tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, ",
-         "tmt.gender , tmu.id_photo, tmt.phone FROM tb_m_teachers tmt ",
-         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.id=?")
-             .toString();
-    
-     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    String sql = buildQueryOf(
+        "SELECT tmt.id as id_techer, tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, ",
+        "tmt.gender , tmu.id_photo, tmt.phone FROM tb_m_teachers tmt ",
+        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.id=?")
+            .toString();
 
-     List<TeacherProfileDTO> listTeachers =
-         HibernateUtils.bMapperList(listObj, TeacherProfileDTO.class, "id", "firstName", "lastName",
-             "email", "titleDegree", "createdAt", "gender", "photoId", "phone");
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
-     return listTeachers.size() > 0 ? listTeachers.get(0) : null;
+    List<TeacherProfileDTO> listTeachers =
+        HibernateUtils.bMapperList(listObj, TeacherProfileDTO.class, "id", "firstName", "lastName",
+            "email", "titleDegree", "createdAt", "gender", "photoId", "phone");
+
+    return listTeachers.size() > 0 ? listTeachers.get(0) : null;
   }
 
   @Override
@@ -144,7 +144,13 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public String getUserId(String teacherId) throws Exception {
     String sql = "SELECT id_user FROM tb_m_teachers WHERE id = ?1";
-    return (String) createNativeQuery(sql).setParameter(1, teacherId).getSingleResult();
+    List<?> objList = createNativeQuery(sql).setParameter(1, teacherId).getResultList();
+    List<String> resultList = new ArrayList<>();
+    objList.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      resultList.add((String) objArr[0]);
+    });
+    return (resultList.size() != 0 ? resultList.get(0) : null);
   }
 
 }

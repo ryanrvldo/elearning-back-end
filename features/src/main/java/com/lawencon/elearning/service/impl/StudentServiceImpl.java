@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -115,7 +118,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public void deleteStudent(DeleteMasterRequestDTO data) throws Exception {
-    validateNullId(data.getId(), "id");
+    validationUtil.validate(data);
     try {
       begin();
       studentDao.deleteStudentById(data.getId());
@@ -157,6 +160,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     stdDashboard.setIdPhoto(std.getUser().getUserPhoto().getId());
     stdDashboard.setLastName(std.getUser().getLastName());
     stdDashboard.setPhone(std.getPhone());
+    stdDashboard.setUsername(std.getUser().getUsername());
     return stdDashboard;
   }
 
@@ -229,6 +233,31 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     }
 
     return listResult;
+  }
+
+  @Override
+  public List<StudentDashboardDTO> getAll() throws Exception {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+    logger.info("Get All Student");
+    List<Student> studentList = studentDao.findAll();
+    logger.info("student list: " + studentList.size());
+    if (studentList.isEmpty()) {
+      throw new DataIsNotExistsException("There is no student yet.");
+    }
+    List<StudentDashboardDTO> responseList = studentList.stream()
+        .map(student -> new StudentDashboardDTO(
+            student.getId(),
+            student.getUser().getUsername(),
+            student.getUser().getFirstName(),
+            student.getUser().getLastName(),
+            student.getUser().getEmail(),
+            student.getPhone(),
+            student.getGender(),
+            student.getUser().getUserPhoto().getId(),
+            student.getCreatedAt()))
+        .collect(Collectors.toList());
+    logger.info("response list: " + responseList.size());
+    return responseList;
   }
 
 }

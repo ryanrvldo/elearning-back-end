@@ -1,6 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,6 @@ public class StudentController {
 
   @GetMapping("report/{id}")
   public ResponseEntity<?> getStudentReport(@PathVariable("id") String studentId) throws Exception {
-    List<StudentReportDTO> listData = new ArrayList<>();
     Student student = studentService.getStudentById(studentId);
     Map<String, Object> mapStudent = new HashMap<>();
     mapStudent.put("modelStudentFName", student.getUser().getFirstName());
@@ -93,17 +91,22 @@ public class StudentController {
     mapStudent.put("modelStudentPhone", student.getPhone());
     byte[] out;
     try {
-      listData = studentService.getStudentExamReport(studentId);
+      List<StudentReportDTO> listData = studentService.getStudentExamReport(studentId);
       out = JasperUtil.responseToByteArray(listData, "StudentReports", mapStudent);
     } catch (Exception e) {
       e.printStackTrace();
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+      return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     HttpHeaders header = new HttpHeaders();
     header.setContentType(MediaType.APPLICATION_PDF);
-    return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
+    return ResponseEntity.ok()
+        .headers(header)
+        .body(new ByteArrayResource(out));
   }
 
-
+  @GetMapping(value = "/all", produces = {MediaType.APPLICATION_JSON_VALUE})
+  public ResponseEntity<?> getAllStudent() throws Exception {
+    return WebResponseUtils.createWebResponse(studentService.getAll(), HttpStatus.OK);
+  }
 
 }

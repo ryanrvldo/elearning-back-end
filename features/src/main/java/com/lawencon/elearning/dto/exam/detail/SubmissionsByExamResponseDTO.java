@@ -7,14 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class SubmissionsByExamResponseDTO {
 
-  private String detailId;
+  private String id;
   private String fileId;
   private String fileName;
   private String code;

@@ -2,8 +2,11 @@ package com.lawencon.elearning.dao.impl;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentDao;
@@ -15,7 +18,6 @@ import com.lawencon.elearning.model.ExamType;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Module;
-import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.User;
@@ -87,7 +89,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   @Override
   public Student getStudentDashboard(String id) throws Exception {
     String query = buildQueryOf(
-        "SELECT s.id as id_student, f.id as id_file, u.first_name, u.last_name, u.email, s.phone, s.gender, s.created_at ",
+        "SELECT s.id as id_student, f.id as id_file, u.username, u.first_name, u.last_name, u.email, s.phone, s.gender, s.created_at ",
         "FROM tb_m_students s ", "INNER JOIN tb_m_users u ON u.id = s.id_user ",
         "LEFT JOIN tb_r_files f ON f.id = u.id_photo ", "WHERE s.id = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
@@ -100,13 +102,14 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
       file.setId((String) objArr[1]);
       User user = new User();
       user.setUserPhoto(file);
-      user.setFirstName((String) objArr[2]);
-      user.setLastName((String) objArr[3]);
-      user.setEmail((String) objArr[4]);
+      user.setUsername((String) objArr[2]);
+      user.setFirstName((String) objArr[3]);
+      user.setLastName((String) objArr[4]);
+      user.setEmail((String) objArr[5]);
       std.setUser(user);
-      std.setPhone((String) objArr[5]);
-      std.setGender((Gender.valueOf((String) objArr[6])));
-      Timestamp created = (Timestamp) objArr[7];
+      std.setPhone((String) objArr[6]);
+      std.setGender((Gender.valueOf((String) objArr[7])));
+      Timestamp created = (Timestamp) objArr[8];
       std.setCreatedAt(created.toLocalDateTime());
       listResult.add(std);
     });
@@ -115,19 +118,37 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
 
   @Override
   public List<Student> findAll() throws Exception {
-    String query = buildQueryOf("SELECT student, user, role FROM Student AS student ",
-        "INNER JOIN User AS user ON user.id = student.user.id ",
-        "INNER JOIN Role AS role ON role.id = user.role.id ");
+    String query = buildQueryOf(
+        "SELECT s.id, s.phone, s.gender, s.createdAt, u.firstName, u.lastName, u.email, f.id ",
+        "FROM Student AS s ",
+        "INNER JOIN User AS u ON u.id = s.user.id ",
+        "LEFT JOIN File AS f ON f.id = u.userPhoto.id ");
+    Logger logger = LoggerFactory.getLogger(getClass());
     List<Student> studentList = new ArrayList<>();
     List<Object[]> objList = createQuery(query, Object[].class).getResultList();
+    logger.info("student size : " + objList.size());
     objList.forEach(objArr -> {
-      Student student = (Student) objArr[0];
-      User user = (User) objArr[1];
-      Role role = (Role) objArr[2];
-      user.setRole(role);
+      Student student = new Student();
+      student.setId((String) objArr[0]);
+      student.setPhone((String) objArr[1]);
+      student.setGender((Gender) objArr[2]);
+      student.setCreatedAt((LocalDateTime) objArr[3]);
+
+
+      User user = new User();
+      user.setFirstName((String) objArr[4]);
+      user.setLastName((String) objArr[5]);
+      user.setEmail((String) objArr[6]);
+
+      File file = new File();
+      file.setId((String) objArr[7]);
+      user.setUserPhoto(file);
       student.setUser(user);
+
+      logger.info("Student: ", student);
       studentList.add(student);
     });
+
     return studentList;
   }
 

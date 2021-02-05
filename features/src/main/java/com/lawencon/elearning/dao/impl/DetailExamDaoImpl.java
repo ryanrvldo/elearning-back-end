@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +119,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   @Override
   public List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception {
     String sql = buildQueryOf(
-        "SELECT de.id AS submission_id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date , trf.id AS file_id , trf.name",
+        "SELECT de.id AS submission_id , de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date , trf.id AS file_id , trf.name ",
         "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student = s.id ",
         "INNER JOIN tb_m_users u ON s.id_user = u.id INNER JOIN tb_r_files trf on trf.id = de.id_file WHERE de.id_exam = ?1")
             .toString();
@@ -138,7 +137,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   public SubmissionStudentResponseDTO getStudentExamSubmission(String examId,
       String studentId) throws Exception {
     String sql = buildQueryOf(
-        "SELECT de.id AS detail_id ,f.id AS file_id,f.\"name\",de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.trx_date ",
+        "SELECT de.id AS detail_id ,f.id AS file_id,f.\"name\",de.trx_number AS code ,u.first_name ,u.last_name ,de.grade,de.created_at ",
         "FROM tb_r_dtl_exams de INNER JOIN tb_m_students s ON de.id_student =s.id ",
         "LEFT JOIN tb_r_files f ON de.id_file = f.id ",
         "INNER JOIN tb_m_users u ON s.id_user = u.id WHERE de.id_exam = ?1 AND s.id = ?2");
@@ -159,8 +158,7 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       submission.setFirstName((String) objArr[4]);
       submission.setLastName((String) objArr[5]);
       submission.setGrade((Double) objArr[6]);
-      Date inDate = (Date) objArr[7];
-      submission.setSubmittedDate(inDate.toLocalDate());
+      submission.setSubmittedDate(((Timestamp) objArr[7]).toLocalDateTime());
     });
 
     return submission;

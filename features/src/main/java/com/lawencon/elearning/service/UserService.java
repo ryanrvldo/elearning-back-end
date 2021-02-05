@@ -19,4 +19,6 @@ public interface UserService {
 
   String getUserRoleId(String userId) throws Exception;
 
+  void deleteById(String id) throws Exception;
+
 }

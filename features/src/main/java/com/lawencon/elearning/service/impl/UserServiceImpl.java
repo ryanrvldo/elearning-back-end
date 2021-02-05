@@ -77,4 +77,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     return id;
   }
 
+  @Override
+  public void deleteById(String id) throws Exception {
+    validationUtil.validateUUID(id);
+    userDao.deleteById(id);
+  }
+
 }

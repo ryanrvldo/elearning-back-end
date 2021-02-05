@@ -22,12 +22,14 @@ public class ErrorController {
   @ExceptionHandler(value = {ConstraintViolationException.class, DataIsNotExistsException.class,
       IllegalRequestException.class})
   public ResponseEntity<WebResponseDTO<String>> validationHandler(Exception e) {
+    e.printStackTrace();
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(value = {MissingServletRequestPartException.class})
   public ResponseEntity<WebResponseDTO<String>> missingRequestPart(
       MissingServletRequestPartException e) {
+    e.printStackTrace();
     return WebResponseUtils
         .createWebResponse(e.getRequestPartName() + " is not present in request form.",
             HttpStatus.BAD_REQUEST);
@@ -36,13 +38,13 @@ public class ErrorController {
   @ExceptionHandler(value = {PSQLException.class})
   public ResponseEntity<?> psqlError(
       PSQLException e) {
+    e.printStackTrace();
     if (e.getServerErrorMessage() != null) {
       String detailMessage = e.getServerErrorMessage().getDetail();
       if (detailMessage != null) {
         return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
       }
     }
-    e.printStackTrace();
     return WebResponseUtils.createWebResponse("There is something error in internal server.",
         HttpStatus.INTERNAL_SERVER_ERROR);
   }

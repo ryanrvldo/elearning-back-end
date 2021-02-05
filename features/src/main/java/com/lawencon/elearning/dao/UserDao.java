@@ -19,4 +19,6 @@ public interface UserDao {
 
   String getUserRoleId(String userId) throws Exception;
 
+  void deleteById(String id) throws Exception;
+
 }

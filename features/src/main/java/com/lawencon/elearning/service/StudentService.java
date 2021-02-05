@@ -43,4 +43,6 @@ public interface StudentService {
 
   List<StudentReportDTO> getStudentExamReport(String studentId) throws Exception;
 
+  List<StudentDashboardDTO> getAll() throws Exception;
+
 }

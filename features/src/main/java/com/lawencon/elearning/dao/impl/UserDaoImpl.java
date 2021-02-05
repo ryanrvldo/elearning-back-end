@@ -78,4 +78,9 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     return (String) objResult;
   }
 
+  @Override
+  public void deleteById(String id) throws Exception {
+    super.deleteById(id);
+  }
+
 }
