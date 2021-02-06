@@ -202,13 +202,16 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     if (examId == null && studentId == null) {
       throw new IllegalRequestException("Student Exam data cannot be empty!");
     }
+    Exam exam = findExamById(examId);
+    if (exam.getEndTime().isBefore(LocalDateTime.now())) {
+      throw new IllegalRequestException("time's up");
+    }
     dtlExamService.sendStudentExam(multiPartFile, examId, studentId);
   }
 
   @Override
   public void updateScoreAssignment(UpdateScoreRequestDTO data) throws Exception {
     validateUtil.validate(data);
-
     dtlExamService.updateScoreStudent(data);
   }
 

@@ -163,11 +163,9 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<Course> getCourseForAdmin() throws Exception {
     String sql = buildQueryOf(
-        "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.status,c.description,c.period_start ,c.period_end ,t.id AS teacher_id ,t.code AS teacher_code,u.first_name ,u.last_name ,t.title_degree ,cc.code AS category_code,cc.category_name AS category_name ",
+        "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.status,c.description,c.period_start ,c.period_end,cc.category_name AS category_name ",
         "FROM tb_m_courses AS c ",
         "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
-        "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
-        "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id");
     List<?> listObj = createNativeQuery(sql).getResultList();
     List<Course> listResult = new ArrayList<>();
@@ -191,19 +189,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       inTime = (Timestamp) objArr[7];
       course.setPeriodEnd(inTime.toLocalDateTime());
 
-      Teacher teacher = new Teacher();
-      teacher.setId((String) objArr[8]);
-      teacher.setCode((String) objArr[9]);
-      User user = new User();
-      user.setFirstName((String) objArr[10]);
-      user.setLastName((String) objArr[11]);
-      teacher.setUser(user);
-      teacher.setTitleDegree((String) objArr[12]);
-      course.setTeacher(teacher);
-
       CourseCategory courseCategory = new CourseCategory();
-      courseCategory.setCode((String) objArr[13]);
-      courseCategory.setName((String) objArr[14]);
+      courseCategory.setName((String) objArr[8]);
       course.setCategory(courseCategory);
 
       listResult.add(course);

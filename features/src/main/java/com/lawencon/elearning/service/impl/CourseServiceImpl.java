@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
+import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
@@ -160,12 +161,26 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public List<CourseResponseDTO> getCourseForAdmin() throws Exception {
+  public List<CourseAdminResponseDTO> getCourseForAdmin() throws Exception {
     List<Course> listCourse = courseDao.getCourseForAdmin();
+    List<CourseAdminResponseDTO> listResult = new ArrayList<>();
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    return insertData(listCourse);
+    listCourse.forEach(val -> {
+      CourseAdminResponseDTO data = new CourseAdminResponseDTO();
+      data.setId(val.getId());
+      data.setCode(val.getCode());
+      data.setCategoryName(val.getCategory().getName());
+      data.setTypeName(val.getCourseType().getName());
+      data.setCapacity(val.getCapacity());
+      data.setPeriodStart(val.getPeriodStart());
+      data.setStatus(val.getStatus().toString());
+      data.setPeriodEnd(val.getPeriodEnd());
+      data.setDescription(val.getDescription());
+      listResult.add(data);
+    });
+    return listResult;
   }
 
 
