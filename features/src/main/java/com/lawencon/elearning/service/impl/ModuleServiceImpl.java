@@ -222,6 +222,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public void deleteModule(DeleteMasterRequestDTO data) throws Exception {
     validateNullId(data.getId(), "id");
+    validationUtil.validate(data);
     try {
       begin();
       moduleDao.deleteModule(data.getId());

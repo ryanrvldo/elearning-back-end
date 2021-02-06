@@ -46,7 +46,7 @@ public class AttendanceController {
     headers.setContentType(MediaType.APPLICATION_PDF);
     Map<String, Object> params = new HashMap<>();
     params.put("listAttendance", listAttendance);
-    byte[] out = JasperUtil.responseToByteArray(listAttendance, "Attendance_Report", params);
+    byte[] out = JasperUtil.responseToByteArray(listAttendance, "AttendanceReport", null);
     return ResponseEntity.ok().headers(headers).body(out);
   }
 

@@ -111,6 +111,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Override
   public void updateStudentProfile(Student data) throws Exception {
     validateNullId(data.getId(), "id");
+    validationUtil.validate(data);
     setupUpdatedValue(data, () -> Optional.ofNullable(studentDao.getStudentById(data.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("id", data.getId())));
     studentDao.updateStudentProfile(data, null);
