@@ -47,7 +47,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
       subjectResponse.setId(subject.getId());
       subjectResponse.setCode(subject.getCode());
       subjectResponse.setName(subject.getSubjectName());
-      subjectResponse.setVersion(subject.getVersion());
+      subjectResponse.setDescription(subject.getDescription());
       subjectResponses.add(subjectResponse);
     }
     return subjectResponses;
@@ -132,7 +132,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
     subjectResponse.setId(subject.getId());
     subjectResponse.setCode(subject.getCode());
     subjectResponse.setName(subject.getSubjectName());
-    subjectResponse.setVersion(subject.getVersion());
+    subjectResponse.setDescription(subject.getDescription());
     return subjectResponse;
 
   }

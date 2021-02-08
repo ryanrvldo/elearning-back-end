@@ -12,6 +12,6 @@ public class SubjectCategoryResponseDTO {
   private String id;
   private String code;
   private String name;
-  private Long version;
+  private String description;
 
 }
