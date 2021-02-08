@@ -265,4 +265,14 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     return bigInteger.intValue();
   }
 
+  @Override
+  public Integer getCapacityCourse(String courseId) throws Exception {
+    String sql = buildQueryOf("SELECT count(id_student) FROM student_course AS sc ",
+        "WHERE sc.id_course = ?1");
+    BigInteger bigInteger =
+        (BigInteger) createNativeQuery(sql).setParameter(1, courseId).getSingleResult();
+    return bigInteger.intValue();
+
+  }
+
 }

@@ -1,7 +1,11 @@
 package com.lawencon.elearning.controller;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.WebResponseUtils;
+import com.lawencon.util.JasperUtil;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -80,5 +86,22 @@ public class TeacherController {
   public ResponseEntity<?> getTeacherCourse(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(teacherService.getTeacherDashboard(id),
         HttpStatus.OK);
+  }
+
+  @GetMapping("report/{id}")
+  public ResponseEntity<?> getTeacherDetailCourseReport(@PathVariable("id") String moduleId)
+      throws Exception {
+    byte[] out;
+    try {
+      List<TeacherReportResponseDTO> listData =
+          teacherService.getTeacherDetailCourseReport(moduleId);
+      out = JasperUtil.responseToByteArray(listData, "TeacherReport", null);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    HttpHeaders header = new HttpHeaders();
+    header.setContentType(MediaType.APPLICATION_PDF);
+    return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
   }
 }

@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -7,6 +8,7 @@ import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
+import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.util.HibernateUtils;
@@ -171,6 +173,39 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       resultList.add((String) objArr[0]);
     });
     return (resultList.size() != 0 ? resultList.get(0) : null);
+  }
+
+  @Override
+  public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
+      throws Exception {
+    String sql = buildQueryOf(
+        "SELECT s.code , u.first_name , u.last_name, count(e.id_module) AS total_ujian,count(de.id_exam) AS assign, ",
+        "count(e.id_module)-count(de.id_exam) AS unassignment , avg(de.grade) AS nilai_avg ",
+        "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_exams AS e ON de.id_exam = e.id ",
+        "INNER JOIN tb_m_modules AS m ON m.id = e.id_module ",
+        "INNER JOIN tb_m_students AS s ON s.id  = de.id_student ",
+        "INNER JOIN tb_m_users AS u ON u.id = s.id_user WHERE m.id = ?1 ",
+        "GROUP BY s.code ,u.first_name ,u.last_name");
+
+    List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
+    List<TeacherReportResponseDTO> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] arrObj = (Object[]) val;
+      TeacherReportResponseDTO responseDTO = new TeacherReportResponseDTO();
+      responseDTO.setStudentCode((String) arrObj[0]);
+      responseDTO.setStudentFirstName((String) arrObj[1]);
+      responseDTO.setStudentLastName((String) arrObj[2]);
+      BigInteger bigInteger = (BigInteger) arrObj[3];
+      responseDTO.setTotalUjian((Integer) bigInteger.intValue());
+      bigInteger = (BigInteger) arrObj[4];
+      responseDTO.setTotalAssignment((Integer) bigInteger.intValue());
+      bigInteger = (BigInteger) arrObj[5];
+      responseDTO.setNotAssignment((Integer) bigInteger.intValue());
+      bigInteger = (BigInteger) arrObj[6];
+      responseDTO.setAvgScore((Integer) bigInteger.intValue());
+      listResult.add(responseDTO);
+    });
+    return listResult;
   }
 
 }

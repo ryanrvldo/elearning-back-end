@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
@@ -81,7 +82,8 @@ public class StudentController {
   }
 
   @GetMapping("report/{id}")
-  public ResponseEntity<?> getStudentReport(@PathVariable("id") String studentId) throws Exception {
+  public ResponseEntity<?> getStudentReportJasper(@PathVariable("id") String studentId)
+      throws Exception {
     Student student = studentService.getStudentById(studentId);
     Map<String, Object> mapStudent = new HashMap<>();
     mapStudent.put("modelStudentFName", student.getUser().getFirstName());
@@ -102,6 +104,13 @@ public class StudentController {
     return ResponseEntity.ok()
         .headers(header)
         .body(new ByteArrayResource(out));
+  }
+
+  @GetMapping("report")
+  public ResponseEntity<?> getStudentReport(@RequestParam("studentId") String studentId)
+      throws Exception {
+    return WebResponseUtils.createWebResponse(studentService.getStudentExamReport(studentId),
+        HttpStatus.OK);
   }
 
   @GetMapping(value = "/all", produces = {MediaType.APPLICATION_JSON_VALUE})

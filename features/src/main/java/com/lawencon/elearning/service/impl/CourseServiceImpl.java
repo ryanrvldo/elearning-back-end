@@ -148,7 +148,38 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    return insertData(listCourse);
+    List<CourseResponseDTO> responseList = new ArrayList<>();
+    for (int i = 0; i < listCourse.size(); i++) {
+      CourseResponseDTO courseDto = new CourseResponseDTO();
+      courseDto.setId(listCourse.get(i).getId());
+      courseDto.setCode(listCourse.get(i).getCode());
+      courseDto.setTypeName(listCourse.get(i).getCourseType().getName());
+      courseDto.setCapacity(listCourse.get(i).getCapacity());
+      courseDto.setCourseStatus(listCourse.get(i).getStatus());
+      courseDto.setCourseDescription(listCourse.get(i).getDescription());
+      courseDto.setPeriodStart(listCourse.get(i).getPeriodStart());
+      courseDto.setPeriodEnd(listCourse.get(i).getPeriodEnd());
+
+      TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
+      teacherDTO.setId(listCourse.get(i).getTeacher().getId());
+      teacherDTO.setCode(listCourse.get(i).getTeacher().getCode());
+      teacherDTO.setFirstName(listCourse.get(i).getTeacher().getUser().getFirstName());
+      teacherDTO.setLastName(listCourse.get(i).getTeacher().getUser().getLastName());
+      teacherDTO.setTittle(listCourse.get(i).getTeacher().getTitleDegree());
+      File teacherPhoto = listCourse.get(i).getTeacher().getUser().getUserPhoto();
+      if (teacherPhoto == null || teacherPhoto.getId() == null) {
+        teacherDTO.setPhotoId("");
+      } else {
+        teacherDTO.setPhotoId(listCourse.get(i).getTeacher().getUser().getUserPhoto().getId());
+      }
+      courseDto.setTeacher(teacherDTO);
+      courseDto.setCategoryName(listCourse.get(i).getCategory().getName());
+      Integer availableCapacity = courseDao.getCapacityCourse(courseDto.getId());
+      if (courseDto.getCapacity() > availableCapacity) {
+        responseList.add(courseDto);
+      }
+    }
+    return responseList;
   }
 
   @Override
@@ -157,7 +188,35 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    return insertData(listCourse);
+    List<CourseResponseDTO> responseList = new ArrayList<>();
+    listCourse.forEach(val -> {
+      CourseResponseDTO courseDto = new CourseResponseDTO();
+      courseDto.setId(val.getId());
+      courseDto.setCode(val.getCode());
+      courseDto.setTypeName(val.getCourseType().getName());
+      courseDto.setCapacity(val.getCapacity());
+      courseDto.setCourseStatus(val.getStatus());
+      courseDto.setCourseDescription(val.getDescription());
+      courseDto.setPeriodStart(val.getPeriodStart());
+      courseDto.setPeriodEnd(val.getPeriodEnd());
+
+      TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
+      teacherDTO.setId(val.getTeacher().getId());
+      teacherDTO.setCode(val.getTeacher().getCode());
+      teacherDTO.setFirstName(val.getTeacher().getUser().getFirstName());
+      teacherDTO.setLastName(val.getTeacher().getUser().getLastName());
+      teacherDTO.setTittle(val.getTeacher().getTitleDegree());
+      File teacherPhoto = val.getTeacher().getUser().getUserPhoto();
+      if (teacherPhoto == null || teacherPhoto.getId() == null) {
+        teacherDTO.setPhotoId("");
+      } else {
+        teacherDTO.setPhotoId(val.getTeacher().getUser().getUserPhoto().getId());
+      }
+      courseDto.setTeacher(teacherDTO);
+      courseDto.setCategoryName(val.getCategory().getName());
+      responseList.add(courseDto);
+    });
+    return responseList;
   }
 
   @Override
@@ -200,38 +259,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     DetailCourseResponseDTO detailDTO = new DetailCourseResponseDTO();
     setData(courseId, detailDTO, studentId);
     return detailDTO;
-  }
-
-  private List<CourseResponseDTO> insertData(List<Course> listCourse) {
-    List<CourseResponseDTO> responseList = new ArrayList<>();
-    listCourse.forEach(val -> {
-      CourseResponseDTO courseDto = new CourseResponseDTO();
-      courseDto.setId(val.getId());
-      courseDto.setCode(val.getCode());
-      courseDto.setTypeName(val.getCourseType().getName());
-      courseDto.setCapacity(val.getCapacity());
-      courseDto.setCourseStatus(val.getStatus());
-      courseDto.setCourseDescription(val.getDescription());
-      courseDto.setPeriodStart(val.getPeriodStart());
-      courseDto.setPeriodEnd(val.getPeriodEnd());
-
-      TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
-      teacherDTO.setId(val.getTeacher().getId());
-      teacherDTO.setCode(val.getTeacher().getCode());
-      teacherDTO.setFirstName(val.getTeacher().getUser().getFirstName());
-      teacherDTO.setLastName(val.getTeacher().getUser().getLastName());
-      teacherDTO.setTittle(val.getTeacher().getTitleDegree());
-      File teacherPhoto = val.getTeacher().getUser().getUserPhoto();
-      if (teacherPhoto == null || teacherPhoto.getId() == null) {
-        teacherDTO.setPhotoId("");
-      } else {
-        teacherDTO.setPhotoId(val.getTeacher().getUser().getUserPhoto().getId());
-      }
-      courseDto.setTeacher(teacherDTO);
-      courseDto.setCategoryName(val.getCategory().getName());
-      responseList.add(courseDto);
-    });
-    return responseList;
   }
 
   @Override
@@ -296,6 +323,5 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throw new IllegalRequestException(msg, id);
     }
   }
-
 
 }

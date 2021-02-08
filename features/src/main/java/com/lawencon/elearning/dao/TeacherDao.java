@@ -3,6 +3,7 @@ package com.lawencon.elearning.dao;
 import java.util.List;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
+import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.util.Callback;
 
@@ -38,6 +39,8 @@ public interface TeacherDao {
   List<String> checkConstraint(String id) throws Exception;
 
   String getUserId(String teacherId) throws Exception;
+
+  List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId) throws Exception;
 
 
 }

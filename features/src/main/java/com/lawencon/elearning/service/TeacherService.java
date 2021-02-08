@@ -5,6 +5,7 @@ import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
+import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.model.Teacher;
@@ -38,4 +39,6 @@ public interface TeacherService {
   Teacher findByIdForCourse(String id) throws Exception;
 
   List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception;
+
+  List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId) throws Exception;
 }

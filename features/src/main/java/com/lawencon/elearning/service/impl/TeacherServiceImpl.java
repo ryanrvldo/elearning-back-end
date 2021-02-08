@@ -14,6 +14,7 @@ import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
+import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -245,6 +246,15 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       dashboard.setPeriodStart(course.getPeriodStart());
       listResult.add(dashboard);
     });
+    return listResult;
+  }
+
+  @Override
+  public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
+      throws Exception {
+    validateNullId(moduleId, "id");
+    List<TeacherReportResponseDTO> listResult = teacherDao.getTeacherDetailCourseReport(moduleId);
+    validUtil.validate(listResult);
     return listResult;
   }
 

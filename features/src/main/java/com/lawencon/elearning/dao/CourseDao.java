@@ -34,4 +34,6 @@ public interface CourseDao {
   Course getCourseById(String id) throws Exception;
 
   Integer getTotalStudentByIdCourse(String id) throws Exception;
+
+  Integer getCapacityCourse(String courseId) throws Exception;
 }
