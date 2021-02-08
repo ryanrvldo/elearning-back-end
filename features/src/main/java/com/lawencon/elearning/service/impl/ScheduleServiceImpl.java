@@ -40,6 +40,9 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public void saveSchedule(Schedule data) throws Exception {
     validateUtil.validate(data);
+    if (data.getStartTime().isAfter(data.getEndTime())) {
+      throw new IllegalRequestException("Schedule end time cannot be greather than start time");
+    }
     data.setCode(TransactionNumberUtils.generateScheduleCode());
     data.setCreatedAt(LocalDateTime.now());
     scheduleDao.saveSchedule(data, null);

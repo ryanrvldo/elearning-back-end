@@ -129,6 +129,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   public void insertModule(List<ModulRequestDTO> data) throws Exception {
     for (ModulRequestDTO element : data) {
       validationUtil.validate(element);
+      validationUtil.validate(element.getScheduleRequestDTO());
       Schedule schedule = new Schedule();
       schedule.setCreatedBy(element.getScheduleRequestDTO().getScheduleCreatedBy());
       schedule.setDate(element.getScheduleRequestDTO().getScheduleDate());

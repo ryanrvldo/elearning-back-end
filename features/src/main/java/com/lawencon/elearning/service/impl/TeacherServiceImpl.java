@@ -65,25 +65,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception {
-    List<Teacher> listTeachers = Optional.ofNullable(teacherDao.allTeachersForAdmin())
+    List<TeacherForAdminDTO> listTeachers = Optional.ofNullable(teacherDao.allTeachersForAdmin())
         .orElseThrow(() -> new DataIsNotExistsException("Teachers data have not been registered "));
-
-    List<TeacherForAdminDTO> listResult = new ArrayList<>();
-    listTeachers.forEach(val -> {
-      TeacherForAdminDTO teacherAdminDTO = new TeacherForAdminDTO();
-      teacherAdminDTO.setId(val.getId());
-      teacherAdminDTO.setCode(val.getCode());
-      teacherAdminDTO.setPhone(val.getPhone());
-      teacherAdminDTO.setGender(val.getGender());
-      teacherAdminDTO.setUsername(val.getUser().getUsername());
-      teacherAdminDTO.setVersion(val.getVersion());
-      teacherAdminDTO.setFirstName(val.getUser().getFirstName());
-      teacherAdminDTO.setLastName(val.getUser().getLastName());
-
-      listResult.add(teacherAdminDTO);
-    });
-
-    return listResult;
+    return listTeachers;
   }
 
   @Override

@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
+import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
@@ -23,18 +25,36 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
-  public List<Teacher> allTeachersForAdmin() throws Exception {
+  public List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception {
     String sql = buildQueryOf("SELECT tmt.id , tmt.code , tmu.first_name , tmu.last_name , ",
-        "tmt.phone , tmt.gender , tmu.username , tmt.version FROM tb_m_teachers tmt ",
-        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.is_active = true ");
+        "tmt.phone , tmt.gender , tmu.username , tmt.is_active , tmu.email, tmt.title_degree, tmu.id_photo, tmt.version ",
+        "FROM tb_m_teachers tmt ",
+        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id");
 
     List<?> listObj = createNativeQuery(sql).getResultList();
 
-    List<Teacher> listResult = HibernateUtils.bMapperList(listObj, Teacher.class, "id", "code",
-        "user.firstName",
-        "user.lastName", "phone", "gender", "user.username", "version");
+    List<TeacherForAdminDTO> teachers = new ArrayList<>();
 
-    return listResult.size() > 0 ? listResult : null;
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      TeacherForAdminDTO teacher = new TeacherForAdminDTO();
+      teacher.setId((String) objArr[0]);
+      teacher.setCode((String) objArr[1]);
+      teacher.setFirstName((String) objArr[2]);
+      teacher.setLastName((String) objArr[3]);
+      teacher.setPhone((String) objArr[4]);
+      teacher.setGender(Gender.valueOf((String) objArr[5]));
+      teacher.setUsername((String) objArr[6]);
+      teacher.setActive((boolean) objArr[7]);
+      teacher.setEmail((String) objArr[8]);
+      teacher.setTitleDegree((String) objArr[9]);
+      teacher.setPhotoId((String) objArr[10]);
+      teacher.setVersion(Long.valueOf(objArr[11].toString()));
+
+      teachers.add(teacher);
+    });
+
+    return teachers.size() > 0 ? teachers : null;
   }
 
   @Override

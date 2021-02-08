@@ -28,4 +28,10 @@ public class TeacherForAdminDTO {
 
   private String lastName;
 
+  private String email;
+
+  private String titleDegree;
+
+  private String photoId;
+
 }
