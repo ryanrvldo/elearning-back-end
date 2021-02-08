@@ -13,6 +13,7 @@ import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
+import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
@@ -25,6 +26,7 @@ import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -46,6 +48,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private ValidationUtil validateUtil;
+
+  @Autowired
+  private ExperienceService experienceService;
 
   @Override
   public List<Course> getListCourse() throws Exception {
@@ -143,37 +148,51 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public List<CourseResponseDTO> getCurrentAvailableCourse() throws Exception {
-    List<Course> listCourse = courseDao.getCurrentAvailableCourse();
-    if (listCourse.isEmpty()) {
+  public List<CourseResponseDTO> getCurrentAvailableCourse(String studentId) throws Exception {
+    List<Course> listCourseAvailable = courseDao.getCurrentAvailableCourse();
+    List<Course> listCourseByStudent = courseDao.getCourseByStudentId(studentId);
+    if (listCourseAvailable.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
     List<CourseResponseDTO> responseList = new ArrayList<>();
-    for (int i = 0; i < listCourse.size(); i++) {
+    for (int i = 0; i < listCourseAvailable.size(); i++) {
       CourseResponseDTO courseDto = new CourseResponseDTO();
-      courseDto.setId(listCourse.get(i).getId());
-      courseDto.setCode(listCourse.get(i).getCode());
-      courseDto.setTypeName(listCourse.get(i).getCourseType().getName());
-      courseDto.setCapacity(listCourse.get(i).getCapacity());
-      courseDto.setCourseStatus(listCourse.get(i).getStatus());
-      courseDto.setCourseDescription(listCourse.get(i).getDescription());
-      courseDto.setPeriodStart(listCourse.get(i).getPeriodStart());
-      courseDto.setPeriodEnd(listCourse.get(i).getPeriodEnd());
+      courseDto.setId(listCourseAvailable.get(i).getId());
+      courseDto.setIsRegist(false);
+      for (int j = 0; j < listCourseByStudent.size(); j++) {
+        CourseResponseDTO courseDtoStudent = new CourseResponseDTO();
+        courseDtoStudent.setId(listCourseByStudent.get(j).getId());
+        if (courseDtoStudent == courseDto) {
+          courseDto.setIsRegist(true);
+        }
+      }
+      courseDto.setCode(listCourseAvailable.get(i).getCode());
+      courseDto.setTypeName(listCourseAvailable.get(i).getCourseType().getName());
+      courseDto.setCapacity(listCourseAvailable.get(i).getCapacity());
+      courseDto.setCourseStatus(listCourseAvailable.get(i).getStatus());
+      courseDto.setCourseDescription(listCourseAvailable.get(i).getDescription());
+      courseDto.setPeriodStart(listCourseAvailable.get(i).getPeriodStart());
+      courseDto.setPeriodEnd(listCourseAvailable.get(i).getPeriodEnd());
 
       TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
-      teacherDTO.setId(listCourse.get(i).getTeacher().getId());
-      teacherDTO.setCode(listCourse.get(i).getTeacher().getCode());
-      teacherDTO.setFirstName(listCourse.get(i).getTeacher().getUser().getFirstName());
-      teacherDTO.setLastName(listCourse.get(i).getTeacher().getUser().getLastName());
-      teacherDTO.setTittle(listCourse.get(i).getTeacher().getTitleDegree());
-      File teacherPhoto = listCourse.get(i).getTeacher().getUser().getUserPhoto();
+      teacherDTO.setId(listCourseAvailable.get(i).getTeacher().getId());
+      teacherDTO.setCode(listCourseAvailable.get(i).getTeacher().getCode());
+      teacherDTO.setFirstName(listCourseAvailable.get(i).getTeacher().getUser().getFirstName());
+      teacherDTO.setLastName(listCourseAvailable.get(i).getTeacher().getUser().getLastName());
+      teacherDTO.setTitle(listCourseAvailable.get(i).getTeacher().getTitleDegree());
+      List<ExperienceResponseDto> experience =
+          experienceService.getAllByTeacherId(listCourseAvailable.get(i).getTeacher().getId());
+      teacherDTO.setExperience(experience.get(experience.size() - 1).getTitle());
+      File teacherPhoto = listCourseAvailable.get(i).getTeacher().getUser().getUserPhoto();
       if (teacherPhoto == null || teacherPhoto.getId() == null) {
         teacherDTO.setPhotoId("");
       } else {
-        teacherDTO.setPhotoId(listCourse.get(i).getTeacher().getUser().getUserPhoto().getId());
+        teacherDTO
+            .setPhotoId(listCourseAvailable.get(i).getTeacher().getUser().getUserPhoto().getId());
       }
       courseDto.setTeacher(teacherDTO);
-      courseDto.setCategoryName(listCourse.get(i).getCategory().getName());
+      courseDto.setCategoryCode(listCourseAvailable.get(i).getCategory().getCode());
+      courseDto.setCategoryName(listCourseAvailable.get(i).getCategory().getName());
       Integer availableCapacity = courseDao.getCapacityCourse(courseDto.getId());
       if (courseDto.getCapacity() > availableCapacity) {
         responseList.add(courseDto);
@@ -205,7 +224,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       teacherDTO.setCode(val.getTeacher().getCode());
       teacherDTO.setFirstName(val.getTeacher().getUser().getFirstName());
       teacherDTO.setLastName(val.getTeacher().getUser().getLastName());
-      teacherDTO.setTittle(val.getTeacher().getTitleDegree());
+      teacherDTO.setTitle(val.getTeacher().getTitleDegree());
       File teacherPhoto = val.getTeacher().getUser().getUserPhoto();
       if (teacherPhoto == null || teacherPhoto.getId() == null) {
         teacherDTO.setPhotoId("");

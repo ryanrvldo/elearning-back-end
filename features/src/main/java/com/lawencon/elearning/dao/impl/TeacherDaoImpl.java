@@ -201,8 +201,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       responseDTO.setTotalAssignment((Integer) bigInteger.intValue());
       bigInteger = (BigInteger) arrObj[5];
       responseDTO.setNotAssignment((Integer) bigInteger.intValue());
-      bigInteger = (BigInteger) arrObj[6];
-      responseDTO.setAvgScore((Integer) bigInteger.intValue());
+      responseDTO.setAvgScore((Double) arrObj[6]);
       listResult.add(responseDTO);
     });
     return listResult;

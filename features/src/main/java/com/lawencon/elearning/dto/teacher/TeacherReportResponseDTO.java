@@ -14,5 +14,5 @@ public class TeacherReportResponseDTO {
   private Integer totalUjian;
   private Integer totalAssignment;
   private Integer notAssignment;
-  private Integer avgScore;
+  private Double avgScore;
 }

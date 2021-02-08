@@ -21,6 +21,8 @@ public class CourseResponseDTO {
 
   private Integer capacity;
 
+  private Boolean isRegist;
+
   private CourseStatus courseStatus;
 
   private String courseDescription;
@@ -32,6 +34,8 @@ public class CourseResponseDTO {
   private LocalDateTime periodEnd;
 
   private String categoryName;
+
+  private String categoryCode;
 
   private TeacherForAvailableCourseDTO teacher;
 

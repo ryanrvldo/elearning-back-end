@@ -34,8 +34,9 @@ public class CourseController {
   private CourseService courseService;
 
   @GetMapping("available")
-  public ResponseEntity<?> getCourseAvailable() throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getCurrentAvailableCourse(),
+  public ResponseEntity<?> getCourseAvailable(@RequestParam("id") String studentId)
+      throws Exception {
+    return WebResponseUtils.createWebResponse(courseService.getCurrentAvailableCourse(studentId),
         HttpStatus.OK);
   }
 
@@ -102,6 +103,11 @@ public class CourseController {
   public ResponseEntity<?> deleteCourse(@RequestBody CourseDeleteRequestDTO data) throws Exception {
     courseService.deleteCourse(data);
     return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
+  }
+
+  @GetMapping
+  public ResponseEntity<?> getAllCourse() throws Exception {
+    return WebResponseUtils.createWebResponse(courseService.getListCourse(), HttpStatus.OK);
   }
 
 }

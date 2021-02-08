@@ -12,6 +12,7 @@ public class TeacherForAvailableCourseDTO {
   private String code;
   private String firstName;
   private String lastName;
-  private String tittle;
+  private String title;
+  private String experience;
   private String photoId;
 }

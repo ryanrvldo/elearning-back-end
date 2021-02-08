@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.16.0.final using JasperReports Library version 6.16.0-48579d909b7943b64690c65c71e07e0b80981928  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TeacherReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4b94f3d2-3e97-4a8f-a55f-a92b04b3203b">
+	<parameter name="teacherFName" class="java.lang.String"/>
+	<parameter name="teacherLName" class="java.lang.String"/>
+	<parameter name="teacherEmail" class="java.lang.String"/>
+	<parameter name="teacherGender" class="java.lang.String"/>
+	<parameter name="teacherPhone" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="Field_1" class="java.lang.String"/>
+	<field name="studentCode" class="java.lang.String"/>
+	<field name="studentFirstName" class="java.lang.String"/>
+	<field name="studentLastName" class="java.lang.String"/>
+	<field name="totalUjian" class="java.lang.Integer"/>
+	<field name="totalAssignment" class="java.lang.Integer"/>
+	<field name="notAssignment" class="java.lang.Integer"/>
+	<field name="avgScore" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -60,19 +71,39 @@
 				<reportElement x="470" y="0" width="100" height="17" uuid="f3032faf-9209-42d4-9183-a61bcd5dbd80"/>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="185" y="43" width="134" height="14" uuid="514315be-d8ec-4833-9ff3-5abb40fd7f54"/>
+				<textFieldExpression><![CDATA[$P{teacherFName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="60" width="134" height="13" uuid="3596a315-1581-4fcd-ac68-9b4ff7fc1f64"/>
+				<textFieldExpression><![CDATA[$P{teacherLName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="77" width="134" height="13" uuid="7489e775-8fb6-49b0-9f94-0b5d39a81a14"/>
+				<textFieldExpression><![CDATA[$P{teacherEmail}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="430" y="50" width="120" height="20" uuid="ed91f3f3-1e7d-4a79-9772-7ae573514871"/>
+				<textFieldExpression><![CDATA[$P{teacherGender}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="430" y="73" width="120" height="20" uuid="463eae8b-fd72-45f8-92af-2a576491c31d"/>
+				<textFieldExpression><![CDATA[$P{teacherPhone}]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<columnHeader>
 		<band height="56" splitType="Stretch">
 			<staticText>
-				<reportElement x="5" y="9" width="60" height="38" uuid="43375157-eada-4829-b20e-8b0217eee48f"/>
+				<reportElement x="-8" y="9" width="82" height="38" uuid="43375157-eada-4829-b20e-8b0217eee48f"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Student Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="95" y="9" width="61" height="38" uuid="5515c512-55ce-4858-8234-f1578fe77c42"/>
+				<reportElement x="86" y="9" width="76" height="38" uuid="5515c512-55ce-4858-8234-f1578fe77c42"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
@@ -161,6 +192,48 @@
 			<line>
 				<reportElement x="-14" y="62" width="584" height="1" uuid="9260a3fb-5e24-4bda-a58a-133e2e0811f8"/>
 			</line>
+			<textField>
+				<reportElement x="-8" y="2" width="84" height="40" uuid="adda8a39-f3e8-4c0f-9c32-b4ed885f66f2">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a21b33e9-5127-4412-8ac0-404139eb209b"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{studentCode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="86" y="0" width="76" height="30" uuid="d248c4dd-956f-4e18-a43a-7a291561f2ca">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9abb409-598f-4e2e-9591-a687232bd9c4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{studentFirstName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="86" y="30" width="76" height="30" uuid="e4bf88dc-bb1f-4b99-9397-90f3d4731518">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="61514435-f58f-4260-8388-acec087cc570"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{studentLastName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="7" width="90" height="30" uuid="23ab76bc-94c6-42e1-b100-2c424025c368">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b3ab0132-0685-4273-8e53-0fdd73288a14"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{totalUjian}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="7" width="72" height="30" uuid="55d44b5f-26a5-4f93-99a0-0e8b26bc8f32">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f2955405-54d0-47a6-bc09-72127b6d57a6"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{totalAssignment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="396" y="8" width="78" height="30" uuid="3aba9f1c-0ffa-4c55-ad2a-93a4df69aae7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4e6be319-a501-4445-bdb5-12971acb9a23"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{notAssignment}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="490" y="8" width="72" height="30" uuid="b043b5c6-d135-4854-9fdc-ae4a649901f4">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cee7a3bf-0d6e-40f0-a525-b2a2b6239b56"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{avgScore}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

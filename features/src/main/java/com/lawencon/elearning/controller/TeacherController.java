@@ -1,6 +1,8 @@
 package com.lawencon.elearning.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -15,11 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.WebResponseUtils;
 import com.lawencon.util.JasperUtil;
@@ -89,13 +93,21 @@ public class TeacherController {
   }
 
   @GetMapping("report/{id}")
-  public ResponseEntity<?> getTeacherDetailCourseReport(@PathVariable("id") String moduleId)
+  public ResponseEntity<?> getTeacherDetailCourseReport(@PathVariable("id") String moduleId
+  , @RequestParam("id") String teacherId)
       throws Exception {
+    Teacher teacher = teacherService.findTeacherById(teacherId);
+    Map<String, Object> mapTeacher = new HashMap<>();
+    mapTeacher.put("teacherFName", teacher.getUser().getFirstName());
+    mapTeacher.put("teacherLName", teacher.getUser().getLastName());
+    mapTeacher.put("teacherEmail", teacher.getUser().getEmail());
+    mapTeacher.put("teacherGender", teacher.getGender().toString());
+    mapTeacher.put("teacherPhone", teacher.getPhone());
     byte[] out;
     try {
       List<TeacherReportResponseDTO> listData =
           teacherService.getTeacherDetailCourseReport(moduleId);
-      out = JasperUtil.responseToByteArray(listData, "TeacherReport", null);
+      out = JasperUtil.responseToByteArray(listData, "TeacherReport", mapTeacher);
     } catch (Exception e) {
       e.printStackTrace();
       return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

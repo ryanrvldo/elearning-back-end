@@ -25,7 +25,7 @@ public interface CourseService {
 
   void deleteCourse(CourseDeleteRequestDTO courseDTO) throws Exception;
 
-  List<CourseResponseDTO> getCurrentAvailableCourse() throws Exception;
+  List<CourseResponseDTO> getCurrentAvailableCourse(String studentId) throws Exception;
 
   List<CourseResponseDTO> getCourseByStudentId(String id) throws Exception;
 
