@@ -29,4 +29,8 @@ public class TransactionNumberUtils {
     return String.format("FRM-%s", System.currentTimeMillis());
   }
 
+  public static String generateStudentCode() {
+    return String.format("STD-%s", System.currentTimeMillis());
+  }
+
 }

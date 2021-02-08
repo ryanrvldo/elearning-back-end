@@ -1,7 +1,6 @@
 package com.lawencon.elearning.dto.student;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
@@ -12,10 +11,6 @@ import lombok.Data;
  */
 @Data
 public class RegisterStudentDTO {
-
-  @NotBlank
-  @Size(max = 50)
-  private String code;
 
   @NotBlank
   @Size(max = 50)
@@ -41,14 +36,5 @@ public class RegisterStudentDTO {
 
   @NotBlank
   private String gender;
-
-  @NotBlank
-  private String roleId;
-
-  @NotNull
-  private Long roleVersion;
-
-  @NotBlank
-  private String createdBy;
 
 }

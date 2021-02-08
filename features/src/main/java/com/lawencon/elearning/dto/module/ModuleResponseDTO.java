@@ -15,7 +15,7 @@ public class ModuleResponseDTO {
   private String description;
   private String subjectName;
   private String attendanceId;
-  private boolean isVerifyStatus;
+  private boolean verifyStatus;
   private ScheduleResponseDTO schedule;
 
 }

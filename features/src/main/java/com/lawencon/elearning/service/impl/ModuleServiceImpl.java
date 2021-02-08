@@ -127,36 +127,42 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public void insertModule(List<ModulRequestDTO> data) throws Exception {
-    for (ModulRequestDTO element : data) {
-      validationUtil.validate(element);
-      validationUtil.validate(element.getScheduleRequestDTO());
+    for (ModulRequestDTO moduleRequestDTO : data) {
+      validationUtil.validate(moduleRequestDTO);
+      validationUtil.validate(moduleRequestDTO.getScheduleRequestDTO());
+      validationUtil.validate(moduleRequestDTO);
+      validationUtil.validate(moduleRequestDTO.getScheduleRequestDTO());
+      Course courseDb = courseService.getCourseById(moduleRequestDTO.getCourseId());
+      if (moduleRequestDTO.getScheduleRequestDTO().getScheduleDate()
+          .isBefore(courseDb.getPeriodStart().toLocalDate())
+          || moduleRequestDTO.getScheduleRequestDTO().getScheduleDate()
+              .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+        throw new IllegalRequestException("You can't insert module outside course period");
+      }
       Schedule schedule = new Schedule();
-      schedule.setCreatedBy(element.getScheduleRequestDTO().getScheduleCreatedBy());
-      schedule.setDate(element.getScheduleRequestDTO().getScheduleDate());
-      schedule.setEndTime(element.getScheduleRequestDTO().getScheduleEnd());
-      schedule.setStartTime(element.getScheduleRequestDTO().getScheduleStart());
+      schedule.setCreatedBy(moduleRequestDTO.getScheduleRequestDTO().getScheduleCreatedBy());
+      schedule.setDate(moduleRequestDTO.getScheduleRequestDTO().getScheduleDate());
+      schedule.setEndTime(moduleRequestDTO.getScheduleRequestDTO().getScheduleEnd());
+      schedule.setStartTime(moduleRequestDTO.getScheduleRequestDTO().getScheduleStart());
 
       Teacher teacher = new Teacher();
-      teacher.setId(element.getScheduleRequestDTO().getTeacherId());
-      teacher.setVersion(element.getScheduleRequestDTO().getTeacherVersion());
+      teacher.setId(moduleRequestDTO.getScheduleRequestDTO().getTeacherId());
       schedule.setTeacher(teacher);
 
       Module module = new Module();
       module.setSchedule(schedule);
-      module.setCode(element.getModuleCode());
+      module.setCode(moduleRequestDTO.getModuleCode());
       module.setCreatedAt(LocalDateTime.now());
-      module.setCreatedBy(element.getModuleCreatedBy());
-      module.setDescription(element.getModuleDescription());
-      module.setTitle(element.getModuleTittle());
+      module.setCreatedBy(moduleRequestDTO.getModuleCreatedBy());
+      module.setDescription(moduleRequestDTO.getModuleDescription());
+      module.setTitle(moduleRequestDTO.getModuleTittle());
 
       Course course = new Course();
-      course.setId(element.getCourseId());
-      course.setVersion(element.getCourseVersion());
+      course.setId(moduleRequestDTO.getCourseId());
       module.setCourse(course);
 
       SubjectCategory subject = new SubjectCategory();
-      subject.setId(element.getSubjectId());
-      subject.setVersion(element.getSubjectVersion());
+      subject.setId(moduleRequestDTO.getSubjectId());
       module.setSubject(subject);
 
       try {
@@ -197,7 +203,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
     Teacher teacher = new Teacher();
     teacher.setId(data.getScheduleRequestDTO().getTeacherId());
-    teacher.setVersion(data.getScheduleRequestDTO().getTeacherVersion());
     schedule.setTeacher(teacher);
 
     Module module = new Module();
@@ -208,12 +213,10 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
     Course course = new Course();
     course.setId(data.getCourseId());
-    course.setVersion(data.getCourseVersion());
     module.setCourse(course);
 
     SubjectCategory subject = new SubjectCategory();
     subject.setId(data.getSubjectId());
-    subject.setVersion(data.getSubjectVersion());
     module.setSubject(subject);
 
     scheduleService.updateSchedule(schedule);

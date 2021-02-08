@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dto.module;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import com.lawencon.elearning.dto.ScheduleRequestDTO;
@@ -23,15 +22,9 @@ public class ModulRequestDTO {
 
   @NotBlank
   private String courseId;
-  @NotNull
-  @Min(0)
-  private Long courseVersion;
 
   @NotBlank
   private String subjectId;
-  @NotNull
-  @Min(0)
-  private Long subjectVersion;
 
   @NotNull
   private ScheduleRequestDTO scheduleRequestDTO;

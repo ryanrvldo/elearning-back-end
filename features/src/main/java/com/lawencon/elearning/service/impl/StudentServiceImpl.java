@@ -26,8 +26,10 @@ import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -50,14 +52,16 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Autowired
   private ValidationUtil validationUtil;
 
+  @Autowired
+  private RoleService roleService;
+
   @Override
   public void insertStudent(RegisterStudentDTO data) throws Exception {
     validationUtil.validate(data);
     Student student = new Student();
-    student.setCode(data.getCode());
+    student.setCode(TransactionNumberUtils.generateStudentCode());
     student.setPhone(data.getPhone());
     student.setGender(Gender.valueOf(data.getGender()));
-    student.setCreatedBy(data.getCreatedBy());
 
     User user = new User();
     user.setFirstName(data.getFirstName());
@@ -66,11 +70,8 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     user.setUsername(data.getUsername());
     user.setPassword(data.getPassword());
     user.setCreatedAt(LocalDateTime.now());
-    user.setCreatedBy(data.getCreatedBy());
 
-    Role role = new Role();
-    role.setId(data.getRoleId());
-    role.setVersion(data.getRoleVersion());
+    Role role = roleService.findByCode("RL-004");
     user.setRole(role);
     student.setUser(user);
 
