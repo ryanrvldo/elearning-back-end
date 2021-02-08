@@ -1,13 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.model.Course;
@@ -23,6 +15,12 @@ import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author WILLIAM
@@ -53,7 +51,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
 
   @Override
   public void updateStudentProfile(Student data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null);
   }
 
   @Override
@@ -119,33 +117,32 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   @Override
   public List<Student> findAll() throws Exception {
     String query = buildQueryOf(
-        "SELECT s.id, s.phone, s.gender, s.createdAt, u.firstName, u.lastName, u.email, f.id ",
+        "SELECT s.id, s.code, s.phone, s.gender, s.createdAt, u.username, u.firstName, u.lastName, u.email, f.id ",
         "FROM Student AS s ",
         "INNER JOIN User AS u ON u.id = s.user.id ",
         "LEFT JOIN File AS f ON f.id = u.userPhoto.id ");
-    Logger logger = LoggerFactory.getLogger(getClass());
     List<Student> studentList = new ArrayList<>();
     List<Object[]> objList = createQuery(query, Object[].class).getResultList();
-    logger.info("student size : " + objList.size());
     objList.forEach(objArr -> {
       Student student = new Student();
       student.setId((String) objArr[0]);
-      student.setPhone((String) objArr[1]);
-      student.setGender((Gender) objArr[2]);
-      student.setCreatedAt((LocalDateTime) objArr[3]);
+      student.setCode((String) objArr[1]);
+      student.setPhone((String) objArr[2]);
+      student.setGender((Gender) objArr[3]);
+      student.setCreatedAt((LocalDateTime) objArr[4]);
 
 
       User user = new User();
-      user.setFirstName((String) objArr[4]);
-      user.setLastName((String) objArr[5]);
-      user.setEmail((String) objArr[6]);
+      user.setUsername((String) objArr[5]);
+      user.setFirstName((String) objArr[6]);
+      user.setLastName((String) objArr[7]);
+      user.setEmail((String) objArr[8]);
 
       File file = new File();
-      file.setId((String) objArr[7]);
+      file.setId((String) objArr[9]);
       user.setUserPhoto(file);
       student.setUser(user);
 
-      logger.info("Student: ", student);
       studentList.add(student);
     });
 

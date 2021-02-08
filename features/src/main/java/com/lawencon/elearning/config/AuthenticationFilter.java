@@ -1,5 +1,10 @@
 package com.lawencon.elearning.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.UserService;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,11 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 /**
  * @author Rian Rivaldo
@@ -78,8 +78,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
           .append("\"role\":")
           .append(String.format("{\"id\":\"%s\",", user.getRole().getId()))
           .append(String.format("\"code\":\"%s\",", user.getRole().getCode()))
-          .append(String.format("\"name\":\"%s\",", user.getRole().getName()))
-          .append(String.format("\"version\":\"%s\"", user.getRole().getVersion()))
+          .append(String.format("\"name\":\"%s\"", user.getRole().getName()))
           .append("}}}");
     } catch (Exception e) {
       e.printStackTrace();

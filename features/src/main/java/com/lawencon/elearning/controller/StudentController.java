@@ -1,5 +1,12 @@
 package com.lawencon.elearning.controller;
 
+import com.lawencon.elearning.dto.student.RegisterStudentDTO;
+import com.lawencon.elearning.dto.student.StudentReportDTO;
+import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
+import com.lawencon.elearning.model.Student;
+import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.util.WebResponseUtils;
+import com.lawencon.util.JasperUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,13 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
-import com.lawencon.elearning.dto.student.RegisterStudentDTO;
-import com.lawencon.elearning.dto.student.StudentReportDTO;
-import com.lawencon.elearning.model.Student;
-import com.lawencon.elearning.service.StudentService;
-import com.lawencon.elearning.util.WebResponseUtils;
-import com.lawencon.util.JasperUtil;
 
 /**
  * 
@@ -37,12 +37,6 @@ public class StudentController {
 
   @Autowired
   private StudentService studentService;
-
-  @GetMapping("/{id}")
-  public ResponseEntity<?> getStudentProfile(@PathVariable("id") String id) throws Exception {
-    return WebResponseUtils.createWebResponse(studentService.getStudentProfile(id),
-        HttpStatus.OK);
-  }
 
   @GetMapping("/dashboard/{id}")
   public ResponseEntity<?> getStudentDashboard(@PathVariable("id") String id) throws Exception {
@@ -62,15 +56,18 @@ public class StudentController {
   }
 
   @PutMapping
-  public ResponseEntity<?> updateStudentProfile(@RequestBody Student body) throws Exception {
+  public ResponseEntity<?> updateStudentProfile(@RequestBody StudentUpdateRequestDto body)
+      throws Exception {
     studentService.updateStudentProfile(body);
-    return WebResponseUtils.createWebResponse("Update Profile Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Student have been updated successfully.",
+        HttpStatus.OK);
   }
 
   @DeleteMapping
-  public ResponseEntity<?> deleteStudent(@RequestBody DeleteMasterRequestDTO body)
+  public ResponseEntity<?> deleteStudent(@RequestParam("id") String studentId,
+      @RequestParam("updatedBy") String updatedBy)
       throws Exception {
-    studentService.deleteStudent(body);
+    studentService.deleteStudent(studentId, updatedBy);
     return WebResponseUtils.createWebResponse("Delete Success", HttpStatus.OK);
   }
 

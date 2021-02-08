@@ -25,9 +25,11 @@ public class ValidationUtil {
     }
   }
 
-  public void validateUUID(String uuid) throws IllegalRequestException {
-    if (uuid == null || uuid.trim().isEmpty() || uuid.length() < 32 || uuid.length() > 36) {
-      throw new IllegalRequestException("Id is not valid UUID.");
+  public void validateUUID(String... uuids) throws IllegalRequestException {
+    for (String uuid : uuids) {
+      if (uuid == null || uuid.trim().isEmpty() || uuid.length() < 32 || uuid.length() > 36) {
+        throw new IllegalRequestException("Id is not valid UUID.");
+      }
     }
   }
 

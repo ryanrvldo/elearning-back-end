@@ -1,25 +1,16 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentDashboardDTO;
-import com.lawencon.elearning.dto.student.StudentProfileDTO;
 import com.lawencon.elearning.dto.student.StudentReportDTO;
+import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.error.InternalServerErrorException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Role;
@@ -31,6 +22,13 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -96,41 +94,52 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   }
 
   @Override
-  public StudentProfileDTO getStudentProfile(String id) throws Exception {
-    validateNullId(id, "id");
-    Student std = Optional.ofNullable(studentDao.getStudentProfile(id))
-        .orElseThrow(() -> new DataIsNotExistsException("id", id));
-    StudentProfileDTO stdProfile = new StudentProfileDTO();
-    stdProfile.setCreatedAt(std.getCreatedAt());
-    stdProfile.setEmail(std.getUser().getEmail());
-    stdProfile.setFirstName(std.getUser().getFirstName());
-    stdProfile.setLastName(std.getUser().getLastName());
-    stdProfile.setGender(std.getGender());
-    return stdProfile;
-  }
+  public void updateStudentProfile(StudentUpdateRequestDto request) throws Exception {
+    validationUtil.validate(request);
 
-  @Override
-  public void updateStudentProfile(Student data) throws Exception {
-    validateNullId(data.getId(), "id");
-    validationUtil.validate(data);
-    setupUpdatedValue(data, () -> Optional.ofNullable(studentDao.getStudentById(data.getId()))
-        .orElseThrow(() -> new DataIsNotExistsException("id", data.getId())));
-    studentDao.updateStudentProfile(data, null);
-  }
-
-  @Override
-  public void deleteStudent(DeleteMasterRequestDTO data) throws Exception {
-    validationUtil.validate(data);
     try {
       begin();
-      studentDao.deleteStudentById(data.getId());
+      Student prevStudent = Optional.ofNullable(studentDao.getStudentById(request.getId()))
+          .orElseThrow(() -> new DataIsNotExistsException("student id", request.getId()));
+      Student newStudent = new Student();
+      newStudent.setCode(prevStudent.getCode());
+      newStudent.setCourses(prevStudent.getCourses());
+      newStudent.setIsActive(prevStudent.getIsActive());
+      newStudent.setUser(prevStudent.getUser());
+      newStudent.setPhone(request.getPhone());
+      newStudent.setGender(request.getGender());
+
+
+      User user = new User();
+      user.setId(prevStudent.getUser().getId());
+      user.setFirstName(request.getFirstName());
+      user.setLastName(request.getLastName());
+      user.setUsername(request.getUsername());
+      userService.updateUser(user);
+      setupUpdatedValue(newStudent, () -> prevStudent);
+      studentDao.updateStudentProfile(newStudent, null);
+      commit();
+    } catch (Exception e) {
+      rollback();
+      throw new InternalServerErrorException(e.getCause());
+    }
+  }
+
+  @Override
+  public void deleteStudent(String studentId, String updatedBy) throws Exception {
+    validationUtil.validateUUID(studentId, updatedBy);
+    try {
+      begin();
+      Student student = getStudentById(studentId);
+      userService.deleteById(student.getUser().getId());
+      studentDao.deleteStudentById(student.getId());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
       if (e.getMessage().equals("ID Not Found")) {
         throw new DataIsNotExistsException(e.getMessage());
       }
-      updateIsActive(data.getId(), data.getUpdatedBy());
+      updateIsActive(studentId, updatedBy);
     }
   }
 
@@ -239,16 +248,14 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public List<StudentDashboardDTO> getAll() throws Exception {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-    logger.info("Get All Student");
     List<Student> studentList = studentDao.findAll();
-    logger.info("student list: " + studentList.size());
     if (studentList.isEmpty()) {
       throw new DataIsNotExistsException("There is no student yet.");
     }
     List<StudentDashboardDTO> responseList = studentList.stream()
         .map(student -> new StudentDashboardDTO(
             student.getId(),
+            student.getCode(),
             student.getUser().getUsername(),
             student.getUser().getFirstName(),
             student.getUser().getLastName(),
@@ -258,7 +265,6 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
             student.getUser().getUserPhoto().getId(),
             student.getCreatedAt()))
         .collect(Collectors.toList());
-    logger.info("response list: " + responseList.size());
     return responseList;
   }
 

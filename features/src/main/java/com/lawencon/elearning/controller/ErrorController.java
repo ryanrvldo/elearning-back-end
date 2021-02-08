@@ -1,17 +1,20 @@
 package com.lawencon.elearning.controller;
 
-import javax.validation.ConstraintViolationException;
-import org.postgresql.util.PSQLException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import com.lawencon.elearning.dto.WebResponseDTO;
 import com.lawencon.elearning.error.AttendanceErrorException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.error.InternalServerErrorException;
 import com.lawencon.elearning.util.WebResponseUtils;
+import javax.validation.ConstraintViolationException;
+import org.postgresql.util.PSQLException;
+import org.postgresql.util.ServerErrorMessage;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 /**
  * @author Rian Rivaldo
@@ -26,24 +29,34 @@ public class ErrorController {
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(value = {MissingServletRequestPartException.class})
+  @ExceptionHandler(value = {MissingServletRequestPartException.class,
+      MissingServletRequestParameterException.class})
   public ResponseEntity<WebResponseDTO<String>> missingRequestPart(
-      MissingServletRequestPartException e) {
+      Exception e) {
     e.printStackTrace();
-    return WebResponseUtils
-        .createWebResponse(e.getRequestPartName() + " is not present in request form.",
-            HttpStatus.BAD_REQUEST);
+    String message;
+    if (e instanceof MissingServletRequestPartException) {
+      message = ((MissingServletRequestPartException) e).getRequestPartName()
+          + " is not present in request form.";
+    } else {
+      message = ((MissingServletRequestParameterException) e).getParameterName()
+          + " is not present in query parameter.";
+    }
+    return WebResponseUtils.createWebResponse(message, HttpStatus.BAD_REQUEST);
   }
 
-  @ExceptionHandler(value = {PSQLException.class})
-  public ResponseEntity<?> psqlError(
-      PSQLException e) {
+  @ExceptionHandler(value = {PSQLException.class, InternalServerErrorException.class})
+  public ResponseEntity<?> psqlError(Exception e) {
     e.printStackTrace();
-    if (e.getServerErrorMessage() != null) {
-      String detailMessage = e.getServerErrorMessage().getDetail();
-      if (detailMessage != null) {
-        return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
+    if (e instanceof PSQLException) {
+      ServerErrorMessage serverErrorMessage = ((PSQLException) e).getServerErrorMessage();
+      if (serverErrorMessage != null) {
+        String detailMessage = serverErrorMessage.getDetail();
+        if (detailMessage != null) {
+          return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
+        }
       }
+
     }
     return WebResponseUtils.createWebResponse("There is something error in internal server.",
         HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,5 +1,7 @@
 package com.lawencon.elearning.config;
 
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.EncoderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -10,8 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.EncoderUtils;
 
 /**
  * @author Rian Rivaldo
@@ -51,7 +51,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
   public void configure(WebSecurity web) throws Exception {
     web.ignoring()
         .antMatchers(HttpMethod.POST, "/student")
-        .antMatchers(HttpMethod.GET, "/file/**");
+        .antMatchers(HttpMethod.GET, "/file/**")
+        .antMatchers(HttpMethod.GET, "/**/report/**");
   }
 
   @Bean
