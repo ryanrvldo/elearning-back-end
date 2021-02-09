@@ -79,6 +79,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
     File prevFile = getFileById(requestContent.getId());
     File newFile = new File();
+    newFile.setId(prevFile.getId());
     newFile.setCreatedAt(prevFile.getCreatedAt());
     newFile.setCreatedBy(prevFile.getCreatedBy());
     newFile.setUpdatedAt(LocalDateTime.now());
@@ -91,7 +92,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     newFile.setContentType(file.getContentType());
     newFile.setData(file.getBytes());
     newFile.setSize(file.getSize());
-    fileDao.updateFile(newFile, null);
+    fileDao.updateFile(newFile);
   }
 
   private FileResponseDto uploadFile(MultipartFile multipartFile, String content)

@@ -30,7 +30,7 @@ public class Teacher extends BaseMaster {
   @Column(nullable = false, length = 50)
   private String code;
 
-  @Column(name = "title_degree", nullable = false, length = 50)
+  @Column(name = "title_degree", length = 50)
   private String titleDegree;
 
   @Column(nullable = false, length = 20)

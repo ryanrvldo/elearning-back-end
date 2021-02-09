@@ -1,9 +1,9 @@
 package com.lawencon.elearning.dto.student;
 
-import com.lawencon.elearning.model.Gender;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import com.lawencon.elearning.model.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +28,6 @@ public class StudentUpdateRequestDto {
   @Size(max = 50)
   private String firstName;
 
-  @NotBlank
   @Size(max = 50)
   private String lastName;
 

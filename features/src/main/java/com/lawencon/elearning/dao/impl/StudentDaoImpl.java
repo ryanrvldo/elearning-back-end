@@ -1,5 +1,11 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.model.Course;
@@ -15,12 +21,6 @@ import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author WILLIAM
@@ -117,7 +117,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   @Override
   public List<Student> findAll() throws Exception {
     String query = buildQueryOf(
-        "SELECT s.id, s.code, s.phone, s.gender, s.createdAt, u.username, u.firstName, u.lastName, u.email, f.id ",
+        "SELECT s.id, s.code, s.phone, s.gender, s.createdAt, s.isActive, u.username, u.firstName, u.lastName, u.email, f.id ",
         "FROM Student AS s ",
         "INNER JOIN User AS u ON u.id = s.user.id ",
         "LEFT JOIN File AS f ON f.id = u.userPhoto.id ");
@@ -130,16 +130,16 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
       student.setPhone((String) objArr[2]);
       student.setGender((Gender) objArr[3]);
       student.setCreatedAt((LocalDateTime) objArr[4]);
-
+      student.setIsActive((Boolean) objArr[5]);
 
       User user = new User();
-      user.setUsername((String) objArr[5]);
-      user.setFirstName((String) objArr[6]);
-      user.setLastName((String) objArr[7]);
-      user.setEmail((String) objArr[8]);
+      user.setUsername((String) objArr[6]);
+      user.setFirstName((String) objArr[7]);
+      user.setLastName((String) objArr[8]);
+      user.setEmail((String) objArr[9]);
 
       File file = new File();
-      file.setId((String) objArr[9]);
+      file.setId((String) objArr[10]);
       user.setUserPhoto(file);
       student.setUser(user);
 

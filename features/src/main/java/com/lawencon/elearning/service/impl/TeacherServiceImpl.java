@@ -128,23 +128,25 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public void updateTeacher(UpdateTeacherRequestDTO data) throws Exception {
     validUtil.validate(data);
+
     Teacher teacherDB = Optional.ofNullable(findTeacherById(data.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("id", data.getId()));
-
+    teacherDB.setPhone(data.getPhone());
     teacherDB.setTitleDegree(data.getTitleDegree());
     teacherDB.setGender(data.getGender());
     teacherDB.setUpdatedBy(data.getUpdatedBy());
     teacherDB.setUpdatedAt(LocalDateTime.now());
 
     User user = new User();
-    user.setFirstName(data.getFirstName());
     user.setId(teacherDB.getUser().getId());
+    user.setUsername(data.getUsername());
+    user.setFirstName(data.getFirstName());
     user.setLastName(data.getLastName());
-    user.setEmail(data.getEmail());
+    user.setUpdatedBy(data.getUpdatedBy());
+
     try {
       begin();
       userService.updateUser(user);
-      teacherDB.setUser(user);
       teacherDao.updateTeacher(teacherDB, null);
       commit();
     } catch (Exception e) {

@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dto.teacher;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -8,7 +7,7 @@ import com.lawencon.elearning.model.Gender;
 import lombok.Data;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @Data
@@ -19,6 +18,10 @@ public class UpdateTeacherRequestDTO {
   private String id;
 
   @NotBlank
+  @Size(max = 100)
+  private String username;
+
+  @NotBlank
   @Size(max = 50)
   private String firstName;
 
@@ -26,8 +29,8 @@ public class UpdateTeacherRequestDTO {
   private String lastName;
 
   @NotBlank
-  @Email
-  private String email;
+  @Size(max = 20)
+  private String phone;
 
   @Size(max = 50)
   private String titleDegree;

@@ -1,8 +1,8 @@
 package com.lawencon.elearning.dto.student;
 
+import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.model.Gender;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,5 +28,5 @@ public class StudentDashboardDTO {
   private String idPhoto;
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime createdAt;
-
+  private Boolean isActive;
 }

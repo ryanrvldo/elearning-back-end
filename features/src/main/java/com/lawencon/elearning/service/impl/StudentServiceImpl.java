@@ -1,5 +1,12 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
@@ -22,13 +29,6 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -108,7 +108,6 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       newStudent.setUser(prevStudent.getUser());
       newStudent.setPhone(request.getPhone());
       newStudent.setGender(request.getGender());
-
 
       User user = new User();
       user.setId(prevStudent.getUser().getId());
@@ -263,7 +262,8 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
             student.getPhone(),
             student.getGender(),
             student.getUser().getUserPhoto().getId(),
-            student.getCreatedAt()))
+            student.getCreatedAt(),
+            student.getIsActive()))
         .collect(Collectors.toList());
     return responseList;
   }

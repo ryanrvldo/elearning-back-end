@@ -79,7 +79,6 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     }
 
     validateUtil.validate(teacherExam);
-    validateUtil.validateUUID(teacherExam.getModuleId());
     if (teacherExam.getStartTime().compareTo(teacherExam.getEndTime()) > 0) {
       throw new IllegalRequestException("End time cannot be greather than start Time");
     }

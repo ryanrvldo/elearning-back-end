@@ -5,12 +5,11 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.model.ExamType;
 import lombok.Data;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 @Data
 public class TeacherExamRequestDTO {
@@ -26,12 +25,10 @@ public class TeacherExamRequestDTO {
   private String description;
 
   @NotNull
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @FutureOrPresent
   private LocalDateTime startTime;
 
   @NotNull
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   @FutureOrPresent
   private LocalDateTime endTime;
 
