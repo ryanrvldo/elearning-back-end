@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dto.course.CheckCourseRegisterRequestDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
@@ -226,7 +227,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type ",
         "INNER JOIN tb_m_course_categories AS cc ON cc.id = c.id_category ",
         "INNER JOIN tb_m_teachers AS t ON t.id = c.id_teacher ",
-        "INNER JOIN student_course AS sc ON sc.id_course = c.id ", "WHERE t.id = ?1 ",
+        "INNER JOIN student_course AS sc ON sc.id_course = c.id WHERE t.id = ?1 ",
         "group by course_id , course_code ,type_name , c.capacity  , c.description, c.period_start , c.period_end ");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
     Map<Course, Integer[]> courseMap = new HashMap<>();
@@ -278,6 +279,23 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         (BigInteger) createNativeQuery(sql).setParameter(1, courseId).getSingleResult();
     return bigInteger.intValue();
 
+  }
+
+  @Override
+  public List<CheckCourseRegisterRequestDTO> checkDataRegisterCourse(String courseId)
+      throws Exception {
+    String sql =
+        buildQueryOf("SELECT id_student,id_course FROM student_course WHERE id_course = ?1");
+    List<?> obj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
+    List<CheckCourseRegisterRequestDTO> listResult = new ArrayList<>();
+    obj.forEach(val -> {
+      Object[] arrObj = (Object[]) val;
+      CheckCourseRegisterRequestDTO student = new CheckCourseRegisterRequestDTO();
+      student.setStudentId((String) arrObj[0]);
+      student.setCourseId((String) arrObj[1]);
+      listResult.add(student);
+    });
+    return listResult;
   }
 
 }

@@ -2,6 +2,7 @@ package com.lawencon.elearning.dao;
 
 import java.util.List;
 import java.util.Map;
+import com.lawencon.elearning.dto.course.CheckCourseRegisterRequestDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
 
@@ -36,4 +37,6 @@ public interface CourseDao {
   Integer getTotalStudentByIdCourse(String id) throws Exception;
 
   Integer getCapacityCourse(String courseId) throws Exception;
+
+  List<CheckCourseRegisterRequestDTO> checkDataRegisterCourse(String courseId) throws Exception;
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
+import com.lawencon.elearning.dto.course.CheckCourseRegisterRequestDTO;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
@@ -17,6 +18,7 @@ import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
+import com.lawencon.elearning.error.DataAlreadyExistException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
@@ -24,6 +26,7 @@ import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
@@ -162,7 +165,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       for (int j = 0; j < listCourseByStudent.size(); j++) {
         CourseResponseDTO courseDtoStudent = new CourseResponseDTO();
         courseDtoStudent.setId(listCourseByStudent.get(j).getId());
-        if (courseDtoStudent == courseDto) {
+        if (courseDto.equals(courseDtoStudent)) {
           courseDto.setIsRegist(true);
         }
       }
@@ -264,11 +267,31 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public void registerCourse(String studentId, String courseId) throws Exception {
-    begin();
     validateNullId(studentId, "id");
     validateNullId(courseId, "id");
-    courseDao.registerCourse(courseId, studentId);
-    commit();
+    Student student = studentService.getStudentById(studentId);
+    Course course = courseDao.getCourseById(courseId);
+    if (student == null) {
+      throw new DataIsNotExistsException("id", studentId);
+    }
+    if (course == null) {
+      throw new DataIsNotExistsException("id", courseId);
+    }
+    List<CheckCourseRegisterRequestDTO> listStudent = courseDao.checkDataRegisterCourse(courseId);
+    if (listStudent.isEmpty()) {
+      begin();
+      courseDao.registerCourse(courseId, studentId);
+      commit();
+    } else {
+      for (int i = 0; i < listStudent.size() - 1; i++) {
+        if (studentId.equals(listStudent.get(i).getStudentId())) {
+          throw new DataAlreadyExistException("id", studentId);
+        }
+      }
+      begin();
+      courseDao.registerCourse(courseId, studentId);
+      commit();
+    }
   }
 
   @Override
