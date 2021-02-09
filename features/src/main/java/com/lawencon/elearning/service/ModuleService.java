@@ -29,7 +29,9 @@ public interface ModuleService {
 
   void deleteModule(UpdateIsActiveRequestDTO data) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void updateIsActiveFalse(String id, String userId) throws Exception;
+
+  void updateIsActiveTrue(UpdateIsActiveRequestDTO data) throws Exception;
 
   void saveLesson(List<MultipartFile> multiPartFiles, String idUser, String body) throws Exception;
 

@@ -55,6 +55,14 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public void updateSchedule(Schedule data) throws Exception {
     validateNullId(data.getId(), "Id");
+    validateUtil.validate(data);
+    if (data.getStartTime().isAfter(data.getEndTime())) {
+      throw new IllegalRequestException("Schedule end time cannot be greather than start time");
+    }
+    // if (scheduleDao.validateSchedule(data.getDate(), data.getStartTime(), data.getEndTime(),
+    // data.getTeacher().getId()) > 0) {
+    // throw new IllegalRequestException("Schedule already exist");
+    // }
     scheduleDao.updateSchedule(data, null);
   }
 

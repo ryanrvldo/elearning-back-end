@@ -15,7 +15,6 @@ import com.lawencon.elearning.dto.AttendanceResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.error.AttendanceErrorException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Attendance;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Student;
@@ -56,8 +55,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Override
   public List<AttendanceResponseDTO> getAttendanceList(String idCourse, String idModule)
       throws Exception {
-    validateNullId(idModule, "module id");
-    validateNullId(idCourse, "course id");
+    validationUtil.validateUUID(idModule, idCourse);
     Optional.ofNullable(moduleService.getModuleById(idModule))
         .orElseThrow(() -> new DataIsNotExistsException("module id", idModule));
     Optional.ofNullable(courseService.getCourseById(idCourse))
@@ -127,8 +125,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
 
   @Override
   public void verifyAttendance(String id, String userId) throws Exception {
-    validateNullId(id, "attendance id");
-    validateNullId(userId, "user id");
+    validationUtil.validateUUID(id, userId);
     Attendance attendance = Optional.ofNullable(attendanceDao.getAttendanceById(id))
         .orElseThrow(() -> new DataIsNotExistsException("attendance id", id));
     Optional.ofNullable(userService.getById(userId))
@@ -139,16 +136,9 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
     attendanceDao.verifyAttendance(attendance, null);
   }
 
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
-  }
-
   @Override
   public String checkAttendanceStatus(String idModule, String idStudent) throws Exception {
-    validateNullId(idModule, "module id");
-    validateNullId(idStudent, "student id");
+    validationUtil.validateUUID(idModule, idStudent);
     Optional.ofNullable(studentService.getStudentById(idStudent))
         .orElseThrow(() -> new DataIsNotExistsException("student id", idStudent));
     Optional.ofNullable(moduleService.getModuleById(idModule))
@@ -165,6 +155,11 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
       }
     }
     return "0";
+  }
+
+  @Override
+  public Module getModuleForAttendanceReport(String idModule) throws Exception {
+    return moduleService.getModuleByIdCustom(idModule);
   }
 
 }

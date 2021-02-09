@@ -114,7 +114,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
 
   @Override
   public void updateModule(Module data, Callback before) throws Exception {
-    save(data, before, null, false, false);
+    save(data, before, null, false, true);
   }
 
   @Override
@@ -123,7 +123,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
+  public void updateIsActiveFalse(String id, String userId) throws Exception {
     String query = "UPDATE tb_m_modules SET is_active = false";
     updateNativeSQL(query, id, userId);
   }
@@ -170,6 +170,12 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
 
   public List<Module> getListModule() throws Exception {
     return getAll();
+  }
+
+  @Override
+  public void updateIsActiveTrue(String id, String userId) throws Exception {
+    String query = "UPDATE tb_m_modules SET is_active = true";
+    updateNativeSQL(query, id, userId);
   }
 
 }

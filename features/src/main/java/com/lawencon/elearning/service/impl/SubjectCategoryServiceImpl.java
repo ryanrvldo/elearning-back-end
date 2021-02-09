@@ -13,7 +13,6 @@ import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
 import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.service.SubjectCategoryService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -37,7 +36,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   public List<SubjectCategoryResponseDTO> getAllSubject() throws Exception {
     List<SubjectCategory> listResult =  subjectCategoryDao.getAllSubject();
     if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("No Subject Category Yet");
+      throw new DataIsNotExistsException("No subject category yet");
     }
 
     List<SubjectCategoryResponseDTO> subjectResponses = new ArrayList<SubjectCategoryResponseDTO>();
@@ -81,16 +80,18 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public void deleteSubject(String id) throws Exception {
-    validationUtil.validateUUID(id);
+  public void deleteSubject(UpdateIsActiveRequestDTO data) throws Exception {
+    validationUtil.validateUUID(data.getId());
     try {
       begin();
-      subjectCategoryDao.deleteSubject(id);
+      subjectCategoryDao.deleteSubject(data.getId());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      rollback();
-      throw e;
+      if (e.getMessage().equals("ID Not Found")) {
+        throw new DataIsNotExistsException(e.getMessage());
+      }
+      updateIsActive(data);
     }
   }
 
@@ -111,7 +112,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Override
   public SubjectCategoryResponseDTO getById(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     SubjectCategory subject = Optional.ofNullable(subjectCategoryDao.getById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
 
@@ -122,12 +123,6 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
     subjectResponse.setDescription(subject.getDescription());
     return subjectResponse;
 
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
 }

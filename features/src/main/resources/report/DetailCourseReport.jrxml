@@ -6,10 +6,10 @@
 	<property name="ireport.x" value="47"/>
 	<property name="ireport.y" value="451"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<style name="Title" forecolor="#000000" fontName="Times New Roman" fontSize="50" isBold="false"/>
-	<style name="SubTitle" forecolor="#666666" fontName="Times New Roman" fontSize="18" isBold="false"/>
-	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
-	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+	<style name="Title" forecolor="#000000" fontSize="50" isBold="false"/>
+	<style name="SubTitle" forecolor="#666666" fontSize="18" isBold="false"/>
+	<style name="Column header" forecolor="#666666" fontSize="14" isBold="true"/>
+	<style name="Row" mode="Transparent">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
 			<style mode="Opaque" backcolor="#F0EFEF"/>
@@ -46,73 +46,73 @@
 		<band height="220" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="-20" y="0" width="842" height="208" forecolor="#006699" backcolor="#ADD8E6" uuid="e8bc167b-bf12-4977-b458-b029eaaafdfb"/>
-				<staticText>
-					<reportElement style="Title" x="231" y="0" width="578" height="65" uuid="e1a595c4-b39a-4bde-b6cf-36a6224d2ff6"/>
-					<textElement textAlignment="Right">
-						<font size="54" isBold="false"/>
-					</textElement>
-					<text><![CDATA[Detail Course]]></text>
-				</staticText>
 				<image>
-					<reportElement x="40" y="0" width="70" height="65" uuid="9d23c546-91a7-4b64-9fbc-493c160b90b9"/>
+					<reportElement x="10" y="65" width="109" height="125" uuid="9d23c546-91a7-4b64-9fbc-493c160b90b9"/>
 					<imageExpression><![CDATA["src/main/resources/report/logo.png"]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement x="39" y="80" width="101" height="30" uuid="a35751bf-5c3f-46cb-8ac5-fe1c54f5b229"/>
+					<reportElement x="130" y="80" width="101" height="30" uuid="a35751bf-5c3f-46cb-8ac5-fe1c54f5b229"/>
 					<textElement>
 						<font size="18"/>
 					</textElement>
 					<text><![CDATA[Name:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="38" y="130" width="101" height="30" uuid="36e105dc-1c28-4c32-a450-dc69b8615aab"/>
+					<reportElement x="129" y="130" width="101" height="30" uuid="36e105dc-1c28-4c32-a450-dc69b8615aab"/>
 					<textElement>
 						<font size="18"/>
 					</textElement>
 					<text><![CDATA[Description:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="490" y="80" width="119" height="30" uuid="7ebb0a86-4c74-4b34-be28-af33fa23a9e2"/>
+					<reportElement x="530" y="80" width="119" height="30" uuid="7ebb0a86-4c74-4b34-be28-af33fa23a9e2"/>
 					<textElement>
 						<font size="18"/>
 					</textElement>
 					<text><![CDATA[Capacity:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="489" y="130" width="119" height="30" uuid="cacd69de-8bc2-43f2-a4ff-1174b015af02"/>
+					<reportElement x="529" y="130" width="119" height="30" uuid="cacd69de-8bc2-43f2-a4ff-1174b015af02"/>
 					<textElement>
 						<font size="18"/>
 					</textElement>
 					<text><![CDATA[Total Student:]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="151" y="80" width="231" height="30" uuid="c4ce6c9b-2177-47fe-9f96-c73b88026add"/>
+					<reportElement x="242" y="80" width="231" height="30" uuid="c4ce6c9b-2177-47fe-9f96-c73b88026add"/>
 					<textElement textAlignment="Left">
 						<font size="18"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{name}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="150" y="130" width="231" height="70" uuid="f69139f7-e038-4ca3-b8ac-a5b7243d1932"/>
+					<reportElement x="241" y="130" width="231" height="70" uuid="f69139f7-e038-4ca3-b8ac-a5b7243d1932"/>
 					<textElement textAlignment="Left">
 						<font size="18"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{description}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="620" y="80" width="160" height="30" uuid="8f1ba926-44da-47f3-815f-e09d4eccd1d0"/>
+					<reportElement x="660" y="80" width="160" height="30" uuid="8f1ba926-44da-47f3-815f-e09d4eccd1d0"/>
 					<textElement textAlignment="Left">
 						<font size="18"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{capacity}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="619" y="130" width="160" height="30" uuid="ecfd6304-d051-4d59-b0f2-c0f3162e7196"/>
+					<reportElement x="659" y="130" width="160" height="30" uuid="ecfd6304-d051-4d59-b0f2-c0f3162e7196"/>
 					<textElement textAlignment="Left">
 						<font size="18"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 				</textField>
+				<staticText>
+					<reportElement x="286" y="0" width="270" height="65" isPrintWhenDetailOverflows="true" uuid="ebb2bfed-17c8-4c30-9300-81224afcef97"/>
+					<textElement>
+						<font size="40"/>
+					</textElement>
+					<text><![CDATA[Detail Course]]></text>
+				</staticText>
 			</frame>
 		</band>
 	</title>
@@ -126,7 +126,7 @@
 				<textFieldExpression><![CDATA[$F{schedule.date}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="160" y="80" width="250" height="20" uuid="37c51963-1b73-4d68-97c1-8df3f3af9ecd"/>
+				<reportElement x="160" y="80" width="348" height="20" uuid="37c51963-1b73-4d68-97c1-8df3f3af9ecd"/>
 				<textFieldExpression><![CDATA[$F{schedule.startTime} + " - " + $F{schedule.endTime}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -137,7 +137,7 @@
 				<textFieldExpression><![CDATA[$F{verifyStatus}!= false ?"Verified": "Not verified"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="160" y="40" width="240" height="30" uuid="d45066f1-8378-4962-b9dc-2d5959ea94b9"/>
+				<reportElement x="160" y="40" width="420" height="30" uuid="d45066f1-8378-4962-b9dc-2d5959ea94b9"/>
 				<textElement>
 					<font size="16"/>
 				</textElement>
@@ -167,21 +167,21 @@
 				<textField evaluationTime="Report">
 					<reportElement style="Column header" x="753" y="0" width="40" height="16" forecolor="#000000" uuid="c2f8be94-d59d-42c3-862d-5d35ba2b4a3b"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false"/>
+						<font size="12" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement style="Column header" x="673" y="0" width="80" height="16" forecolor="#000000" uuid="6d83c685-14e3-41e8-aabf-ba56f75ebfad"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false"/>
+						<font size="12" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 				</textField>
 				<textField pattern="EEEEE dd MMMMM yyyy">
 					<reportElement style="Column header" x="20" y="0" width="190" height="16" forecolor="#000000" uuid="81eae817-c3ed-46a0-b950-81c5af3f605a"/>
 					<textElement verticalAlignment="Middle">
-						<font fontName="Arial" size="12" isBold="false"/>
+						<font size="12" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>

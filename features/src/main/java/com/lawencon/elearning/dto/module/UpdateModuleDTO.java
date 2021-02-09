@@ -1,8 +1,6 @@
 package com.lawencon.elearning.dto.module;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,13 +22,5 @@ public class UpdateModuleDTO extends ModulRequestDTO {
 
   @NotBlank
   private String idSchedule;
-
-  @NotNull
-  @Min(0)
-  private Long moduleVersion;
-
-  @NotNull
-  @Min(0)
-  private Long scheduleVersion;
 
 }

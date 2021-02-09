@@ -34,4 +34,10 @@ public interface StudentDao {
 
   List<DetailExam> getStudentExamReport(String studentId) throws Exception;
 
+  Integer countTotalStudent() throws Exception;
+
+  Integer countTotalStudentIsActiveTrue() throws Exception;
+
+  Integer countTotalMaleStudent() throws Exception;
+
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
+import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
@@ -16,7 +17,6 @@ import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentReportDTO;
 import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.error.InternalServerErrorException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Gender;
@@ -88,7 +88,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public Student getStudentById(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     return Optional.ofNullable(studentDao.getStudentById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
@@ -151,14 +151,14 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public Student getStudentByIdUser(String id) throws Exception {
-    validateNullId(id, "user id");
+    validationUtil.validateUUID(id);
     return Optional.ofNullable(studentDao.getStudentByIdUser(id))
         .orElseThrow(() -> new DataIsNotExistsException("user id", id));
   }
 
   @Override
   public StudentDashboardDTO getStudentDashboard(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     Student std = Optional.ofNullable(studentDao.getStudentDashboard(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
     StudentDashboardDTO stdDashboard = new StudentDashboardDTO();
@@ -176,7 +176,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public List<CourseResponseDTO> getStudentCourse(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     Optional.ofNullable(studentDao.getStudentById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
     List<CourseResponseDTO> listResult = courseService.getCourseByStudentId(id);
@@ -189,6 +189,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Override
   public List<StudentByCourseResponseDTO> getListStudentByIdCourse(String idCourse)
       throws Exception {
+    validationUtil.validateUUID(idCourse);
     List<Student> listStudent = studentDao.getListStudentByIdCourse(idCourse);
     List<StudentByCourseResponseDTO> listDto = new ArrayList<>();
     for (Student element : listStudent) {
@@ -205,25 +206,20 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     return listDto;
   }
 
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
-  }
-
   public void RegisterCourse(String student, String course) throws Exception {
     courseService.registerCourse(student, course);
   }
 
   @Override
   public List<Student> getAllStudentByCourseId(String idCourse) throws Exception {
+    validationUtil.validateUUID(idCourse);
     return Optional.ofNullable(studentDao.getListStudentByIdCourse(idCourse))
         .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
   }
 
   @Override
   public List<StudentReportDTO> getStudentExamReport(String studentId) throws Exception {
-    validateNullId(studentId, "id");
+    validationUtil.validateUUID(studentId);
     List<DetailExam> listDetail = studentDao.getStudentExamReport(studentId);
     List<StudentReportDTO> listResult = new ArrayList<>();
     if (listDetail.isEmpty()) {
@@ -266,6 +262,21 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
             student.getIsActive()))
         .collect(Collectors.toList());
     return responseList;
+  }
+
+  @Override
+  public DashboardStudentResponseDto getStudentDataForAdmin() throws Exception {
+    DashboardStudentResponseDto studentDashboardData = new DashboardStudentResponseDto();
+    Integer totalActiveStudent = studentDao.countTotalStudentIsActiveTrue();
+    Integer totalMaleStudent = studentDao.countTotalMaleStudent();
+    Integer totalStudent = studentDao.countTotalStudent();
+    studentDashboardData.setActive(totalActiveStudent);
+    studentDashboardData.setInactive((totalStudent - totalActiveStudent));
+    studentDashboardData.setMale(totalMaleStudent);
+    studentDashboardData.setFemale((totalStudent - totalMaleStudent));
+    studentDashboardData.setTotal(totalStudent);
+    studentDashboardData.setVerified(0);
+    return studentDashboardData;
   }
 
 }

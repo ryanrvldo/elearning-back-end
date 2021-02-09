@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.dto.AttendanceResponseDTO;
+import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.AttendanceService;
 import com.lawencon.elearning.util.WebResponseUtils;
 import com.lawencon.util.JasperUtil;
@@ -44,9 +45,14 @@ public class AttendanceController {
     List<AttendanceResponseDTO> listAttendance = attendanceService.getAttendanceList(idCourse, idModule);
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_PDF);
+    Module module = attendanceService.getModuleForAttendanceReport(idModule);
     Map<String, Object> params = new HashMap<>();
-    params.put("listAttendance", listAttendance);
-    byte[] out = JasperUtil.responseToByteArray(listAttendance, "AttendanceReport", null);
+    params.put("title", module.getTitle());
+    params.put("code", module.getCode());
+    params.put("date", module.getSchedule().getDate());
+    params.put("startTime", module.getSchedule().getStartTime());
+    params.put("endTime", module.getSchedule().getEndTime());
+    byte[] out = JasperUtil.responseToByteArray(listAttendance, "AttendanceReport", params);
     return ResponseEntity.ok().headers(headers).body(out);
   }
 

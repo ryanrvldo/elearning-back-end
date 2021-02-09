@@ -32,8 +32,6 @@ import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
-import com.lawencon.elearning.service.SubjectCategoryService;
-import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -57,20 +55,14 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   private FileService fileService;
 
   @Autowired
-  private TeacherService teacherService;
-
-  @Autowired
   private CourseService courseService;
-
-  @Autowired
-  private SubjectCategoryService subjectCategoryService;
 
   @Autowired
   private StudentService studentService;
 
   @Override
   public Module getModuleById(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     return Optional.ofNullable(moduleDao.getModuleById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
@@ -78,6 +70,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse, String idStudent)
       throws Exception {
+    validationUtil.validateUUID(idCourse);
     Optional.ofNullable(courseService.getCourseById(idCourse))
         .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
     if (idStudent == null || idStudent.trim().isEmpty()) {
@@ -130,14 +123,19 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     for (ModulRequestDTO moduleRequestDTO : data) {
       validationUtil.validate(moduleRequestDTO);
       validationUtil.validate(moduleRequestDTO.getScheduleRequestDTO());
-      validationUtil.validate(moduleRequestDTO);
-      validationUtil.validate(moduleRequestDTO.getScheduleRequestDTO());
-      Course courseDb = courseService.getCourseById(moduleRequestDTO.getCourseId());
+      Course courseDb = Optional
+          .ofNullable(courseService.getCourseById(moduleRequestDTO.getCourseId())).orElseThrow(
+              () -> new DataIsNotExistsException("course id", moduleRequestDTO.getCourseId()));
       if (moduleRequestDTO.getScheduleRequestDTO().getScheduleDate()
           .isBefore(courseDb.getPeriodStart().toLocalDate())
           || moduleRequestDTO.getScheduleRequestDTO().getScheduleDate()
               .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
         throw new IllegalRequestException("You can't insert module outside course period");
+      }
+      if (!moduleRequestDTO.getScheduleRequestDTO().getTeacherId()
+          .equalsIgnoreCase(courseDb.getTeacher().getId())) {
+        throw new IllegalRequestException(
+            "The course already registered to teacher with id " + courseDb.getTeacher().getId());
       }
       Schedule schedule = new Schedule();
       schedule.setCreatedBy(moduleRequestDTO.getScheduleRequestDTO().getScheduleCreatedBy());
@@ -181,22 +179,24 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public void updateModule(UpdateModuleDTO data) throws Exception {
     validationUtil.validate(data);
+    validationUtil.validate(data.getScheduleRequestDTO());
     Optional.ofNullable(moduleDao.getModuleById(data.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("id module", data.getId()));
-    Optional.ofNullable(teacherService.findTeacherById(data.getScheduleRequestDTO().getTeacherId()))
-        .orElseThrow(() -> new DataIsNotExistsException("id teacher",
-            data.getScheduleRequestDTO().getTeacherId()));
-    Schedule scheduleDb =
-        Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
-            .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
-    Optional.ofNullable(subjectCategoryService.getById(data.getSubjectId()))
-        .orElseThrow(() -> new DataIsNotExistsException("id subject", data.getSubjectId()));
-    Optional.ofNullable(courseService.getCourseById(data.getCourseId()))
+    Course courseDb = Optional.ofNullable(courseService.getCourseById(data.getCourseId()))
         .orElseThrow(() -> new DataIsNotExistsException("id course", data.getCourseId()));
-    Schedule schedule = new Schedule();
-    schedule.setId(data.getIdSchedule());
-    schedule.setCode(scheduleDb.getCode());
-    schedule.setCreatedBy(data.getScheduleRequestDTO().getScheduleCreatedBy());
+    if (data.getScheduleRequestDTO().getScheduleDate()
+        .isBefore(courseDb.getPeriodStart().toLocalDate())
+        || data.getScheduleRequestDTO().getScheduleDate()
+            .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+      throw new IllegalRequestException("You can't insert module outside course period");
+    }
+    if (!data.getScheduleRequestDTO().getTeacherId()
+        .equalsIgnoreCase(courseDb.getTeacher().getId())) {
+      throw new IllegalRequestException(
+          "The course already registered to teacher with id " + courseDb.getTeacher().getId());
+    }
+    Schedule schedule = Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
+        .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
     schedule.setDate(data.getScheduleRequestDTO().getScheduleDate());
     schedule.setEndTime(data.getScheduleRequestDTO().getScheduleEnd());
     schedule.setStartTime(data.getScheduleRequestDTO().getScheduleStart());
@@ -219,13 +219,21 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     subject.setId(data.getSubjectId());
     module.setSubject(subject);
 
-    scheduleService.updateSchedule(schedule);
-    moduleDao.updateModule(module, null);
+    try {
+      begin();
+      scheduleService.updateSchedule(schedule);
+      moduleDao.updateModule(module, null);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
   }
 
   @Override
   public void deleteModule(UpdateIsActiveRequestDTO data) throws Exception {
-    validateNullId(data.getId(), "id");
+    validationUtil.validateUUID(data.getId());
     validationUtil.validate(data);
     try {
       begin();
@@ -236,20 +244,26 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       if (e.getMessage().equals("ID Not Found")) {
         throw new DataIsNotExistsException(e.getMessage());
       }
-      updateIsActive(data.getId(), data.getUpdatedBy());
+      updateIsActiveFalse(data.getId(), data.getUpdatedBy());
     }
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    begin();
-    moduleDao.updateIsActive(id, userId);
-    commit();
+  public void updateIsActiveFalse(String id, String userId) throws Exception {
+    try {
+      begin();
+      moduleDao.updateIsActiveFalse(id, userId);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
   }
 
   @Override
   public Module getModuleByIdCustom(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     return Optional.ofNullable(moduleDao.getModuleByIdCustom(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
@@ -285,7 +299,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Override
   public List<FileResponseDto> getLessonFile(String idModule) throws Exception {
-    validateNullId(idModule, "module id");
+    validationUtil.validateUUID(idModule);
     Optional.ofNullable(moduleDao.getModuleById(idModule))
         .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
     System.out.println(idModule);
@@ -296,9 +310,16 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     return listFileDto;
   }
 
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
+  @Override
+  public void updateIsActiveTrue(UpdateIsActiveRequestDTO data) throws Exception {
+    try {
+      begin();
+      moduleDao.updateIsActiveTrue(data.getId(), data.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
     }
   }
 

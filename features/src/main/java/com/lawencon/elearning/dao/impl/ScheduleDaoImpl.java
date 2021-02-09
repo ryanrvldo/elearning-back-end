@@ -33,7 +33,7 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
   @Override
   public void updateSchedule(Schedule data, Callback before) throws Exception {
-    save(data, before, null, true, true);
+    save(data, before, null, false, false);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -209,6 +210,24 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
       listResult.add(detailExam);
     });
     return listResult;
+  }
+
+  @Override
+  public Integer countTotalStudent() throws Exception {
+    String sql = "SELECT COUNT(id) from tb_m_students";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  @Override
+  public Integer countTotalStudentIsActiveTrue() throws Exception {
+    String sql = "SELECT COUNT(id) from tb_m_students WHERE is_active = true";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  @Override
+  public Integer countTotalMaleStudent() throws Exception {
+    String sql = "SELECT COUNT(id) from tb_m_students WHERE gender = 'MALE'";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
   }
 
 }

@@ -31,7 +31,9 @@ public interface ModuleDao {
 
   void deleteModule(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void updateIsActiveFalse(String id, String userId) throws Exception;
+
+  void updateIsActiveTrue(String id, String userId) throws Exception;
 
   List<FileResponseDto> getLessonByIdModule(String idModule) throws Exception;
 
