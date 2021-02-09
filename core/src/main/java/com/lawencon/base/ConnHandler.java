@@ -2,7 +2,6 @@ package com.lawencon.base;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-
 import com.lawencon.util.BeanUtil;
 
 /**
@@ -27,7 +26,7 @@ public class ConnHandler {
 	/**
 	 * opening transaction, automatically initialize if no available manager
 	 */
-	static void begin() {
+    public static void begin() {
 		if (manager.get() != null && manager.get().isOpen()) {
 			manager.get().getTransaction().begin();
 			System.out.println("Transaction started.");
@@ -41,7 +40,7 @@ public class ConnHandler {
 	/**
 	 * rollback transaction and close manager
 	 */
-	static void rollback() {
+    public static void rollback() {
 		if (manager.get() != null && manager.get().isOpen() && manager.get().getTransaction().isActive()) {
 			manager.get().getTransaction().rollback();
 			System.out.println("Transaction rolled back.");
@@ -51,7 +50,7 @@ public class ConnHandler {
 	/**
 	 * commit transaction and close manager
 	 */
-	static void commit() {
+    public static void commit() {
 		if (manager.get() != null && manager.get().isOpen() && manager.get().getTransaction().isActive()) {
 			manager.get().getTransaction().commit();
 			System.out.println("Transaction commited.");
@@ -63,7 +62,7 @@ public class ConnHandler {
 	 * 
 	 * @return EntityManager
 	 */
-	static EntityManager getManager() {
+    public static EntityManager getManager() {
 		if (manager.get() != null && manager.get().isOpen()) {
 			return manager.get();
 		} else {
@@ -76,7 +75,7 @@ public class ConnHandler {
 	/**
 	 * close and clear manager
 	 */
-	static void clear() {
+    public static void clear() {
 		if (manager.get() != null && manager.get().isOpen()) {
 			manager.get().close();
 		}
