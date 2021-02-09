@@ -71,17 +71,6 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
     return listResult.size() > 0 ? listResult : null;
   }
 
-
-  @Override
-  public Long checkScheduleTeacher(String id, LocalDate date, LocalTime startTime)
-      throws Exception {
-    String sql = buildQueryOf(
-        "SELECT count(*) FROM tb_m_schedules WHERE id_teacher = ?1 AND schedule_date = ?2 AND start_time = ?3  AND is_active = true")
-        .toString();
-    return Long.valueOf(createNativeQuery(sql).setParameter(1, id).setParameter(2, date)
-        .setParameter(3, startTime).getSingleResult().toString());
-  }
-
   @Override
   public Integer validateSchedule(LocalDate date, LocalTime startTime, LocalTime endTime,
       String idTeacher) throws Exception {
@@ -92,16 +81,6 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
     return ((BigInteger) createNativeQuery(sql).setParameter(1, date).setParameter(2, idTeacher)
         .setParameter(3, startTime).setParameter(4, endTime).getSingleResult()).intValue();
-
-    // List<Integer> result = new ArrayList<>();
-    //
-    // listObj.forEach(obj -> {
-    // Object[] objArr = (Object[]) obj;
-    // BigInteger temp = (BigInteger) objArr[0];
-    // result.add(temp.intValue());
-    // });
-    //
-    // return result.size() != 0 ? result.get(0) : null;
   }
 
 

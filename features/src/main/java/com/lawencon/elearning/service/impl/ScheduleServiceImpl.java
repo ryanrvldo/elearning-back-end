@@ -1,8 +1,6 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -101,13 +99,6 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
       listResult.add(scheduleDTO);
     });
     return listResult;
-  }
-
-  @Override
-  public Long checkScheduleTeacher(String teacherId, LocalDate date, LocalTime startTime)
-      throws Exception {
-    validateNullId(teacherId, "Teacher Id");
-    return scheduleDao.checkScheduleTeacher(teacherId, date, startTime);
   }
 
   private void validateNullId(String id, String msg) throws Exception {
