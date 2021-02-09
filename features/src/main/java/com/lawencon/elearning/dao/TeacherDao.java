@@ -24,9 +24,7 @@ public interface TeacherDao {
 
   TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception;
 
-  void setIsActiveTrue(String id, String userId) throws Exception;
-
-  void setIsActiveFalse(String id, String userId) throws Exception;
+  void updateIsActive(String id, String userId, boolean status) throws Exception;
 
   void updateTeacher(Teacher data, Callback before) throws Exception;
 

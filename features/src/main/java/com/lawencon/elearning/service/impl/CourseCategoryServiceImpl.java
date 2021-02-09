@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseCategoryDao;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryResponseDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
@@ -93,23 +93,11 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   }
 
   @Override
-  public void setIsActiveTrue(DeleteMasterRequestDTO data) throws Exception {
+  public void updateIsActive(UpdateIsActiveRequestDTO data) throws Exception {
+    validateUtil.validate(data);
     try {
       begin();
-      courseCategoryDao.setIsActiveTrue(data.getId(), data.getUpdatedBy());
-      commit();
-    } catch (Exception e) {
-      e.printStackTrace();
-      rollback();
-      throw e;
-    }
-  }
-
-  @Override
-  public void setIsActiveFalse(DeleteMasterRequestDTO data) throws Exception {
-    try {
-      begin();
-      courseCategoryDao.setIsActiveFalse(data.getId(), data.getUpdatedBy());
+      courseCategoryDao.updateIsActive(data.getId(), data.getUpdatedBy(), data.getStatus());
       commit();
     } catch (Exception e) {
       e.printStackTrace();

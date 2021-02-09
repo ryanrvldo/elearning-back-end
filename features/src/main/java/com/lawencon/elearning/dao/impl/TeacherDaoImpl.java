@@ -89,15 +89,14 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
-  public void setIsActiveTrue(String id, String userId) throws Exception {
-    String sql = "UPDATE tb_m_teachers SET is_active = TRUE";
-    updateNativeSQL(sql, id, userId);
-  }
+  public void updateIsActive(String id, String userId, boolean status) throws Exception {
+    String sql = buildQueryOf(
+        "UPDATE tb_m_teachers SET is_active = ?1 ",
+        ", updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3")
+            .toString();
 
-  @Override
-  public void setIsActiveFalse(String id, String userId) throws Exception {
-    String sql = "UPDATE tb_m_teachers SET is_active = FALSE";
-    updateNativeSQL(sql, id, userId);
+    createNativeQuery(sql).setParameter(1, status).setParameter(2, userId).setParameter(3, id)
+        .executeUpdate();
   }
 
   @Override

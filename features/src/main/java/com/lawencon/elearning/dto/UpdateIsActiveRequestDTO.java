@@ -1,8 +1,10 @@
 package com.lawencon.elearning.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
@@ -10,7 +12,8 @@ import lombok.Data;
  *
  */
 @Data
-public class DeleteMasterRequestDTO {
+@NoArgsConstructor
+public class UpdateIsActiveRequestDTO {
 
   @NotBlank
   @Size(min = 32, max = 36)
@@ -19,5 +22,8 @@ public class DeleteMasterRequestDTO {
   @NotBlank
   @Size(min = 32, max = 36)
   private String updatedBy;
+
+  @NotNull
+  private Boolean status;
 
 }

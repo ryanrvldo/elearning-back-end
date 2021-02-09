@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.service.CourseCategoryService;
@@ -47,18 +47,11 @@ public class CourseCategoryController {
     return WebResponseUtils.createWebResponse("Update data success", HttpStatus.OK);
   }
 
-  @PatchMapping("/false")
-  public ResponseEntity<?> setIsActiveFalse(@RequestBody DeleteMasterRequestDTO data)
+  @PatchMapping
+  public ResponseEntity<?> updateIsActive(@RequestBody UpdateIsActiveRequestDTO data)
       throws Exception {
-    courseCategoryService.setIsActiveFalse(data);
-    return WebResponseUtils.createWebResponse("Update is active to false success", HttpStatus.OK);
-  }
-
-  @PatchMapping("/true")
-  public ResponseEntity<?> setIsActiveTrue(@RequestBody DeleteMasterRequestDTO data)
-      throws Exception {
-    courseCategoryService.setIsActiveTrue(data);
-    return WebResponseUtils.createWebResponse("Update is active to true", HttpStatus.OK);
+    courseCategoryService.updateIsActive(data);
+    return WebResponseUtils.createWebResponse("Update is active success", HttpStatus.OK);
   }
 
   @DeleteMapping("/id/{id}")

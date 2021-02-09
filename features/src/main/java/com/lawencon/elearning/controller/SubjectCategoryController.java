@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.service.SubjectCategoryService;
@@ -55,19 +55,11 @@ public class SubjectCategoryController {
     return WebResponseUtils.createWebResponse("Update Subject Success", HttpStatus.OK);
   }
 
-  @PatchMapping("/false")
-  public ResponseEntity<?> setActiveFalse(@RequestBody DeleteMasterRequestDTO data)
+  @PatchMapping
+  public ResponseEntity<?> updateIsActive(@RequestBody UpdateIsActiveRequestDTO data)
       throws Exception {
-    subjectCategoryService.setActiveFalse(data);
-    return WebResponseUtils.createWebResponse("Set isActive subject category to false Success",
-        HttpStatus.OK);
-  }
-
-  @PatchMapping("/true")
-  public ResponseEntity<?> setActiveTrue(@RequestBody DeleteMasterRequestDTO data)
-      throws Exception {
-    subjectCategoryService.setActiveTrue(data);
-    return WebResponseUtils.createWebResponse("Set isActive subject category to true Success",
+    subjectCategoryService.updateIsActive(data);
+    return WebResponseUtils.createWebResponse("Update is active subject category Success",
         HttpStatus.OK);
   }
 

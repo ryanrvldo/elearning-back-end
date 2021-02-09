@@ -21,8 +21,6 @@ public interface SubjectCategoryDao {
 
   void deleteSubject(String id) throws Exception;
 
-  void setActiveFalse(String id, String updatedBy) throws Exception;
-
-  void setActiveTrue(String id, String updatedBy) throws Exception;
+  void updateIsActive(String id, String updatedBy, boolean status) throws Exception;
 
 }

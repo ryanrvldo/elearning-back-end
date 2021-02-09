@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
@@ -182,38 +182,17 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public void setIsActiveTrue(DeleteMasterRequestDTO deleteReq) throws Exception {
+  public void updateIsActive(UpdateIsActiveRequestDTO deleteReq) throws Exception {
     validUtil.validate(deleteReq);
-    validUtil.validateUUID(deleteReq.getId());
     try {
       begin();
-      teacherDao.setIsActiveTrue(deleteReq.getId(), deleteReq.getUpdatedBy());
-      String idUser = teacherDao.getUserId(deleteReq.getId());
-      userService.updateActivateStatus(idUser, true);
+      teacherDao.updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy(), deleteReq.getStatus());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
       rollback();
       throw e;
     }
-  }
-
-  @Override
-  public void setIsActiveFalse(DeleteMasterRequestDTO deleteReq) throws Exception {
-    validUtil.validate(deleteReq);
-    validUtil.validateUUID(deleteReq.getId());
-    try {
-      begin();
-      teacherDao.setIsActiveFalse(deleteReq.getId(), deleteReq.getUpdatedBy());
-      String idUser = teacherDao.getUserId(deleteReq.getId());
-      userService.updateActivateStatus(idUser, false);
-      commit();
-    } catch (Exception e) {
-      e.printStackTrace();
-      rollback();
-      throw e;
-    }
-
   }
 
 
@@ -257,5 +236,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     validUtil.validate(listResult);
     return listResult;
   }
+
 
 }

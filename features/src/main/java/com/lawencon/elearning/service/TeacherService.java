@@ -1,7 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
@@ -26,9 +26,7 @@ public interface TeacherService {
 
   TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception;
 
-  void setIsActiveTrue(DeleteMasterRequestDTO deleteReq) throws Exception;
-
-  void setIsActiveFalse(DeleteMasterRequestDTO deleteReq) throws Exception;
+  void updateIsActive(UpdateIsActiveRequestDTO deleteReq) throws Exception;
 
   void updateTeacher(UpdateTeacherRequestDTO data) throws Exception;
 

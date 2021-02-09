@@ -43,6 +43,10 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
     if (data.getStartTime().isAfter(data.getEndTime())) {
       throw new IllegalRequestException("Schedule end time cannot be greather than start time");
     }
+    if (scheduleDao.validateSchedule(data.getDate(), data.getStartTime(), data.getEndTime(),
+        data.getTeacher().getId()) > 0) {
+      throw new IllegalRequestException("Schedule already exist");
+    }
     data.setCode(TransactionNumberUtils.generateScheduleCode());
     data.setCreatedAt(LocalDateTime.now());
     scheduleDao.saveSchedule(data, null);

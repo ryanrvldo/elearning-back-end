@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
@@ -44,7 +44,7 @@ public class ModuleController {
   }
 
   @DeleteMapping
-  public ResponseEntity<?> deleteModule(@RequestBody DeleteMasterRequestDTO data) throws Exception {
+  public ResponseEntity<?> deleteModule(@RequestBody UpdateIsActiveRequestDTO data) throws Exception {
     moduleService.deleteModule(data);
     return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
   }

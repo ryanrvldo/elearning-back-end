@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
@@ -65,18 +65,11 @@ public class TeacherController {
     return WebResponseUtils.createWebResponse("Update Teacher Profile Success!", HttpStatus.OK);
   }
 
-  @PatchMapping("/false")
-  public ResponseEntity<?> setIsActiveFalse(@RequestBody DeleteMasterRequestDTO deleteReq)
+  @PatchMapping
+  public ResponseEntity<?> updateIsActive(@RequestBody UpdateIsActiveRequestDTO deleteReq)
       throws Exception {
-    teacherService.setIsActiveFalse(deleteReq);
-    return WebResponseUtils.createWebResponse("Delete Teacher Profile Success!", HttpStatus.OK);
-  }
-
-  @PatchMapping("/true")
-  public ResponseEntity<?> setIsActiveTrue(@RequestBody DeleteMasterRequestDTO deleteReq)
-      throws Exception {
-    teacherService.setIsActiveTrue(deleteReq);
-    return WebResponseUtils.createWebResponse("Delete Teacher Profile Success!", HttpStatus.OK);
+    teacherService.updateIsActive(deleteReq);
+    return WebResponseUtils.createWebResponse("Update Is Active Teacher Success!", HttpStatus.OK);
   }
 
   @DeleteMapping("/id/{id}")

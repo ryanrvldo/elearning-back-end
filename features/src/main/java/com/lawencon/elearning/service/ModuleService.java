@@ -2,7 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.dto.DeleteMasterRequestDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
@@ -27,7 +27,7 @@ public interface ModuleService {
 
   void updateModule(UpdateModuleDTO data) throws Exception;
 
-  void deleteModule(DeleteMasterRequestDTO data) throws Exception;
+  void deleteModule(UpdateIsActiveRequestDTO data) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 

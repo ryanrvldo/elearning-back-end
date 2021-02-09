@@ -26,5 +26,6 @@ public interface ScheduleDao {
 
   Long checkScheduleTeacher(String id, LocalDate date, LocalTime startTime) throws Exception;
 
-
+  Integer validateSchedule(LocalDate time, LocalTime startTime, LocalTime endTime, String idTeacher)
+      throws Exception;
 }
