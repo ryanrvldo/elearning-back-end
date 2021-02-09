@@ -11,6 +11,7 @@ import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
+import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
@@ -239,5 +240,25 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     return listResult;
   }
 
+  @Override
+  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
+      throws Exception {
+    validUtil.validateUUID(teacherId);
+    List<CourseAttendanceReportByTeacher> listData =
+        teacherDao.getCourseAttendanceReport(teacherId);
+    if (listData.isEmpty()) {
+      throw new DataIsNotExistsException("Data empty");
+    }
+    listData.forEach(val -> {
+      try {
+        Integer totalStudent = teacherDao.getTotalStudentByIdTeacher(teacherId);
+        val.setTotalStudent(totalStudent);
+        val.setAbsent(totalStudent - val.getPresent());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
+    return listData;
+  }
 
 }

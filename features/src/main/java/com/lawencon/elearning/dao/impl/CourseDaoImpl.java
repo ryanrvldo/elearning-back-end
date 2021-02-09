@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
-import com.lawencon.elearning.dto.course.CheckCourseRegisterRequestDTO;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
@@ -282,20 +281,15 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public List<CheckCourseRegisterRequestDTO> checkDataRegisterCourse(String courseId)
+  public Integer checkDataRegisterCourse(String courseId, String studentId)
       throws Exception {
     String sql =
-        buildQueryOf("SELECT id_student,id_course FROM student_course WHERE id_course = ?1");
-    List<?> obj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
-    List<CheckCourseRegisterRequestDTO> listResult = new ArrayList<>();
-    obj.forEach(val -> {
-      Object[] arrObj = (Object[]) val;
-      CheckCourseRegisterRequestDTO student = new CheckCourseRegisterRequestDTO();
-      student.setStudentId((String) arrObj[0]);
-      student.setCourseId((String) arrObj[1]);
-      listResult.add(student);
-    });
-    return listResult;
+        buildQueryOf(
+            "SELECT count(*) FROM student_course WHERE id_course = ?1 AND id_student = ?2");
+    BigInteger bigInteger = (BigInteger) createNativeQuery(sql).setParameter(1, courseId)
+        .setParameter(2, studentId).getSingleResult();
+
+    return bigInteger.intValue();
   }
 
 }

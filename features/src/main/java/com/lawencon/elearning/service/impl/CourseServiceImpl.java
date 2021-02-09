@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
-import com.lawencon.elearning.dto.course.CheckCourseRegisterRequestDTO;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
@@ -26,7 +25,6 @@ import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
-import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
@@ -163,9 +161,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       courseDto.setId(listCourseAvailable.get(i).getId());
       courseDto.setIsRegist(false);
       for (int j = 0; j < listCourseByStudent.size(); j++) {
-        CourseResponseDTO courseDtoStudent = new CourseResponseDTO();
-        courseDtoStudent.setId(listCourseByStudent.get(j).getId());
-        if (courseDto.equals(courseDtoStudent)) {
+        if (courseDto.getId().equals(listCourseByStudent.get(j).getId())) {
           courseDto.setIsRegist(true);
         }
       }
@@ -267,30 +263,24 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public void registerCourse(String studentId, String courseId) throws Exception {
-    validateNullId(studentId, "id");
-    validateNullId(courseId, "id");
-    Student student = studentService.getStudentById(studentId);
+    validateUtil.validateUUID(studentId, courseId);
+    studentService.getStudentById(studentId);
     Course course = courseDao.getCourseById(courseId);
-    if (student == null) {
-      throw new DataIsNotExistsException("id", studentId);
-    }
     if (course == null) {
-      throw new DataIsNotExistsException("id", courseId);
+      throw new DataIsNotExistsException("course id", courseId);
     }
-    List<CheckCourseRegisterRequestDTO> listStudent = courseDao.checkDataRegisterCourse(courseId);
-    if (listStudent.isEmpty()) {
-      begin();
-      courseDao.registerCourse(courseId, studentId);
-      commit();
-    } else {
-      for (int i = 0; i < listStudent.size() - 1; i++) {
-        if (studentId.equals(listStudent.get(i).getStudentId())) {
-          throw new DataAlreadyExistException("id", studentId);
-        }
+    Integer count = courseDao.checkDataRegisterCourse(courseId, studentId);
+    if (count == 0) {
+      Integer capacityRegist = courseDao.getCapacityCourse(courseId);
+      if (capacityRegist < course.getCapacity()) {
+        begin();
+        courseDao.registerCourse(courseId, studentId);
+        commit();
+      } else {
+        throw new IllegalRequestException("capacity already full");
       }
-      begin();
-      courseDao.registerCourse(courseId, studentId);
-      commit();
+    } else {
+      throw new DataAlreadyExistException("student id", studentId);
     }
   }
 
