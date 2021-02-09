@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lawencon.model.BaseTransaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @author : Galih Dika Permana
@@ -23,6 +24,7 @@ import lombok.EqualsAndHashCode;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"data", "user", "modules"})
 @Entity
 @Table(name = "tb_r_files")
 public class File extends BaseTransaction {
@@ -44,7 +46,7 @@ public class File extends BaseTransaction {
   private String contentType;
 
   @Column(nullable = false)
-  private long size;
+  private Long size;
 
   @JsonIgnore
   @OneToOne(mappedBy = "userPhoto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -54,5 +56,7 @@ public class File extends BaseTransaction {
   @JsonIgnore
   @ManyToMany(mappedBy = "files", fetch = FetchType.LAZY)
   private Set<Module> modules;
+
+
 
 }

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,11 +57,15 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
   @Override
   public File getFileById(String id) throws Exception {
     validationUtil.validateUUID(id);
-    begin();
-    File file = Optional.ofNullable(fileDao.findById(id))
-        .orElseThrow(() -> new DataIsNotExistsException("id", id));
-    commit();
-    return file;
+    try {
+      begin();
+      File file = fileDao.findById(id);
+      commit();
+      return file;
+    } catch (NoResultException e) {
+      clear();
+      throw new DataIsNotExistsException("file id", id);
+    }
   }
 
   @Override
@@ -92,7 +96,10 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     newFile.setContentType(file.getContentType());
     newFile.setData(file.getBytes());
     newFile.setSize(file.getSize());
+    begin();
     fileDao.updateFile(newFile);
+    commit();
+    clear();
   }
 
   private FileResponseDto uploadFile(MultipartFile multipartFile, String content)
