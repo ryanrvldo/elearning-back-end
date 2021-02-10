@@ -21,4 +21,7 @@ public class CourseAdminResponseDTO {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime periodEnd;
   private String description;
+  private String typeId;
+  private String categoryId;
+  private String teacherId;
 }
