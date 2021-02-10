@@ -62,11 +62,29 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Autowired
   private ModuleService moduleService;
 
-
   @Override
-  public List<Teacher> getAllTeachers() throws Exception {
-    return Optional.ofNullable(teacherDao.getAllTeachers())
-        .orElseThrow(() -> new DataIsNotExistsException("Teachers data have not been registered "));
+  public List<TeacherForAdminDTO> getAllTeachers() throws Exception {
+    List<Teacher> teacherList = teacherDao.getAllTeachers();
+    if (teacherList.isEmpty()) {
+      throw new DataIsNotExistsException("There is no teacher yet.");
+    }
+
+    List<TeacherForAdminDTO> responseList = new ArrayList<>();
+    teacherList.forEach(teacher -> {
+      responseList.add(new TeacherForAdminDTO(
+          teacher.getId(),
+          teacher.getCode(),
+          teacher.getUser().getUsername(),
+          teacher.getUser().getFirstName(),
+          teacher.getUser().getLastName(),
+          teacher.getTitleDegree(),
+          teacher.getUser().getEmail(),
+          teacher.getPhone(),
+          teacher.getGender(),
+          teacher.getUser().getUserPhoto().getId(),
+          teacher.getIsActive()));
+    });
+    return responseList;
   }
 
   @Override
@@ -116,7 +134,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     validateNullId(id, "Id");
     return teacherDao.findTeacherById(id);
   }
-
 
   @Override
   public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
@@ -201,7 +218,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       throw e;
     }
   }
-
 
   @Override
   public Teacher findByIdForCourse(String id) throws Exception {

@@ -293,7 +293,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
 
   private void initStudentCourse() throws Exception {
     List<Student> studentList = studentDao.findAll();
-    List<Course> courses = courseDao.getListCourse();
+    List<Course> courses = courseDao.findAll();
     int totalCourse = courses.size();
     Random random = new Random();
     for (Student student : studentList) {
@@ -312,7 +312,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       file.setContentType(MediaType.TEXT_PLAIN_VALUE);
       file.setName("tes_file" + i);
       file.setType(FileType.ASSIGNMENT);
-      file.setSize(Integer.toUnsignedLong(5));
+      file.setSize(5L);
       fileDao.create(file);
     }
   }
@@ -412,7 +412,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       module.setDescription("Lorem Ipsum bla bla bla bla" + module.getTitle());
       List<Schedule> schedule = scheduleDao.getAllSchedules();
       module.setSchedule(schedule.get(i - 1));
-      List<Course> course = courseDao.getListCourse();
+      List<Course> course = courseDao.findAll();
       module.setCourse(course.get(i - 1));
       List<SubjectCategory> subject = subjectCategoryDao.getAllSubject();
       module.setSubject(subject.get(i - 1));

@@ -46,6 +46,11 @@ public class TeacherController {
     return WebResponseUtils.createWebResponse(teacherService.allTeachersForAdmin(), HttpStatus.OK);
   }
 
+  @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<?> getAll() throws Exception {
+    return WebResponseUtils.createWebResponse(teacherService.getAllTeachers(), HttpStatus.OK);
+  }
+
   @GetMapping("/{id}")
   public ResponseEntity<?> getTeacherProfile(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(teacherService.findTeacherByIdCustom(id),
@@ -88,8 +93,8 @@ public class TeacherController {
   }
 
   @GetMapping("report/{id}")
-  public ResponseEntity<?> getTeacherDetailCourseReport(@PathVariable("id") String moduleId
-  , @RequestParam("id") String teacherId)
+  public ResponseEntity<?> getTeacherDetailCourseReport(@PathVariable("id") String moduleId,
+      @RequestParam("id") String teacherId)
       throws Exception {
     Teacher teacher = teacherService.findTeacherById(teacherId);
     Map<String, Object> mapTeacher = new HashMap<>();

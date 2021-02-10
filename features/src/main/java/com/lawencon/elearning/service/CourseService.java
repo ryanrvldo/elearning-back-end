@@ -18,7 +18,7 @@ import com.lawencon.elearning.model.Course;
 
 public interface CourseService {
 
-  List<Course> getListCourse() throws Exception;
+  List<CourseResponseDTO> getAllCourse() throws Exception;
 
   void insertCourse(CourseCreateRequestDTO courseDTO) throws Exception;
 

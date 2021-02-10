@@ -11,8 +11,11 @@ public class CourseTypeCreateRequestDTO {
 
   @NotBlank
   private String code;
+
   @NotBlank
   private String name;
+
   @NotBlank
   private String createdBy;
+
 }

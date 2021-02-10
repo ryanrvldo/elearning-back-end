@@ -11,9 +11,12 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CourseCategoryUpdateRequestDTO extends CourseCategoryCreateRequestDTO {
+
   @NotBlank
   @Size(min = 32, max = 36)
   private String id;
+
   @NotBlank
-  private String updateBy;
+  private String updatedBy;
+
 }

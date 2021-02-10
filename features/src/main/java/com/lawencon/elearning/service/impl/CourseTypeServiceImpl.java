@@ -63,7 +63,7 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
     validateUtil.validate(courseTypeDTO);
     CourseType courseType = new CourseType();
     courseType.setId(courseTypeDTO.getId());
-    courseType.setUpdatedBy(courseTypeDTO.getUpdateBy());
+    courseType.setUpdatedBy(courseTypeDTO.getUpdatedBy());
     courseType.setCode(courseTypeDTO.getCode());
     courseType.setName(courseTypeDTO.getName());
 

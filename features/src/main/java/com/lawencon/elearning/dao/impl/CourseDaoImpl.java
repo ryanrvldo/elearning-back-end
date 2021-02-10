@@ -3,6 +3,7 @@ package com.lawencon.elearning.dao.impl;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,20 @@ import com.lawencon.util.Callback;
 @Repository
 public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
+  private final String getCoursesSQL = buildQueryOf(
+      "SELECT c.id AS course_id, c.code AS course_code, ct.type_name AS typeName, c.capacity, c.period_start, c.period_end, ",
+      "t.id AS teacher_id, t.code AS teacher_code, e.title, u.first_name, u.last_name, t.title_degree, u.id_photo, ",
+      "cc.code AS category_code, cc.category_name AS category_name, c.status, c.description FROM tb_m_courses AS c ",
+      "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
+      "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
+      "INNER JOIN tb_m_experiences AS e ON e.id_teacher = t.id ",
+      "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
+      "LEFT JOIN tb_r_files AS f ON u.id_photo = f.id ",
+      "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ");
+
   @Override
-  public List<Course> getListCourse() throws Exception {
-    return getAll();
+  public List<Course> findAll() throws Exception {
+    return getAndSetupListCourseByQuery(getCoursesSQL);
   }
 
   @Override
@@ -47,63 +59,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
   @Override
   public List<Course> getCurrentAvailableCourse() throws Exception {
-    String sql = buildQueryOf(
-        "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.period_start ,c.period_end , ",
-        "t.id AS teacher_id ,t.code AS teacher_code,e.title ,u.first_name ,u.last_name ,t.title_degree,u.id_photo  , ",
-        "cc.code AS category_code,cc.category_name AS category_name FROM tb_m_courses AS c ",
-        "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
-        "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
-        "INNER JOIN tb_m_experiences AS e ON e.id_teacher = t.id ",
-        "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
-        "LEFT JOIN tb_r_files AS f ON u.id_photo = f.id ",
-        "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
-        "WHERE current_timestamp < c.period_end AND current_timestamp < c.period_start");
-    List<?> listObj = createNativeQuery(sql).getResultList();
-
-    List<Course> listResult = new ArrayList<>();
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      Course course = new Course();
-      course.setId((String) objArr[0]);
-      course.setCode((String) objArr[1]);
-
-      CourseType courseType = new CourseType();
-      courseType.setName((String) objArr[2]);
-      course.setCourseType(courseType);
-
-      course.setCapacity((Integer) objArr[3]);
-      Timestamp inTime = (Timestamp) objArr[4];
-      course.setPeriodStart(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[5];
-      course.setPeriodEnd(inTime.toLocalDateTime());
-
-      Teacher teacher = new Teacher();
-      teacher.setId((String) objArr[6]);
-      teacher.setCode((String) objArr[7]);
-      Experience experience = new Experience();
-      experience.setTitle((String) objArr[8]);
-      User user = new User();
-      user.setFirstName((String) objArr[9]);
-      user.setLastName((String) objArr[10]);
-      teacher.setTitleDegree((String) objArr[11]);
-
-      File file = new File();
-      file.setId((String) objArr[12]);
-      user.setUserPhoto(file);
-
-      teacher.setUser(user);
-
-      course.setTeacher(teacher);
-
-      CourseCategory courseCategory = new CourseCategory();
-      courseCategory.setCode((String) objArr[13]);
-      courseCategory.setName((String) objArr[14]);
-      course.setCategory(courseCategory);
-
-      listResult.add(course);
-    });
-
-    return listResult;
+    return getAndSetupListCourseByQuery(getCoursesSQL
+        + "WHERE current_timestamp < c.period_end AND current_timestamp < c.period_start");
   }
 
   @Override
@@ -328,6 +285,66 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   public Integer countTotalCourse() throws Exception {
     String sql = "SELECT count(id) FROM tb_m_courses";
     return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  /**
+   * @author Rian Rivaldo
+   * @param query sql query for get course list
+   * @return list course of query result
+   */
+  private List<Course> getAndSetupListCourseByQuery(String query) {
+    List<?> listObj = createNativeQuery(query).getResultList();
+    if (listObj.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Course> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      Course course = new Course();
+      course.setId((String) objArr[0]);
+      course.setCode((String) objArr[1]);
+
+      CourseType courseType = new CourseType();
+      courseType.setName((String) objArr[2]);
+      course.setCourseType(courseType);
+
+      course.setCapacity((Integer) objArr[3]);
+      Timestamp inTime = (Timestamp) objArr[4];
+      course.setPeriodStart(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[5];
+      course.setPeriodEnd(inTime.toLocalDateTime());
+
+      Teacher teacher = new Teacher();
+      teacher.setId((String) objArr[6]);
+      teacher.setCode((String) objArr[7]);
+      Experience experience = new Experience();
+      experience.setTitle((String) objArr[8]);
+      User user = new User();
+      user.setFirstName((String) objArr[9]);
+      user.setLastName((String) objArr[10]);
+      teacher.setTitleDegree((String) objArr[11]);
+
+      File file = new File();
+      file.setId((String) objArr[12]);
+      user.setUserPhoto(file);
+
+      teacher.setUser(user);
+
+      course.setTeacher(teacher);
+
+      CourseCategory courseCategory = new CourseCategory();
+      courseCategory.setCode((String) objArr[13]);
+      courseCategory.setName((String) objArr[14]);
+      course.setCategory(courseCategory);
+
+      course.setStatus(CourseStatus.valueOf((String) objArr[15]));
+      course.setDescription((String) objArr[16]);
+
+      listResult.add(course);
+    });
+
+    return listResult;
   }
 
 }

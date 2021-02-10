@@ -13,12 +13,12 @@ import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Teacher;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 public interface TeacherService {
 
-  List<Teacher> getAllTeachers() throws Exception;
+  List<TeacherForAdminDTO> getAllTeachers() throws Exception;
 
   List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception;
 

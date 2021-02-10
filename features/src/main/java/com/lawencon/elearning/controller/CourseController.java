@@ -105,9 +105,9 @@ public class CourseController {
     return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
   }
 
-  @GetMapping
+  @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getAllCourse() throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getListCourse(), HttpStatus.OK);
+    return WebResponseUtils.createWebResponse(courseService.getAllCourse(), HttpStatus.OK);
   }
 
 }

@@ -2,7 +2,9 @@ package com.lawencon.elearning.dao.impl;
 
 import java.math.BigInteger;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
@@ -11,8 +13,10 @@ import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
+import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
 
@@ -25,13 +29,49 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
 
   @Override
   public List<Teacher> getAllTeachers() throws Exception {
-    return getAll();
+    String sql = buildQueryOf(
+        "SELECT t.id, t.code, t.phone, t.gender, t.titleDegree, t.createdAt, t.isActive, ",
+        "u.username, u.firstName, u.lastName, u.email, f.id ",
+        "FROM Teacher AS t INNER JOIN t.user AS u ",
+        "LEFT JOIN u.userPhoto AS f ",
+        "WHERE t.isActive = true ORDER BY t.createdAt ");
+    List<Object[]> objList = createQuery(sql, Object[].class)
+        .getResultList();
+    if (objList.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Teacher> teachers = new ArrayList<>();
+    objList.forEach(objArr -> {
+      Teacher teacher = new Teacher();
+      teacher.setId((String) objArr[0]);
+      teacher.setCode((String) objArr[1]);
+      teacher.setPhone((String) objArr[2]);
+      teacher.setGender((Gender) objArr[3]);
+      teacher.setTitleDegree((String) objArr[4]);
+      teacher.setCreatedAt((LocalDateTime) objArr[5]);
+      teacher.setIsActive((Boolean) objArr[6]);
+
+      User user = new User();
+      user.setUsername((String) objArr[7]);
+      user.setFirstName((String) objArr[8]);
+      user.setLastName((String) objArr[9]);
+      user.setEmail((String) objArr[10]);
+
+      File userPhoto = new File();
+      userPhoto.setId((String) objArr[11]);
+
+      user.setUserPhoto(userPhoto);
+      teacher.setUser(user);
+      teachers.add(teacher);
+    });
+    return teachers;
   }
 
   @Override
   public List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception {
     String sql = buildQueryOf("SELECT tmt.id , tmt.code , tmu.first_name , tmu.last_name , ",
-        "tmt.phone , tmt.gender , tmu.username , tmt.is_active , tmu.email, tmt.title_degree, tmu.id_photo, tmt.version ",
+        "tmt.phone , tmt.gender , tmu.username , tmt.is_active , tmu.email, tmt.title_degree, tmu.id_photo ",
         "FROM tb_m_teachers tmt ",
         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id");
 
@@ -53,7 +93,6 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       teacher.setEmail((String) objArr[8]);
       teacher.setTitleDegree((String) objArr[9]);
       teacher.setPhotoId((String) objArr[10]);
-      teacher.setVersion(Long.valueOf(objArr[11].toString()));
 
       teachers.add(teacher);
     });
@@ -217,7 +256,8 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         "INNER JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
         "INNER JOIN tb_m_courses AS c ON c.id = m.id_course WHERE c.id = ?1 ",
         "GROUP BY m.title ,s.schedule_date,c.capacity");
-    List<?> listObj = createNativeQuery(sql).setParameter(1,courseId).getResultList();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
+
     List<CourseAttendanceReportByTeacher> listResult = new ArrayList<>();
     listObj.forEach(val -> {
       Object[] arrObj = (Object[]) val;

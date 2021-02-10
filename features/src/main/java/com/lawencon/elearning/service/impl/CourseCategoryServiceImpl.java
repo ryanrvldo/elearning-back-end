@@ -66,7 +66,7 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
     CourseCategory courseCategory = new CourseCategory();
     courseCategory.setId(courseCategoryDTO.getId());
     courseCategory.setCode(courseCategoryDTO.getCode());
-    courseCategory.setUpdatedBy(courseCategoryDTO.getUpdateBy());
+    courseCategory.setUpdatedBy(courseCategoryDTO.getUpdatedBy());
     courseCategory.setName(courseCategoryDTO.getName());
     CourseCategory courseCategories = courseCategoryDao.getCategoryById(courseCategory.getId());
     if (courseCategories == null) {

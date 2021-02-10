@@ -11,7 +11,7 @@ import com.lawencon.util.Callback;
 
 public interface CourseDao {
 
-  List<Course> getListCourse() throws Exception;
+  List<Course> findAll() throws Exception;
 
   void insertCourse(Course course, Callback before) throws Exception;
 

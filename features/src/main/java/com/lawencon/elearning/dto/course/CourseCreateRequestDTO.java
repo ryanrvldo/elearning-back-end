@@ -25,14 +25,19 @@ public class CourseCreateRequestDTO {
   @NotBlank
   @Size(min = 32, max = 36)
   private String teacherId;
+
   @NotBlank
   private String courseCategoryId;
+
   @NotNull
   private Integer capacity;
+
   @NotNull
   private LocalDateTime periodStart;
+
   @NotNull
   private LocalDateTime periodEnd;
+
   @NotBlank
   private String createdBy;
 

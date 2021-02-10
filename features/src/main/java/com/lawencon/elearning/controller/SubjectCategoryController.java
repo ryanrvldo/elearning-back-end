@@ -45,7 +45,7 @@ public class SubjectCategoryController {
   public ResponseEntity<?> insertSubjectCategory(@RequestBody CreateSubjectCategoryRequestDTO body)
       throws Exception {
     subjectCategoryService.addSubject(body, null);
-    return WebResponseUtils.createWebResponse("Insert Subject Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Insert Subject Success", HttpStatus.CREATED);
   }
 
   @PutMapping

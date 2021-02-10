@@ -3,6 +3,7 @@ package com.lawencon.elearning.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -59,12 +60,12 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   private TeacherService teacherService;
 
   @Override
-  public List<Course> getListCourse() throws Exception {
-    List<Course> listCourse = courseDao.getListCourse();
+  public List<CourseResponseDTO> getAllCourse() throws Exception {
+    List<Course> listCourse = courseDao.findAll();
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is not exist");
     }
-    return listCourse;
+    return getAndSetupCourseResponse(listCourse, null);
   }
 
   @Override
@@ -160,49 +161,14 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (listCourseAvailable.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
     }
-    List<CourseResponseDTO> responseList = new ArrayList<>();
-    for (int i = 0; i < listCourseAvailable.size(); i++) {
-      CourseResponseDTO courseDto = new CourseResponseDTO();
-      courseDto.setId(listCourseAvailable.get(i).getId());
-      courseDto.setIsRegist(false);
-      for (int j = 0; j < listCourseByStudent.size(); j++) {
-        if (courseDto.getId().equals(listCourseByStudent.get(j).getId())) {
-          courseDto.setIsRegist(true);
+    return getAndSetupCourseResponse(listCourseAvailable, (course, response) -> {
+      response.setIsRegist(false);
+      listCourseByStudent.forEach(c -> {
+        if (response.getId().equals(c.getId())) {
+          response.setIsRegist(true);
         }
-      }
-      courseDto.setCode(listCourseAvailable.get(i).getCode());
-      courseDto.setTypeName(listCourseAvailable.get(i).getCourseType().getName());
-      courseDto.setCapacity(listCourseAvailable.get(i).getCapacity());
-      courseDto.setCourseStatus(listCourseAvailable.get(i).getStatus());
-      courseDto.setCourseDescription(listCourseAvailable.get(i).getDescription());
-      courseDto.setPeriodStart(listCourseAvailable.get(i).getPeriodStart());
-      courseDto.setPeriodEnd(listCourseAvailable.get(i).getPeriodEnd());
-
-      TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
-      teacherDTO.setId(listCourseAvailable.get(i).getTeacher().getId());
-      teacherDTO.setCode(listCourseAvailable.get(i).getTeacher().getCode());
-      teacherDTO.setFirstName(listCourseAvailable.get(i).getTeacher().getUser().getFirstName());
-      teacherDTO.setLastName(listCourseAvailable.get(i).getTeacher().getUser().getLastName());
-      teacherDTO.setTitle(listCourseAvailable.get(i).getTeacher().getTitleDegree());
-      List<ExperienceResponseDto> experience =
-          experienceService.getAllByTeacherId(listCourseAvailable.get(i).getTeacher().getId());
-      teacherDTO.setExperience(experience.get(experience.size() - 1).getTitle());
-      File teacherPhoto = listCourseAvailable.get(i).getTeacher().getUser().getUserPhoto();
-      if (teacherPhoto == null || teacherPhoto.getId() == null) {
-        teacherDTO.setPhotoId("");
-      } else {
-        teacherDTO
-            .setPhotoId(listCourseAvailable.get(i).getTeacher().getUser().getUserPhoto().getId());
-      }
-      courseDto.setTeacher(teacherDTO);
-      courseDto.setCategoryCode(listCourseAvailable.get(i).getCategory().getCode());
-      courseDto.setCategoryName(listCourseAvailable.get(i).getCategory().getName());
-      Integer availableCapacity = courseDao.getCapacityCourse(courseDto.getId());
-      if (courseDto.getCapacity() > availableCapacity) {
-        responseList.add(courseDto);
-      }
-    }
-    return responseList;
+      });
+    });
   }
 
   @Override
@@ -363,6 +329,51 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throw new IllegalRequestException(msg, id);
     }
   }
+
+  private List<CourseResponseDTO> getAndSetupCourseResponse(List<Course> courseList,
+      BiConsumer<Course, CourseResponseDTO> courseConsumer) throws Exception {
+    List<CourseResponseDTO> responseList = new ArrayList<>();
+    for (Course course : courseList) {
+      Integer availableCapacity = courseDao.getCapacityCourse(course.getId());
+      if (course.getCapacity() < availableCapacity) {
+        continue;
+      }
+
+      CourseResponseDTO courseResponse = new CourseResponseDTO();
+      if (courseConsumer != null) {
+        courseConsumer.accept(course, courseResponse);
+      }
+      courseResponse.setId(course.getId());
+      courseResponse.setCode(course.getCode());
+      courseResponse.setTypeName(course.getCourseType().getName());
+      courseResponse.setCapacity(course.getCapacity());
+      courseResponse.setCourseStatus(course.getStatus());
+      courseResponse.setCourseDescription(course.getDescription());
+      courseResponse.setPeriodStart(course.getPeriodStart());
+      courseResponse.setPeriodEnd(course.getPeriodEnd());
+
+      Teacher teacher = course.getTeacher();
+      TeacherForAvailableCourseDTO teacherResponse = new TeacherForAvailableCourseDTO();
+      teacherResponse.setId(teacher.getId());
+      teacherResponse.setCode(teacher.getCode());
+      teacherResponse.setFirstName(teacher.getUser().getFirstName());
+      teacherResponse.setLastName(teacher.getUser().getLastName());
+      teacherResponse.setTitle(teacher.getTitleDegree());
+
+      List<ExperienceResponseDto> experience = experienceService.getAllByTeacherId(teacher.getId());
+      teacherResponse.setExperience(experience.get(experience.size() - 1).getTitle());
+
+      File teacherPhoto = teacher.getUser().getUserPhoto();
+      teacherResponse.setPhotoId(teacherPhoto.getId());
+
+      courseResponse.setTeacher(teacherResponse);
+      courseResponse.setCategoryCode(course.getCategory().getCode());
+      courseResponse.setCategoryName(course.getCategory().getName());
+      responseList.add(courseResponse);
+    }
+    return responseList;
+  }
+
   @Override
   public DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception {
     DashboardCourseResponseDto dashboardCourse = new DashboardCourseResponseDto();
