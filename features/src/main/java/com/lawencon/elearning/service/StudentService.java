@@ -2,6 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
+import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
@@ -47,5 +48,6 @@ public interface StudentService {
 
   Integer countTotalStudent() throws Exception;
 
+  List<RegisteredStudentMonthlyDto> countRegisteredStudentMonthly() throws Exception;
 
 }

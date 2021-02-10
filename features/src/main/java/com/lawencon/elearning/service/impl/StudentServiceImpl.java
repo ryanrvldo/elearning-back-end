@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
+import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
@@ -270,15 +271,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public DashboardStudentResponseDto getStudentDataForAdmin() throws Exception {
-    DashboardStudentResponseDto studentDashboardData = new DashboardStudentResponseDto();
-    Integer totalActiveStudent = studentDao.countTotalStudentIsActiveTrue();
-    Integer totalMaleStudent = studentDao.countTotalMaleStudent();
-    Integer totalStudent = studentDao.countTotalStudent();
-    studentDashboardData.setActive(totalActiveStudent);
-    studentDashboardData.setInactive((totalStudent - totalActiveStudent));
-    studentDashboardData.setMale(totalMaleStudent);
-    studentDashboardData.setFemale((totalStudent - totalMaleStudent));
-    studentDashboardData.setTotal(totalStudent);
+    DashboardStudentResponseDto studentDashboardData = studentDao.countStudentData();
     studentDashboardData.setVerified(0);
     return studentDashboardData;
   }
@@ -286,6 +279,16 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Override
   public Integer countTotalStudent() throws Exception {
     return studentDao.countTotalStudent();
+  }
+
+  @Override
+  public List<RegisteredStudentMonthlyDto> countRegisteredStudentMonthly() throws Exception {
+    List<RegisteredStudentMonthlyDto> listDto =
+        studentDao.countTotalRegisteredStudent();
+    if (listDto.isEmpty()) {
+      throw new DataIsNotExistsException("No register student yet");
+    }
+    return listDto;
   }
 
 }

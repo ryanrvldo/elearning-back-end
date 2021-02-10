@@ -26,7 +26,4 @@ public class ScheduleRequestDTO {
   @NotBlank
   private String scheduleCreatedBy;
 
-  @NotBlank
-  private String teacherId;
-
 }

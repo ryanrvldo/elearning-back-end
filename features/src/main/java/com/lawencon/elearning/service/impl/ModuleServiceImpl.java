@@ -132,11 +132,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
               .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
         throw new IllegalRequestException("You can't insert module outside course period");
       }
-      if (!moduleRequestDTO.getScheduleRequestDTO().getTeacherId()
-          .equalsIgnoreCase(courseDb.getTeacher().getId())) {
-        throw new IllegalRequestException(
-            "The course already registered to teacher with id " + courseDb.getTeacher().getId());
-      }
       Schedule schedule = new Schedule();
       schedule.setCreatedBy(moduleRequestDTO.getScheduleRequestDTO().getScheduleCreatedBy());
       schedule.setDate(moduleRequestDTO.getScheduleRequestDTO().getScheduleDate());
@@ -144,7 +139,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       schedule.setStartTime(moduleRequestDTO.getScheduleRequestDTO().getScheduleStart());
 
       Teacher teacher = new Teacher();
-      teacher.setId(moduleRequestDTO.getScheduleRequestDTO().getTeacherId());
+      teacher.setId(courseDb.getTeacher().getId());
       schedule.setTeacher(teacher);
 
       Module module = new Module();
@@ -190,11 +185,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
             .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
       throw new IllegalRequestException("You can't insert module outside course period");
     }
-    if (!data.getScheduleRequestDTO().getTeacherId()
-        .equalsIgnoreCase(courseDb.getTeacher().getId())) {
-      throw new IllegalRequestException(
-          "The course already registered to teacher with id " + courseDb.getTeacher().getId());
-    }
     Schedule schedule = Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
         .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
     schedule.setDate(data.getScheduleRequestDTO().getScheduleDate());
@@ -202,7 +192,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     schedule.setStartTime(data.getScheduleRequestDTO().getScheduleStart());
 
     Teacher teacher = new Teacher();
-    teacher.setId(data.getScheduleRequestDTO().getTeacherId());
+    teacher.setId(courseDb.getTeacher().getId());
     schedule.setTeacher(teacher);
 
     Module module = new Module();

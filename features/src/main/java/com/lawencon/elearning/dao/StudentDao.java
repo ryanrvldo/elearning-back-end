@@ -1,6 +1,9 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
+import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
+import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
+import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.util.Callback;
 
@@ -33,8 +36,12 @@ public interface StudentDao {
 
   Integer countTotalStudent() throws Exception;
 
-  Integer countTotalStudentIsActiveTrue() throws Exception;
+  List<DetailExam> getStudentExamReport(String studentId) throws Exception;
 
-  Integer countTotalMaleStudent() throws Exception;
+  Integer countRecentlyRegisteredStudent() throws Exception;
+
+  List<RegisteredStudentMonthlyDto> countTotalRegisteredStudent() throws Exception;
+
+  DashboardStudentResponseDto countStudentData() throws Exception;
 
 }
