@@ -1,5 +1,9 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -8,10 +12,6 @@ import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.EncoderUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
@@ -39,8 +39,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   @Override
   public User getById(String id) throws Exception {
     validationUtil.validateUUID(id);
-    return Optional.ofNullable(userDao.findById(id))
-        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+    try {
+      return userDao.findById(id);
+    } catch (NoResultException e) {
+      throw new DataIsNotExistsException("id", id);
+    }
   }
 
   @Override
@@ -48,8 +51,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     if (username == null || username.trim().isEmpty()) {
       throw new IllegalRequestException("username", username);
     }
-    return Optional.ofNullable(userDao.findByUsername(username))
-        .orElseThrow(() -> new DataIsNotExistsException("username", username));
+    try {
+      return userDao.findByUsername(username);
+    } catch (NoResultException e) {
+      throw new DataIsNotExistsException("username", username);
+    }
   }
 
   @Override

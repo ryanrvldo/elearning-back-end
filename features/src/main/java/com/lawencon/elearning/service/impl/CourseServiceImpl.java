@@ -164,7 +164,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     return getAndSetupCourseResponse(listCourseAvailable, (course, response) -> {
       response.setIsRegist(false);
       listCourseByStudent.forEach(c -> {
-        if (response.getId().equals(c.getId())) {
+        if (course.getId().equals(c.getId())) {
           response.setIsRegist(true);
         }
       });
@@ -334,11 +334,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       BiConsumer<Course, CourseResponseDTO> courseConsumer) throws Exception {
     List<CourseResponseDTO> responseList = new ArrayList<>();
     for (Course course : courseList) {
-      Integer availableCapacity = courseDao.getCapacityCourse(course.getId());
-      if (course.getCapacity() < availableCapacity) {
-        continue;
-      }
-
       CourseResponseDTO courseResponse = new CourseResponseDTO();
       if (courseConsumer != null) {
         courseConsumer.accept(course, courseResponse);
@@ -361,7 +356,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       teacherResponse.setTitle(teacher.getTitleDegree());
 
       List<ExperienceResponseDto> experience = experienceService.getAllByTeacherId(teacher.getId());
-      teacherResponse.setExperience(experience.get(experience.size() - 1).getTitle());
+      if (experience != null) {
+        teacherResponse.setExperience(experience.get(experience.size() - 1).getTitle());
+      }
 
       File teacherPhoto = teacher.getUser().getUserPhoto();
       teacherResponse.setPhotoId(teacherPhoto.getId());

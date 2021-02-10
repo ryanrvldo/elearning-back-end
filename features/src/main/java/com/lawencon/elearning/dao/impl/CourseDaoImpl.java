@@ -32,7 +32,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       "cc.code AS category_code, cc.category_name AS category_name, c.status, c.description FROM tb_m_courses AS c ",
       "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
       "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
-      "INNER JOIN tb_m_experiences AS e ON e.id_teacher = t.id ",
+      "LEFT JOIN tb_m_experiences AS e ON e.id_teacher = t.id ",
       "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
       "LEFT JOIN tb_r_files AS f ON u.id_photo = f.id ",
       "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ");
@@ -297,7 +297,6 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     if (listObj.isEmpty()) {
       return Collections.emptyList();
     }
-
     List<Course> listResult = new ArrayList<>();
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
@@ -343,7 +342,6 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
       listResult.add(course);
     });
-
     return listResult;
   }
 

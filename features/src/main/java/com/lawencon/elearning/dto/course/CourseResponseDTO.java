@@ -10,7 +10,6 @@ import lombok.Data;
  * @author : Galih Dika Permana
  */
 @Data
-// @JsonInclude(value = Include.NON_NULL)
 public class CourseResponseDTO {
 
   private String id;
