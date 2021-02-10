@@ -9,6 +9,7 @@ import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Teacher;
 
 /**
@@ -43,4 +44,6 @@ public interface TeacherService {
 
   List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
       throws Exception;
+
+  Course getCourseById(String courseId) throws Exception;
 }

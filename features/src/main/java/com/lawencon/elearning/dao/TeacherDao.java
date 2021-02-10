@@ -44,6 +44,6 @@ public interface TeacherDao {
   List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
       throws Exception;
 
-  Integer getTotalStudentByIdTeacher(String teacherId) throws Exception;
+  Integer getTotalStudentByIdCourse(String teacherId) throws Exception;
 
 }

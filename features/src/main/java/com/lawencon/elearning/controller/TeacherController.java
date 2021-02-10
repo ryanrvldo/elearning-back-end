@@ -24,6 +24,7 @@ import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -112,9 +113,10 @@ public class TeacherController {
   }
 
   @GetMapping("attendance/report/{id}")
-  public ResponseEntity<?> getCourseAttendanceReport(@PathVariable("id") String teacherId)
+  public ResponseEntity<?> getCourseAttendanceReport(@PathVariable("id") String courseId)
       throws Exception {
-    Teacher teacher = teacherService.findTeacherById(teacherId);
+    Course course = teacherService.getCourseById(courseId);
+    Teacher teacher = teacherService.findTeacherById(course.getTeacher().getId());
     Map<String, Object> mapTeacher = new HashMap<>();
     mapTeacher.put("teacherFName", teacher.getUser().getFirstName());
     mapTeacher.put("teacherLName", teacher.getUser().getLastName());
@@ -124,7 +126,7 @@ public class TeacherController {
     byte[] out;
     try {
       List<CourseAttendanceReportByTeacher> listData =
-          teacherService.getCourseAttendanceReport(teacherId);
+          teacherService.getCourseAttendanceReport(courseId);
       out = JasperUtil.responseToByteArray(listData, "CourseAttendanceReport", mapTeacher);
     } catch (Exception e) {
       e.printStackTrace();
@@ -136,9 +138,9 @@ public class TeacherController {
   }
 
   @GetMapping("attendance/reports/{id}")
-  public ResponseEntity<?> getCourseAttendanceReports(@PathVariable("id") String teacherId)
+  public ResponseEntity<?> getCourseAttendanceReports(@PathVariable("id") String courseId)
       throws Exception {
-    return WebResponseUtils.createWebResponse(teacherService.getCourseAttendanceReport(teacherId),
+    return WebResponseUtils.createWebResponse(teacherService.getCourseAttendanceReport(courseId),
         HttpStatus.OK);
   }
 }

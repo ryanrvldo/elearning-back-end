@@ -209,16 +209,16 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
-  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
+  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
       throws Exception {
-    String sql = buildQueryOf("SELECT ct.type_name , m.title , s.schedule_date ,",
+    String sql = buildQueryOf("SELECT ct.type_name , m.title , s.schedule_date , ",
         "count(a.id_student) AS student_present FROM tb_r_attendances AS a ",
-        "INNER JOIN tb_m_modules AS m ON m.id = a.id_module ",
+        "RIGHT JOIN tb_m_modules AS m ON m.id = a.id_module ",
         "INNER JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
         "INNER JOIN tb_m_courses AS c ON c.id = m.id_course ",
-        "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type ",
-        "WHERE c.id_teacher = ?1 GROUP BY ct.type_name , m.title ,s.schedule_date,c.capacity");
-    List<?> listObj = createNativeQuery(sql).setParameter(1,teacherId).getResultList();
+        "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type WHERE c.id = ?1 ",
+        "GROUP BY ct.type_name , m.title ,s.schedule_date,c.capacity");
+    List<?> listObj = createNativeQuery(sql).setParameter(1,courseId).getResultList();
     List<CourseAttendanceReportByTeacher> listResult = new ArrayList<>();
     listObj.forEach(val -> {
       Object[] arrObj = (Object[]) val;
@@ -237,12 +237,11 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   }
 
   @Override
-  public Integer getTotalStudentByIdTeacher(String teacherId) throws Exception {
+  public Integer getTotalStudentByIdCourse(String courseId) throws Exception {
     String sql = buildQueryOf("SELECT count(sc.id_student) FROM student_course AS sc ",
-        "INNER JOIN tb_m_courses AS c ON c.id = sc.id_course ",
-        "INNER JOIN tb_m_modules AS m ON m.id_course = c.id WHERE c.id_teacher = ?1");
+        "WHERE sc.id_course = ?1");
     BigInteger bigInteger =
-        (BigInteger) createNativeQuery(sql).setParameter(1, teacherId).getSingleResult();
+        (BigInteger) createNativeQuery(sql).setParameter(1, courseId).getSingleResult();
     return bigInteger.intValue();
   }
 

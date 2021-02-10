@@ -21,12 +21,14 @@ import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
+import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
@@ -57,6 +59,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Autowired
   private CourseService courseService;
 
+  @Autowired
+  private ModuleService moduleService;
 
 
   @Override
@@ -234,24 +238,34 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
       throws Exception {
-    validateNullId(moduleId, "id");
+    validUtil.validateUUID(moduleId);
+    Module module = moduleService.getModuleById(moduleId);
+    if (module == null) {
+      throw new DataIsNotExistsException("module id", moduleId);
+    }
     List<TeacherReportResponseDTO> listResult = teacherDao.getTeacherDetailCourseReport(moduleId);
-    validUtil.validate(listResult);
+    if (listResult.isEmpty()) {
+      throw new DataIsNotExistsException("Data empty");
+    }
     return listResult;
   }
 
   @Override
-  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
+  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
       throws Exception {
-    validUtil.validateUUID(teacherId);
+    validUtil.validateUUID(courseId);
+    Course course = courseService.getCourseById(courseId);
+    if (course == null) {
+      throw new DataIsNotExistsException("course id", courseId);
+    }
     List<CourseAttendanceReportByTeacher> listData =
-        teacherDao.getCourseAttendanceReport(teacherId);
+        teacherDao.getCourseAttendanceReport(courseId);
     if (listData.isEmpty()) {
       throw new DataIsNotExistsException("Data empty");
     }
     listData.forEach(val -> {
       try {
-        Integer totalStudent = teacherDao.getTotalStudentByIdTeacher(teacherId);
+        Integer totalStudent = teacherDao.getTotalStudentByIdCourse(courseId);
         val.setTotalStudent(totalStudent);
         val.setAbsent(totalStudent - val.getPresent());
       } catch (Exception e) {
@@ -259,6 +273,11 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       }
     });
     return listData;
+  }
+
+  @Override
+  public Course getCourseById(String courseId) throws Exception {
+    return courseService.getCourseById(courseId);
   }
 
 }
