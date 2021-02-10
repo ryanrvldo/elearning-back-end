@@ -46,4 +46,6 @@ public interface TeacherService {
       throws Exception;
 
   Course getCourseById(String courseId) throws Exception;
+
+  Integer countTotalTeacher() throws Exception;
 }

@@ -211,25 +211,23 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
       throws Exception {
-    String sql = buildQueryOf("SELECT ct.type_name , m.title , s.schedule_date , ",
+    String sql = buildQueryOf("SELECT m.title , s.schedule_date , ",
         "count(a.id_student) AS student_present FROM tb_r_attendances AS a ",
         "RIGHT JOIN tb_m_modules AS m ON m.id = a.id_module ",
         "INNER JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
-        "INNER JOIN tb_m_courses AS c ON c.id = m.id_course ",
-        "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type WHERE c.id = ?1 ",
-        "GROUP BY ct.type_name , m.title ,s.schedule_date,c.capacity");
+        "INNER JOIN tb_m_courses AS c ON c.id = m.id_course WHERE c.id = ?1 ",
+        "GROUP BY m.title ,s.schedule_date,c.capacity");
     List<?> listObj = createNativeQuery(sql).setParameter(1,courseId).getResultList();
     List<CourseAttendanceReportByTeacher> listResult = new ArrayList<>();
     listObj.forEach(val -> {
       Object[] arrObj = (Object[]) val;
       CourseAttendanceReportByTeacher object = new CourseAttendanceReportByTeacher();
-      object.setCourseName((String) arrObj[0]);
-      object.setModuleName((String) arrObj[1]);
+      object.setModuleName((String) arrObj[0]);
 
-      Date date = (Date) arrObj[2];
+      Date date = (Date) arrObj[1];
       object.setDate(date.toLocalDate().toString());
 
-      BigInteger bigInteger = (BigInteger) arrObj[3];
+      BigInteger bigInteger = (BigInteger) arrObj[2];
       object.setPresent(bigInteger.intValue());
       listResult.add(object);
     });
@@ -243,6 +241,12 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     BigInteger bigInteger =
         (BigInteger) createNativeQuery(sql).setParameter(1, courseId).getSingleResult();
     return bigInteger.intValue();
+  }
+
+  @Override
+  public Integer countTotalTeacher() throws Exception {
+    String sql = "SELECT COUNT(id) from tb_m_teachers";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
   }
 
 }

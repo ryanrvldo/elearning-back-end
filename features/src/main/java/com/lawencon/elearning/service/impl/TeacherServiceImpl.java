@@ -280,4 +280,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     return courseService.getCourseById(courseId);
   }
 
+  @Override
+  public Integer countTotalTeacher() throws Exception {
+    return teacherDao.countTotalTeacher();
+  }
+
 }

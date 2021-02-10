@@ -38,4 +38,14 @@ public interface CourseDao {
   Integer getCapacityCourse(String courseId) throws Exception;
 
   Integer checkDataRegisterCourse(String courseId, String studentId) throws Exception;
+
+  Integer countAvailableCourse() throws Exception;
+
+  Integer countExpiredCourse() throws Exception;
+
+  Integer countActiveCourse() throws Exception;
+
+  Integer countInActiveCourse() throws Exception;
+
+  Integer countTotalCourse() throws Exception;
 }

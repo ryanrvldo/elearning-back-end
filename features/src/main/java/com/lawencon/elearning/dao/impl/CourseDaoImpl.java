@@ -300,4 +300,34 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     return bigInteger.intValue();
   }
 
+  @Override
+  public Integer countAvailableCourse() throws Exception {
+    String sql = "SELECT count(id) FROM tb_m_courses WHERE period_start > current_timestamp";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  @Override
+  public Integer countExpiredCourse() throws Exception {
+    String sql = "SELECT count(id) FROM tb_m_courses WHERE period_end < current_timestamp";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  @Override
+  public Integer countActiveCourse() throws Exception {
+    String sql = "SELECT count(id) FROM tb_m_courses WHERE is_active = true";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  @Override
+  public Integer countInActiveCourse() throws Exception {
+    String sql = "SELECT count(id) FROM tb_m_courses WHERE is_active = false";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
+  @Override
+  public Integer countTotalCourse() throws Exception {
+    String sql = "SELECT count(id) FROM tb_m_courses";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
+
 }

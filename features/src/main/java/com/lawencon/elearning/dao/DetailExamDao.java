@@ -33,4 +33,6 @@ public interface DetailExamDao {
   void sendStudentExam(DetailExam dtlExam) throws Exception;
 
   DetailExam getDetailById(String id) throws Exception;
+
+  List<DetailExam> getStudentExamReport(String studentId) throws Exception;
 }

@@ -24,6 +24,7 @@ import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
@@ -52,6 +53,9 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Autowired
   private RoleService roleService;
+
+  @Autowired
+  private DetailExamService detailExamService;
 
   @Override
   public void insertStudent(RegisterStudentDTO data) throws Exception {
@@ -220,7 +224,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Override
   public List<StudentReportDTO> getStudentExamReport(String studentId) throws Exception {
     validationUtil.validateUUID(studentId);
-    List<DetailExam> listDetail = studentDao.getStudentExamReport(studentId);
+    List<DetailExam> listDetail = detailExamService.getStudentExamReport(studentId);
     List<StudentReportDTO> listResult = new ArrayList<>();
     if (listDetail.isEmpty()) {
       throw new DataIsNotExistsException("id", studentId);
@@ -277,6 +281,11 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     studentDashboardData.setTotal(totalStudent);
     studentDashboardData.setVerified(0);
     return studentDashboardData;
+  }
+
+  @Override
+  public Integer countTotalStudent() throws Exception {
+    return studentDao.countTotalStudent();
   }
 
 }

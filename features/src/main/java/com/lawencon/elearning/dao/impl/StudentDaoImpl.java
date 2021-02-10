@@ -1,7 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
 import java.math.BigInteger;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,16 +8,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentDao;
-import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.CourseType;
-import com.lawencon.elearning.model.DetailExam;
-import com.lawencon.elearning.model.Exam;
-import com.lawencon.elearning.model.ExamType;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Gender;
-import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Student;
-import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
@@ -171,43 +163,6 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
       student.setPhone((String) objArr[5]);
       student.setGender(Gender.valueOf((String) objArr[6]));
       listResult.add(student);
-    });
-    return listResult;
-  }
-
-  @Override
-  public List<DetailExam> getStudentExamReport(String studentId) throws Exception {
-    String sql = buildQueryOf(
-        "SELECT ct.type_name AS course, sc.subject_name , e.\"exam_type\" AS exam_type , e.exam_title, e.trx_date , de.grade ",
-        "FROM tb_r_dtl_exams AS de ",
-        "INNER JOIN tb_r_exams AS e ON de.id_exam = e.id ",
-        "INNER JOIN tb_m_modules AS m ON e.id_module = m.id ",
-        "INNER JOIN tb_m_subject_categories AS sc ON m.id_subject = sc.id ",
-        "INNER JOIN  tb_m_courses AS c ON m.id_course = c.id ",
-        "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type WHERE de.id_student =  ?1");
-    List<?> listObj = createNativeQuery(sql).setParameter(1, studentId).getResultList();
-    List<DetailExam> listResult = new ArrayList<>();
-    listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      DetailExam detailExam = new DetailExam();
-      Exam exam = new Exam();
-      Module module = new Module();
-      SubjectCategory subjectCategory = new SubjectCategory();
-      Course course = new Course();
-      CourseType courseType = new CourseType();
-      courseType.setName((String) objArr[0]);
-      course.setCourseType(courseType);
-      subjectCategory.setSubjectName((String) objArr[1]);
-      module.setSubject(subjectCategory);
-      module.setCourse(course);
-      exam.setModule(module);
-      exam.setExamType(ExamType.valueOf((String) objArr[2]));
-      exam.setTitle((String) objArr[3]);
-      Date inDate = (Date) objArr[4];
-      exam.setTrxDate(inDate.toLocalDate());
-      detailExam.setGrade((Double) objArr[5]);
-      detailExam.setExam(exam);
-      listResult.add(detailExam);
     });
     return listResult;
   }

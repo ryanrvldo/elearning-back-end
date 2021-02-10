@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class CourseAttendanceReportByTeacher {
 
-  public String courseName;
   public String moduleName;
   public String date;
   public Integer absent;

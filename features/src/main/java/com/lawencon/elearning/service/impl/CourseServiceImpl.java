@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
+import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
@@ -30,6 +31,7 @@ import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -52,6 +54,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private ExperienceService experienceService;
+
+  @Autowired
+  private TeacherService teacherService;
 
   @Override
   public List<Course> getListCourse() throws Exception {
@@ -357,6 +362,18 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (id == null || id.trim().isEmpty()) {
       throw new IllegalRequestException(msg, id);
     }
+  }
+  @Override
+  public DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception {
+    DashboardCourseResponseDto dashboardCourse = new DashboardCourseResponseDto();
+    dashboardCourse.setRegisteredStudent(studentService.countTotalStudent());
+    dashboardCourse.setRegisteredTeacher(teacherService.countTotalTeacher());
+    dashboardCourse.setActive(courseDao.countActiveCourse());
+    dashboardCourse.setExpired(courseDao.countExpiredCourse());
+    dashboardCourse.setAvailable(courseDao.countAvailableCourse());
+    dashboardCourse.setInactive(courseDao.countInActiveCourse());
+    dashboardCourse.setTotal(courseDao.countTotalCourse());
+    return dashboardCourse;
   }
 
 }

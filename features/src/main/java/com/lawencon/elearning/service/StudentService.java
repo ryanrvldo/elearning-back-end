@@ -45,4 +45,7 @@ public interface StudentService {
 
   DashboardStudentResponseDto getStudentDataForAdmin() throws Exception;
 
+  Integer countTotalStudent() throws Exception;
+
+
 }

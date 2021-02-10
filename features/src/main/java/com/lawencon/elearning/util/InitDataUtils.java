@@ -312,7 +312,7 @@ public class InitDataUtils extends BaseServiceImpl implements CommandLineRunner 
       file.setContentType(MediaType.TEXT_PLAIN_VALUE);
       file.setName("tes_file" + i);
       file.setType(FileType.ASSIGNMENT);
-      file.setSize(5);
+      file.setSize(Integer.toUnsignedLong(5));
       fileDao.create(file);
     }
   }

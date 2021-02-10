@@ -46,4 +46,6 @@ public interface TeacherDao {
 
   Integer getTotalStudentByIdCourse(String teacherId) throws Exception;
 
+  Integer countTotalTeacher() throws Exception;
+
 }

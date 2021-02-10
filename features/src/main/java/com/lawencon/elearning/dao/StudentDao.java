@@ -1,7 +1,6 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
-import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.util.Callback;
 
@@ -31,8 +30,6 @@ public interface StudentDao {
   List<Student> findAll() throws Exception;
   
   List<Student> getListStudentByIdCourse(String idCourse) throws Exception;
-
-  List<DetailExam> getStudentExamReport(String studentId) throws Exception;
 
   Integer countTotalStudent() throws Exception;
 

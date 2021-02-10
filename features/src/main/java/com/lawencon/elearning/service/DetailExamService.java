@@ -37,4 +37,6 @@ public interface DetailExamService {
 
   void sendStudentExam(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception;
+
+  List<DetailExam> getStudentExamReport(String studentId) throws Exception;
 }

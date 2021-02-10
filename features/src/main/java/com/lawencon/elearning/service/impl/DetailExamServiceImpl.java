@@ -197,6 +197,11 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     }
   }
 
+  @Override
+  public List<DetailExam> getStudentExamReport(String studentId) throws Exception {
+    return dtlExamDao.getStudentExamReport(studentId);
+  }
+
 
 
 }
