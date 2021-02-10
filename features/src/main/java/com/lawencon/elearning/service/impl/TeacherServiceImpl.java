@@ -151,8 +151,18 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   public void updateTeacher(UpdateTeacherRequestDTO data) throws Exception {
     validUtil.validate(data);
 
+    User userValidate = Optional.ofNullable(userService.getById(data.getUpdatedBy()))
+        .orElseThrow(() -> new DataIsNotExistsException("id", data.getUpdatedBy()));
+
+    if (!(userValidate.getRole().getCode().equals(Roles.SUPER_ADMIN.getCode())
+        || userValidate.getRole().getCode().equals(Roles.ADMIN.getCode())
+        || (userValidate.getRole().getCode().equals(Roles.TEACHER.getCode())))) {
+      throw new IllegalAccessException("Role not match");
+    }
+
     Teacher teacherDB = Optional.ofNullable(findTeacherById(data.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("id", data.getId()));
+
     teacherDB.setPhone(data.getPhone());
     teacherDB.setTitleDegree(data.getTitleDegree());
     teacherDB.setGender(data.getGender());

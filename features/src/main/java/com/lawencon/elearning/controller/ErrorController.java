@@ -23,7 +23,7 @@ import com.lawencon.elearning.util.WebResponseUtils;
 public class ErrorController {
 
   @ExceptionHandler(value = {ConstraintViolationException.class, DataIsNotExistsException.class,
-      IllegalRequestException.class, AttendanceErrorException.class})
+      IllegalRequestException.class, AttendanceErrorException.class, IllegalAccessException.class})
   public ResponseEntity<WebResponseDTO<String>> validationHandler(Exception e) {
     e.printStackTrace();
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
