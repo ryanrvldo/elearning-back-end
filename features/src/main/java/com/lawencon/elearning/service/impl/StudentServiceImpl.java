@@ -291,6 +291,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   @Override
   public DashboardStudentResponseDto getStudentDataForAdmin() throws Exception {
     DashboardStudentResponseDto studentDashboardData = studentDao.countStudentData();
+    studentDashboardData.setRegisteredToCourse(courseService.getRegisterStudent());
     studentDashboardData.setVerified(0);
     return studentDashboardData;
   }

@@ -132,6 +132,7 @@ public class StudentController {
     params.put("male", dashboardDto.getMale());
     params.put("female", dashboardDto.getFemale());
     params.put("total", dashboardDto.getTotal());
+    params.put("registeredToCourse", dashboardDto.getRegisteredToCourse());
     byte[] out = JasperUtil.responseToByteArray(listDto, "StudentDataReport", params);
     return ResponseEntity.ok().headers(headers).body(out);
   }

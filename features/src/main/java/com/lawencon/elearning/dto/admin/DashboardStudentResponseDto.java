@@ -24,4 +24,6 @@ public class DashboardStudentResponseDto {
 
   private Integer total;
 
+  private Integer registeredToCourse;
+
 }
