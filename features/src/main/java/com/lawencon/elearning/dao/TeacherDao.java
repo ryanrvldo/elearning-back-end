@@ -40,4 +40,6 @@ public interface TeacherDao {
 
   List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId) throws Exception;
 
+  Integer validateTeacherUpdatedBy(String idTeacher, String updatedBy) throws Exception;
+
 }

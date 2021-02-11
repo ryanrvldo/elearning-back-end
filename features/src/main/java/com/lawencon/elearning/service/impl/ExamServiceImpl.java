@@ -57,12 +57,6 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   private MailUtils mailUtils;
 
   @Override
-  public List<Exam> getAllExams() throws Exception {
-    return Optional.ofNullable(examDao.getAllExams()).orElseThrow(
-        () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
-  }
-
-  @Override
   public void saveExam(MultipartFile multiPartFile, String body) throws Exception {
 
     if (body == null && multiPartFile == null) {
@@ -129,69 +123,47 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     String[] emailTo = {"lawerning.acc@gmail.com"};
     EmailSetupDTO email = new EmailSetupDTO();
     email.setTo(emailTo);
-    email.setSubject("TEST SMTP");
+    email.setSubject("New Exam posted");
     email.setBody("ORANG ORANG TOLOL");
     new EmailServiceImpl(mailUtils, email).start();
   }
 
   @Override
   public void updateExam(Exam data) throws Exception {
-    validateNullId(data.getId(), "Id");
+    validateUtil.validateUUID(data.getId());
     examDao.saveExam(data, null);
   }
 
   @Override
   public Exam findExamById(String id) throws Exception {
-    validateNullId(id, "Id");
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException("id", id);
-    }
+    validateUtil.validateUUID(id);
     return Optional.ofNullable(examDao.findExamById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
   public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
-    validateNullId(moduleId, "Id Module");
     validateUtil.validateUUID(moduleId);
     return Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
         () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
   }
 
   @Override
-  public Long getCountData() throws Exception {
-    return examDao.getCountData();
-  }
-
-  @Override
-  public Long getCountDataByModule(String id) throws Exception {
-    validateNullId(id, "id");
-    return examDao.getCountDataByModule(id);
-  }
-
-  @Override
-  public String getIdByCode(String code) throws Exception {
-    validateNullId(code, "code");
-    return examDao.getIdByCode(code);
-  }
-
-  @Override
   public List<ScoreAverageResponseDTO> getListScoreAvg(String studentId) throws Exception {
-    validateNullId(studentId, "Student Id");
+    validateUtil.validateUUID(studentId);
     return dtlExamService.getListScoreAvg(studentId);
   }
 
   @Override
   public List<SubmissionsByExamResponseDTO> getExamSubmissions(String examId) throws Exception {
-    validateNullId(examId, "Exam Id");
+    validateUtil.validateUUID(examId);
     return dtlExamService.getExamSubmission(examId);
   }
 
   @Override
   public SubmissionStudentResponseDTO getStudentExamSubmission(String examId,
       String studentId) throws Exception {
-    validateNullId(examId, "exam id");
-    validateNullId(studentId, "student id");
+    validateUtil.validateUUID(examId, studentId);
     return dtlExamService.getStudentExamSubmission(examId, studentId);
   }
 
@@ -216,18 +188,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
-    validateNullId(id, "id");
-
+    validateUtil.validateUUID(id);
     return Optional.ofNullable(dtlExamService.getListScoreReport(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
-  }
-
-
 
 }

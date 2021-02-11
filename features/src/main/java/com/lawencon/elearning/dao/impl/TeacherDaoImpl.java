@@ -113,7 +113,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
 
     String sql = buildQueryOf(
-        "SELECT tmt.id as id_techer, tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, ",
+        "SELECT tmt.id as id_techer, tmu.username , tmu.first_name , tmu.last_name , tmu.email , tmt.title_degree , tmt.created_at, ",
         "tmt.gender , tmu.id_photo, tmt.phone FROM tb_m_teachers tmt ",
         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id WHERE tmt.id=?")
             .toString();
@@ -121,7 +121,8 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 
     List<TeacherProfileDTO> listTeachers =
-        HibernateUtils.bMapperList(listObj, TeacherProfileDTO.class, "id", "firstName", "lastName",
+        HibernateUtils.bMapperList(listObj, TeacherProfileDTO.class, "id", "username", "firstName",
+            "lastName",
             "email", "titleDegree", "createdAt", "gender", "photoId", "phone");
 
     return listTeachers.size() > 0 ? listTeachers.get(0) : null;
@@ -243,6 +244,15 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       listResult.add(responseDTO);
     });
     return listResult;
+  }
+
+  @Override
+  public Integer validateTeacherUpdatedBy(String idTeacher, String updatedBy) throws Exception {
+    String query = buildQueryOf("SELECT count(id) FROM tb_m_teachers tmt ",
+        "WHERE id = ?1 AND id_user = ?2").toString();
+    BigInteger bigInteger = (BigInteger) createNativeQuery(query).setParameter(1, idTeacher)
+        .setParameter(2, updatedBy).getSingleResult();
+    return bigInteger.intValue();
   }
 
 }

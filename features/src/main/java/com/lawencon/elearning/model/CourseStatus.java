@@ -15,4 +15,8 @@ public enum CourseStatus {
     this.status = status;
   }
 
+  public String getStatus() {
+    return status;
+  }
+
 }

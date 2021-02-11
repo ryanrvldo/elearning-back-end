@@ -18,7 +18,6 @@ import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Role;
@@ -96,6 +95,14 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public void saveTeacher(TeacherRequestDTO data) throws Exception {
     validUtil.validate(data);
+    User userValidate = Optional.ofNullable(userService.getById(data.getCreatedBy()))
+        .orElseThrow(() -> new DataIsNotExistsException("id", data.getCreatedBy()));
+
+    if (!userValidate.getRole().getCode().equals(Roles.ADMIN.getCode())) {
+      throw new IllegalAccessException(
+          String.format("Illegal access role with Id : %s.", data.getCreatedBy()));
+    }
+
     User user = new User();
     user.setFirstName(data.getFirstName());
     user.setLastName(data.getLastName());
@@ -130,13 +137,12 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public Teacher findTeacherById(String id) throws Exception {
-    validateNullId(id, "Id");
+    validUtil.validateUUID(id);
     return teacherDao.findTeacherById(id);
   }
 
   @Override
   public TeacherProfileDTO findTeacherByIdCustom(String id) throws Exception {
-    validateNullId(id, "Id");
     validUtil.validateUUID(id);
     TeacherProfileDTO teacher = Optional.ofNullable(teacherDao.findTeacherByIdCustom(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
@@ -153,9 +159,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     User userValidate = Optional.ofNullable(userService.getById(data.getUpdatedBy()))
         .orElseThrow(() -> new DataIsNotExistsException("id", data.getUpdatedBy()));
 
-    if (!(userValidate.getRole().getCode().equals(Roles.SUPER_ADMIN.getCode())
-        || userValidate.getRole().getCode().equals(Roles.ADMIN.getCode())
-        || (userValidate.getRole().getCode().equals(Roles.TEACHER.getCode())))) {
+    if (!(userValidate.getRole().getCode().equals(Roles.ADMIN.getCode())
+        || (userValidate.getRole().getCode().equals(Roles.TEACHER.getCode())
+            && teacherDao.validateTeacherUpdatedBy(data.getId(), data.getUpdatedBy()) == 1))) {
       throw new IllegalAccessException("Role not match");
     }
 
@@ -189,14 +195,13 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public Teacher getFullNameByUserId(String userId) throws Exception {
-    validateNullId(userId, "User Id");
+    validUtil.validateUUID(userId);
     return Optional.ofNullable(teacherDao.findByUserId(userId))
         .orElseThrow(() -> new DataIsNotExistsException("User Id", userId));
   }
 
   @Override
   public void deleteTeacherById(String teacherId) throws Exception {
-    validateNullId(teacherId, "Id");
     validUtil.validateUUID(teacherId);
 
     try {
@@ -230,14 +235,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public Teacher findByIdForCourse(String id) throws Exception {
-    validateNullId(id, "Id");
+    validUtil.validateUUID(id);
     return teacherDao.findByIdForCourse(id);
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
   @Override

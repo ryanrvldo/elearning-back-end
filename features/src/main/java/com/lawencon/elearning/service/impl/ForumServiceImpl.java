@@ -32,13 +32,6 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   private ValidationUtil validateUtil;
 
   @Override
-  public List<Forum> getAllForums() throws Exception {
-    return Optional.ofNullable(forumDao.getAllForums())
-        .orElseThrow(
-            () -> new DataIsNotExistsException("Forum is empty and has not been initialized."));
-  }
-
-  @Override
   public void saveForum(ForumRequestDTO data) throws Exception {
     validateUtil.validate(data);
 
@@ -49,10 +42,10 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
     module.setId(data.getModuleId());
 
     Forum forum = new Forum();
-    forum.setContent(data.getContent());
     forum.setUser(user);
     forum.setModule(module);
 
+    forum.setContent(data.getContent());
     forum.setCreatedAt(LocalDateTime.now());
     forum.setCreatedBy(data.getUserId());
     forum.setTrxDate(LocalDate.now());
@@ -62,21 +55,8 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   }
 
   @Override
-  public void updateForum(Forum data) throws Exception {
-    validateNullId(data.getId(), "id");
-    forumDao.saveForum(data, null);
-  }
-
-  @Override
-  public Forum findForumById(String id) throws Exception {
-    validateNullId(id, "id");
-    return Optional.ofNullable(forumDao.findForumById(id)).orElseThrow(
-        () -> new DataIsNotExistsException("Discussion in this module has not been initialized."));
-  }
-
-  @Override
   public List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception {
-    validateNullId(moduleId, "Id Module");
+    validateUtil.validateUUID(moduleId);
     List<ForumModuleResponseDTO> forumResponses =
         Optional.ofNullable(forumDao.getByModuleId(moduleId))
             .orElseThrow(() -> new DataIsNotExistsException("Module Id", moduleId));
@@ -85,7 +65,7 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
 
   @Override
   public void deleteForum(String id, String userId) throws Exception {
-    validateNullId(id, "Id");
+    validateUtil.validateUUID(id, userId);
     if (forumDao.checkByForumIdAndUserId(id, userId) > 0) {
       try {
         begin();
@@ -100,12 +80,6 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
       throw new IllegalRequestException("User Id", userId);
     }
 
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
 }

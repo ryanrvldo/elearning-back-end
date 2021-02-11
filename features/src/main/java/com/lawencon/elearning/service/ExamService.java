@@ -16,8 +16,6 @@ import com.lawencon.elearning.model.Exam;
 
 public interface ExamService {
 
-  List<Exam> getAllExams() throws Exception;
-
   void saveExam(MultipartFile multiPartFile, String body) throws Exception;
 
   void updateExam(Exam data) throws Exception;
@@ -25,12 +23,6 @@ public interface ExamService {
   Exam findExamById(String id) throws Exception;
 
   List<ExamsModuleResponseDTO> getExamsByModule(String id) throws Exception;
-
-  Long getCountData() throws Exception;
-
-  Long getCountDataByModule(String moduleId) throws Exception;
-
-  String getIdByCode(String code) throws Exception;
 
 
   // ----------------------- Detail Exam ------------------------

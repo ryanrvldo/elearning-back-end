@@ -52,7 +52,7 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
 
   @Override
   public void updateSchedule(Schedule data) throws Exception {
-    validateNullId(data.getId(), "Id");
+    validateUtil.validateUUID(data.getId());
     validateUtil.validate(data);
     if (data.getStartTime().isAfter(data.getEndTime())) {
       throw new IllegalRequestException("Schedule end time cannot be greather than start time");
@@ -66,14 +66,14 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
 
   @Override
   public Schedule findScheduleById(String id) throws Exception {
-    validateNullId(id, "Id");
+    validateUtil.validateUUID(id);
     return Optional.ofNullable(scheduleDao.findScheduleById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
   public Schedule getByIdCustom(String id) throws Exception {
-    validateNullId(id, "Id");
+    validateUtil.validateUUID(id);
     return Optional.ofNullable(scheduleDao.getByIdCustom(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
 
@@ -81,8 +81,7 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
 
   @Override
   public List<ScheduleResponseDTO> getByTeacherId(String teacherId) throws Exception {
-    validateNullId(teacherId, "Teacher Id");
-
+    validateUtil.validateUUID(teacherId);
     List<Schedule> schedules = Optional.ofNullable(scheduleDao.getByTeacherId(teacherId))
         .orElseThrow(() -> new DataIsNotExistsException("Teacher Id", teacherId));
 
@@ -100,13 +99,5 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
     });
     return listResult;
   }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
-  }
-
-
 
 }

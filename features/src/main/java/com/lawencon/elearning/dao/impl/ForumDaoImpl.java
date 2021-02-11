@@ -27,16 +27,6 @@ public class ForumDaoImpl extends CustomBaseDao<Forum> implements ForumDao {
   }
 
   @Override
-  public void updateForum(Forum data, Callback before) throws Exception {
-    save(data, before, null, true, true);
-  }
-
-  @Override
-  public Forum findForumById(String id) throws Exception {
-    return getById(id);
-  }
-
-  @Override
   public List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception {
     String sql = buildQueryOf(
         "SELECT trf.trx_number ,  trf.\"content\" , trf.created_at,  ",

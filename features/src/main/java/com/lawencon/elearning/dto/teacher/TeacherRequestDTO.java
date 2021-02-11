@@ -48,6 +48,7 @@ public class TeacherRequestDTO {
   private String email;
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String createdBy;
 
   @Size(max = 50)

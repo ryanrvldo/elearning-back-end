@@ -13,13 +13,16 @@ import lombok.Data;
 
 @Data
 public class UpdateScoreRequestDTO {
+
   @NotBlank
   @Size(min = 32, max = 36)
   private String id;
+
   @NotNull
   @Min(0)
   @Max(100)
   private Double grade;
+
   @NotBlank
   @Size(min = 32, max = 36)
   private String updatedBy;

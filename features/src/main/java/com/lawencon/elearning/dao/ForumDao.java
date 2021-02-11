@@ -15,11 +15,7 @@ public interface ForumDao {
 
   void saveForum(Forum data, Callback before) throws Exception;
   
-  void updateForum(Forum data, Callback before) throws Exception;
-
   void deleteForum(String id) throws Exception;
-
-  Forum findForumById(String id) throws Exception;
 
   List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception;
 
