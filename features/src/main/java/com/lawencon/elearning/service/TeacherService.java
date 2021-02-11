@@ -2,14 +2,12 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
-import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Teacher;
 
 /**
@@ -42,10 +40,4 @@ public interface TeacherService {
 
   List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId) throws Exception;
 
-  List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
-      throws Exception;
-
-  Course getCourseById(String courseId) throws Exception;
-
-  Integer countTotalTeacher() throws Exception;
 }

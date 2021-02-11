@@ -1,5 +1,6 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
+import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.error.DataAlreadyExistException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -60,10 +62,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   private ExperienceService experienceService;
 
   @Autowired
-  private TeacherService teacherService;
+  private UserService userService;
 
   @Autowired
-  private UserService userService;
+  private TeacherService teacherService;
 
   @Override
   public List<CourseResponseDTO> getAllCourse() throws Exception {
@@ -256,6 +258,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (course == null) {
       throw new DataIsNotExistsException("course id", courseId);
     }
+    if (LocalDateTime.now().isAfter(course.getPeriodStart())) {
+      throw new IllegalRequestException("can't register to course when course already on going");
+    }
     Integer count = courseDao.checkDataRegisterCourse(courseId, studentId);
     if (count == 0) {
       Integer capacityRegist = courseDao.getCapacityCourse(courseId);
@@ -380,14 +385,42 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception {
     DashboardCourseResponseDto dashboardCourse = courseDao.dashboardCourseByAdmin();
-    System.out.println(dashboardCourse.getTotal());
-    System.out.println(dashboardCourse.getAvailable());
-    System.out.println(dashboardCourse.getExpired());
-    System.out.println(dashboardCourse.getActive());
-    System.out.println(dashboardCourse.getInactive());
-    dashboardCourse.setRegisteredStudent(studentService.countTotalStudent());
-    dashboardCourse.setRegisteredTeacher(teacherService.countTotalTeacher());
+    dashboardCourse.setRegisteredStudent(courseDao.getRegisterStudent());
     return dashboardCourse;
+  }
+
+  @Override
+  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
+      throws Exception {
+    validateUtil.validateUUID(courseId);
+    Course course = courseDao.getCourseById(courseId);
+    if (course == null) {
+      throw new DataIsNotExistsException("course id", courseId);
+    }
+    List<CourseAttendanceReportByTeacher> listData = courseDao.getCourseAttendanceReport(courseId);
+    if (listData.isEmpty()) {
+      throw new DataIsNotExistsException("Data empty");
+    }
+    listData.forEach(val -> {
+      try {
+        Integer totalStudent = courseDao.getTotalStudentByIdCourse(courseId);
+        val.setTotalStudent(totalStudent);
+        val.setAbsent(totalStudent - val.getPresent());
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
+    return listData;
+  }
+
+  @Override
+  public Teacher getTeacherById(String teacherId) throws Exception {
+    return teacherService.findTeacherById(teacherId);
+  }
+
+  @Override
+  public Integer getRegisterStudent() throws Exception {
+    return courseDao.getRegisterStudent();
   }
 
 }

@@ -1,7 +1,6 @@
 package com.lawencon.elearning.dao;
 
 import java.util.List;
-import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
@@ -40,12 +39,5 @@ public interface TeacherDao {
   String getUserId(String teacherId) throws Exception;
 
   List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId) throws Exception;
-
-  List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String teacherId)
-      throws Exception;
-
-  Integer getTotalStudentByIdCourse(String teacherId) throws Exception;
-
-  Integer countTotalTeacher() throws Exception;
 
 }

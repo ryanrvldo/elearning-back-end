@@ -1,7 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
 import java.math.BigInteger;
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,7 +8,6 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
-import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
@@ -245,48 +243,6 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       listResult.add(responseDTO);
     });
     return listResult;
-  }
-
-  @Override
-  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
-      throws Exception {
-    String sql = buildQueryOf("SELECT m.title , s.schedule_date , ",
-        "count(a.id_student) AS student_present FROM tb_r_attendances AS a ",
-        "RIGHT JOIN tb_m_modules AS m ON m.id = a.id_module ",
-        "INNER JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
-        "INNER JOIN tb_m_courses AS c ON c.id = m.id_course WHERE c.id = ?1 ",
-        "GROUP BY m.title ,s.schedule_date,c.capacity");
-    List<?> listObj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
-
-    List<CourseAttendanceReportByTeacher> listResult = new ArrayList<>();
-    listObj.forEach(val -> {
-      Object[] arrObj = (Object[]) val;
-      CourseAttendanceReportByTeacher object = new CourseAttendanceReportByTeacher();
-      object.setModuleName((String) arrObj[0]);
-
-      Date date = (Date) arrObj[1];
-      object.setDate(date.toLocalDate().toString());
-
-      BigInteger bigInteger = (BigInteger) arrObj[2];
-      object.setPresent(bigInteger.intValue());
-      listResult.add(object);
-    });
-    return listResult;
-  }
-
-  @Override
-  public Integer getTotalStudentByIdCourse(String courseId) throws Exception {
-    String sql = buildQueryOf("SELECT count(sc.id_student) FROM student_course AS sc ",
-        "WHERE sc.id_course = ?1");
-    BigInteger bigInteger =
-        (BigInteger) createNativeQuery(sql).setParameter(1, courseId).getSingleResult();
-    return bigInteger.intValue();
-  }
-
-  @Override
-  public Integer countTotalTeacher() throws Exception {
-    String sql = "SELECT COUNT(id) from tb_m_teachers";
-    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
   }
 
 }

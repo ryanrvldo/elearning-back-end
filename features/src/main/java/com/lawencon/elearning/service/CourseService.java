@@ -10,7 +10,9 @@ import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
+import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.Teacher;
 
 /**
  * @author : Galih Dika Permana
@@ -45,5 +47,11 @@ public interface CourseService {
   Course getCourseById(String id) throws Exception;
 
   DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception;
+
+  List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId) throws Exception;
+
+  Teacher getTeacherById(String teacherId) throws Exception;
+
+  Integer getRegisterStudent() throws Exception;
 
 }

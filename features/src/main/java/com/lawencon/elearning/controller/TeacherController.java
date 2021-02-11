@@ -20,11 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
-import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -115,37 +113,5 @@ public class TeacherController {
     HttpHeaders header = new HttpHeaders();
     header.setContentType(MediaType.APPLICATION_PDF);
     return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
-  }
-
-  @GetMapping("attendance/report/{id}")
-  public ResponseEntity<?> getCourseAttendanceReport(@PathVariable("id") String courseId)
-      throws Exception {
-    Course course = teacherService.getCourseById(courseId);
-    Teacher teacher = teacherService.findTeacherById(course.getTeacher().getId());
-    Map<String, Object> mapTeacher = new HashMap<>();
-    mapTeacher.put("teacherFName", teacher.getUser().getFirstName());
-    mapTeacher.put("teacherLName", teacher.getUser().getLastName());
-    mapTeacher.put("teacherEmail", teacher.getUser().getEmail());
-    mapTeacher.put("teacherGender", teacher.getGender().toString());
-    mapTeacher.put("teacherPhone", teacher.getPhone());
-    byte[] out;
-    try {
-      List<CourseAttendanceReportByTeacher> listData =
-          teacherService.getCourseAttendanceReport(courseId);
-      out = JasperUtil.responseToByteArray(listData, "CourseAttendanceReport", mapTeacher);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    HttpHeaders header = new HttpHeaders();
-    header.setContentType(MediaType.APPLICATION_PDF);
-    return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
-  }
-
-  @GetMapping("attendance/reports/{id}")
-  public ResponseEntity<?> getCourseAttendanceReports(@PathVariable("id") String courseId)
-      throws Exception {
-    return WebResponseUtils.createWebResponse(teacherService.getCourseAttendanceReport(courseId),
-        HttpStatus.OK);
   }
 }

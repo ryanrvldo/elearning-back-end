@@ -1,6 +1,7 @@
 package com.lawencon.elearning.dao.impl;
 
 import java.math.BigInteger;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
+import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
@@ -263,8 +265,9 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     String sql = buildQueryOf("SELECT COUNT(id) AS all_course, ",
         "SUM(CASE WHEN is_active = TRUE THEN 1 ELSE 0 END) AS course_active, ",
         "SUM(CASE WHEN is_active = FALSE THEN 1 ELSE 0 END) AS course_inactive, ",
-        "SUM(CASE WHEN period_end < current_timestamp THEN 1 ELSE 0 END) AS course_expired ,",
-        "SUM(CASE WHEN period_start > current_timestamp THEN 1 ELSE 0 END) AS course_available ",
+        "SUM(CASE WHEN period_end < current_timestamp THEN 1 ELSE 0 END) AS course_expired , ",
+        "SUM(CASE WHEN period_start > current_timestamp THEN 1 ELSE 0 END) AS course_available, ",
+        "count(DISTINCT id_teacher) AS teacher ",
         "FROM tb_m_courses");
     List<?> objList = createNativeQuery(sql).getResultList();
     DashboardCourseResponseDto dashboardRespon = new DashboardCourseResponseDto();
@@ -275,6 +278,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       dashboardRespon.setInactive(((BigInteger) objArr[2]).intValue());
       dashboardRespon.setExpired(((BigInteger) objArr[3]).intValue());
       dashboardRespon.setAvailable(((BigInteger) objArr[4]).intValue());
+      dashboardRespon.setRegisteredTeacher(((BigInteger) objArr[5]).intValue());
     });
     return dashboardRespon;
   }
@@ -338,6 +342,37 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     return listResult;
   }
 
+  @Override
+  public Integer getRegisterStudent() throws Exception {
+    String sql = "SELECT COUNT(distinct id_student) from student_course";
+    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  }
 
+  @Override
+  public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
+      throws Exception {
+    String sql = buildQueryOf("SELECT m.title , s.schedule_date , ",
+        "count(a.id_student) AS student_present FROM tb_r_attendances AS a ",
+        "RIGHT JOIN tb_m_modules AS m ON m.id = a.id_module ",
+        "INNER JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
+        "INNER JOIN tb_m_courses AS c ON c.id = m.id_course WHERE c.id = ?1 ",
+        "GROUP BY m.title ,s.schedule_date,c.capacity");
+    List<?> listObj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
+
+    List<CourseAttendanceReportByTeacher> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] arrObj = (Object[]) val;
+      CourseAttendanceReportByTeacher object = new CourseAttendanceReportByTeacher();
+      object.setModuleName((String) arrObj[0]);
+
+      Date date = (Date) arrObj[1];
+      object.setDate(date.toLocalDate().toString());
+
+      BigInteger bigInteger = (BigInteger) arrObj[2];
+      object.setPresent(bigInteger.intValue());
+      listResult.add(object);
+    });
+    return listResult;
+  }
 
 }
