@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dto.student;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class RegisterStudentDTO {
 
   @NotBlank
   @Size(max = 100)
+  @Email
   private String email;
 
   @NotBlank

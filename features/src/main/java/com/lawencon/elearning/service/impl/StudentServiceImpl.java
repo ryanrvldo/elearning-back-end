@@ -22,6 +22,7 @@ import com.lawencon.elearning.error.InternalServerErrorException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Role;
+import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
@@ -74,7 +75,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     user.setPassword(data.getPassword());
     user.setCreatedAt(LocalDateTime.now());
 
-    Role role = roleService.findByCode("RL-004");
+    Role role = roleService.findByCode(Roles.STUDENT.getCode());
     user.setRole(role);
     student.setUser(user);
 
@@ -102,10 +103,27 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   public void updateStudentProfile(StudentUpdateRequestDto request) throws Exception {
     validationUtil.validate(request);
 
+    User userDb = Optional.ofNullable(userService.getById(request.getUpdatedBy()))
+        .orElseThrow(() -> new DataIsNotExistsException("user id", request.getUpdatedBy()));
+
+    if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.ADMIN.getCode())
+        && !userDb.getRole().getCode().equalsIgnoreCase(Roles.STUDENT.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
+
+    Student prevStudent = Optional.ofNullable(studentDao.getStudentById(request.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("student id", request.getId()));
+    System.out.println(userDb.getRole().getCode());
+    if (userDb.getRole().getCode().equalsIgnoreCase(Roles.STUDENT.getCode())) {
+      System.out.println("galih 12");
+      if (!userDb.getId().equalsIgnoreCase(prevStudent.getUser().getId())) {
+        System.out.println("galih 2");
+        throw new IllegalAccessException("You Are Unauthorized");
+      }
+    }
+
     try {
       begin();
-      Student prevStudent = Optional.ofNullable(studentDao.getStudentById(request.getId()))
-          .orElseThrow(() -> new DataIsNotExistsException("student id", request.getId()));
       Student newStudent = new Student();
       newStudent.setCode(prevStudent.getCode());
       newStudent.setCourses(prevStudent.getCourses());
@@ -113,6 +131,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       newStudent.setUser(prevStudent.getUser());
       newStudent.setPhone(request.getPhone());
       newStudent.setGender(request.getGender());
+      newStudent.setUpdatedBy(request.getUpdatedBy());
 
       User user = new User();
       user.setId(prevStudent.getUser().getId());

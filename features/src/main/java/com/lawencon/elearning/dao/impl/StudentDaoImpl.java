@@ -252,7 +252,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
     String sql = buildQueryOf("SELECT COUNT(id) AS all_student, ",
         "SUM(CASE WHEN is_active = TRUE THEN 1 ELSE 0 END) AS ACTIVE, ",
         "SUM(CASE WHEN is_active = FALSE THEN 1 ELSE 0 END) AS INACTIVE, ",
-        "SUM(CASE WHEN gender = 'MALE' THEN 1 ELSE 0 END) AS MALE ",
+        "SUM(CASE WHEN gender = 'MALE' THEN 1 ELSE 0 END) AS MALE, ",
         "SUM(CASE WHEN gender = 'FEMALE' THEN 1 ELSE 0 END) AS FEMALE ", "FROM tb_m_students");
     List<DashboardStudentResponseDto> listDto = new ArrayList<>();
     List<?> listObj = createNativeQuery(sql).getResultList();
@@ -261,7 +261,9 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
       DashboardStudentResponseDto countDto = new DashboardStudentResponseDto();
       countDto.setTotal(((BigInteger) objArr[0]).intValue());
       countDto.setActive(((BigInteger) objArr[1]).intValue());
-      countDto.setMale(((BigInteger) objArr[2]).intValue());
+      countDto.setInactive(((BigInteger) objArr[2]).intValue());
+      countDto.setMale(((BigInteger) objArr[3]).intValue());
+      countDto.setFemale(((BigInteger) objArr[4]).intValue());
       listDto.add(countDto);
     });
     return listDto.size() > 0 ? listDto.get(0) : null;

@@ -14,6 +14,7 @@ import lombok.Data;
 public class UpdateSubjectCategoryRequestDTO {
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String id;
 
   @NotBlank
@@ -27,6 +28,7 @@ public class UpdateSubjectCategoryRequestDTO {
   private String description;
 
   @NotBlank
+  @Size(min = 32, max = 36)
   private String updatedBy;
 
 }

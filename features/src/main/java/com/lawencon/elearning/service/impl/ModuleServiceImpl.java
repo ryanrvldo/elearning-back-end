@@ -24,14 +24,17 @@ import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Module;
+import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -59,6 +62,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Autowired
   private StudentService studentService;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public Module getModuleById(String id) throws Exception {
@@ -175,16 +181,24 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   public void updateModule(UpdateModuleDTO data) throws Exception {
     validationUtil.validate(data);
     validationUtil.validate(data.getScheduleRequestDTO());
-    Optional.ofNullable(moduleDao.getModuleById(data.getId()))
+    Module moduleDb = Optional.ofNullable(moduleDao.getModuleById(data.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("id module", data.getId()));
     Course courseDb = Optional.ofNullable(courseService.getCourseById(data.getCourseId()))
         .orElseThrow(() -> new DataIsNotExistsException("id course", data.getCourseId()));
+    User userDb = Optional.ofNullable(userService.getById(data.getUpdatedBy()))
+        .orElseThrow(() -> new DataIsNotExistsException("id user", data.getUpdatedBy()));
+
     if (data.getScheduleRequestDTO().getScheduleDate()
         .isBefore(courseDb.getPeriodStart().toLocalDate())
         || data.getScheduleRequestDTO().getScheduleDate()
             .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
       throw new IllegalRequestException("You can't insert module outside course period");
     }
+
+    if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.ADMIN.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
+
     Schedule schedule = Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
         .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
     schedule.setDate(data.getScheduleRequestDTO().getScheduleDate());
@@ -198,6 +212,8 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     Module module = new Module();
     module.setSchedule(schedule);
     module.setCode(data.getModuleCode());
+    module.setTitle(data.getModuleTittle());
+    module.setDescription(data.getModuleDescription());
     module.setId(data.getId());
     module.setUpdatedBy(data.getUpdatedBy());
 
@@ -209,21 +225,15 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     subject.setId(data.getSubjectId());
     module.setSubject(subject);
 
-    try {
-      begin();
-      scheduleService.updateSchedule(schedule);
-      moduleDao.updateModule(module, null);
-      commit();
-    } catch (Exception e) {
-      e.printStackTrace();
-      rollback();
-      throw e;
-    }
+    scheduleService.updateSchedule(schedule);
+
+    setupUpdatedValue(module, () -> moduleDb);
+    moduleDao.updateModule(module, null);
+
   }
 
   @Override
   public void deleteModule(UpdateIsActiveRequestDTO data) throws Exception {
-    validationUtil.validateUUID(data.getId());
     validationUtil.validate(data);
     try {
       begin();

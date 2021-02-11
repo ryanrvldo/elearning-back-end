@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
+import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentReportDTO;
 import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
@@ -117,22 +119,21 @@ public class StudentController {
 
 
   // REPORT FOR ADMIN
-  // @GetMapping(value = "/report/admin")
-  // public ResponseEntity<?> getStudentReport() throws Exception {
-  // List<RegisteredStudentCountMonthlyResponseDto> listDto =
-  // studentService.countTotalRegisteredStudent();
-  // HttpHeaders headers = new HttpHeaders();
-  // headers.setContentType(MediaType.APPLICATION_PDF);
-  // DashboardStudentResponseDto dashboardDto = studentService.getStudentDataForAdmin();
-  // Map<String, Object> params = new HashMap<>();
-  // params.put("verified", dashboardDto.getVerified());
-  // params.put("active", dashboardDto.getActive());
-  // params.put("inActive", dashboardDto.getInactive());
-  // params.put("male", dashboardDto.getMale());
-  // params.put("female", dashboardDto.getFemale());
-  // params.put("total", dashboardDto.getTotal());
-  // byte[] out = JasperUtil.responseToByteArray(listDto, "StudentDataReport", params);
-  // return ResponseEntity.ok().headers(headers).body(out);
-  // }
+  @GetMapping(value = "/report/admin")
+  public ResponseEntity<?> getStudentReport() throws Exception {
+    List<RegisteredStudentMonthlyDto> listDto = studentService.countRegisteredStudentMonthly();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_PDF);
+    DashboardStudentResponseDto dashboardDto = studentService.getStudentDataForAdmin();
+    Map<String, Object> params = new HashMap<>();
+    params.put("verified", dashboardDto.getVerified());
+    params.put("active", dashboardDto.getActive());
+    params.put("inActive", dashboardDto.getInactive());
+    params.put("male", dashboardDto.getMale());
+    params.put("female", dashboardDto.getFemale());
+    params.put("total", dashboardDto.getTotal());
+    byte[] out = JasperUtil.responseToByteArray(listDto, "StudentDataReport", params);
+    return ResponseEntity.ok().headers(headers).body(out);
+  }
 
 }

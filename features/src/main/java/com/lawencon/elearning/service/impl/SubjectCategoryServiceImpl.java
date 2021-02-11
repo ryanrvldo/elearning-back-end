@@ -13,8 +13,11 @@ import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
 import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.SubjectCategory;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.SubjectCategoryService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
 
@@ -31,6 +34,9 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Autowired
   private ValidationUtil validationUtil;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public List<SubjectCategoryResponseDTO> getAllSubject() throws Exception {
@@ -56,6 +62,11 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   public void updateSubject(UpdateSubjectCategoryRequestDTO data, Callback before)
       throws Exception {
     validationUtil.validate(data);
+    User userDb = Optional.ofNullable(userService.getById(data.getUpdatedBy()))
+        .orElseThrow(() -> new DataIsNotExistsException("user id", data.getUpdatedBy()));
+    if (!userDb.getRole().getCode().equals(Roles.ADMIN.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
     SubjectCategory subject = new SubjectCategory();
     subject.setId(data.getId());
     subject.setCode(data.getCode());
@@ -81,7 +92,6 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Override
   public void deleteSubject(UpdateIsActiveRequestDTO data) throws Exception {
-    validationUtil.validateUUID(data.getId());
     try {
       begin();
       subjectCategoryDao.deleteSubject(data.getId());
