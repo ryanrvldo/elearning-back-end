@@ -178,4 +178,28 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
     updateNativeSQL(query, id, userId);
   }
 
+  @Override
+  public List<Module> getModuleList(String courseId) throws Exception {
+    String sql = buildQueryOf(
+        "SELECT  m.id as module_id, m.code, m.title, m.description, sc.subject_name ",
+        "FROM tb_m_modules m INNER JOIN tb_m_subject_categories AS sc ON sc.id = m.id_subject ",
+        "WHERE m.id_course = ?1 ");
+    List<Module> listResult = new ArrayList<>();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
+
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      Module module = new Module();
+      module.setId((String) objArr[0]);
+      module.setCode((String) objArr[1]);
+      module.setTitle((String) objArr[2]);
+      module.setDescription((String) objArr[3]);
+      SubjectCategory subjectCategory = new SubjectCategory();
+      subjectCategory.setSubjectName((String) objArr[4]);
+      module.setSubject(subjectCategory);
+      listResult.add(module);
+    });
+    return listResult;
+  }
+
 }

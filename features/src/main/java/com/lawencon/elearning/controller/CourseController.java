@@ -148,4 +148,11 @@ public class CourseController {
         HttpStatus.OK);
   }
 
+  @GetMapping("module/{id}")
+  public ResponseEntity<?> getModuleListByIdCourse(@PathVariable("id") String courseId)
+      throws Exception {
+    return WebResponseUtils.createWebResponse(courseService.getCourseForDashboard(courseId),
+        HttpStatus.OK);
+  }
+
 }

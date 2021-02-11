@@ -219,16 +219,14 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
       throws Exception {
     String sql = buildQueryOf(
-        "SELECT s.code , u.first_name , u.last_name, count(e.id_module) AS total_ujian,count(de.id_exam) AS assign, ",
-        "count(e.id_module)-count(de.id_exam) AS unassignment , avg(de.grade) AS nilai_avg ",
-        "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_exams AS e ON de.id_exam = e.id ",
-        "INNER JOIN tb_m_modules AS m ON m.id = e.id_module ",
+        "SELECT s.code , u.first_name , u.last_name ,count(de.id) ,sum(de.grade) "
+        , "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_exams AS e ON de.id_exam = e.id ",
         "INNER JOIN tb_m_students AS s ON s.id  = de.id_student ",
-        "INNER JOIN tb_m_users AS u ON u.id = s.id_user WHERE m.id = ?1 ",
-        "GROUP BY s.code ,u.first_name ,u.last_name");
+        "INNER JOIN tb_m_users AS u ON u.id = s.id_user WHERE e.id_module = ?1 ",
+        "GROUP BY s.code , u.first_name , u.last_name");
 
-    List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
     List<TeacherReportResponseDTO> listResult = new ArrayList<>();
+    List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
     listObj.forEach(val -> {
       Object[] arrObj = (Object[]) val;
       TeacherReportResponseDTO responseDTO = new TeacherReportResponseDTO();
@@ -236,12 +234,8 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       responseDTO.setStudentFirstName((String) arrObj[1]);
       responseDTO.setStudentLastName((String) arrObj[2]);
       BigInteger bigInteger = (BigInteger) arrObj[3];
-      responseDTO.setTotalUjian((Integer) bigInteger.intValue());
-      bigInteger = (BigInteger) arrObj[4];
-      responseDTO.setTotalAssignment((Integer) bigInteger.intValue());
-      bigInteger = (BigInteger) arrObj[5];
-      responseDTO.setNotAssignment((Integer) bigInteger.intValue());
-      responseDTO.setAvgScore((Double) arrObj[6]);
+      responseDTO.setTotalAssignment(bigInteger.intValue());
+      responseDTO.setAvgScore((Double) arrObj[4]);
       listResult.add(responseDTO);
     });
     return listResult;
@@ -288,6 +282,12 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       listDto.add(countDto);
     });
     return listDto.size() > 0 ? listDto.get(0) : null;
+  }
+
+  public Integer getTotalExamByModuleId(String moduleId) throws Exception {
+    String sql = buildQueryOf("SELECT count(id_module) FROM tb_r_exams WHERE id_module = ?1 ");
+    return ((BigInteger) createNativeQuery(sql).setParameter(1, moduleId).getSingleResult())
+        .intValue();
   }
 
 

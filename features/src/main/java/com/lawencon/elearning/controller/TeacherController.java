@@ -114,4 +114,10 @@ public class TeacherController {
     header.setContentType(MediaType.APPLICATION_PDF);
     return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
   }
+
+  @GetMapping("reports/{id}")
+  public ResponseEntity<?> getReport(@PathVariable("id") String moduleId) throws Exception {
+    return WebResponseUtils.createWebResponse(teacherService.getTeacherDetailCourseReport(moduleId),
+        HttpStatus.OK);
+  }
 }

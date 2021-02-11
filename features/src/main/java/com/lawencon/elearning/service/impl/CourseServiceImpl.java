@@ -15,8 +15,10 @@ import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
+import com.lawencon.elearning.dto.course.DashboardCourseResponseDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
+import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
@@ -282,6 +284,28 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     validateUtil.validateUUID(courseId);
     DetailCourseResponseDTO detailDTO = new DetailCourseResponseDTO();
     setData(courseId, detailDTO, studentId);
+    return detailDTO;
+  }
+
+  @Override
+  public DashboardCourseResponseDTO getCourseForDashboard(String courseId) throws Exception {
+    validateUtil.validateUUID(courseId);
+    DashboardCourseResponseDTO detailDTO = new DashboardCourseResponseDTO();
+    Course course = courseDao.getCourseById(courseId);
+    if (course == null) {
+      throw new DataIsNotExistsException("course id", courseId);
+    }
+    List<ModuleListReponseDTO> listModule = new ArrayList<>();
+    listModule = moduleService.getModuleList(courseId);
+    detailDTO.setId(course.getId());
+    detailDTO.setCode(course.getCode());
+    detailDTO.setName(course.getCourseType().getName());
+    detailDTO.setCapacity(course.getCapacity());
+    detailDTO.setTotalStudent(courseDao.getTotalStudentByIdCourse(courseId));
+    detailDTO.setDescription(course.getDescription());
+    detailDTO.setPeriodStart(course.getPeriodStart());
+    detailDTO.setPeriodEnd(course.getPeriodEnd());
+    detailDTO.setModules(listModule);
     return detailDTO;
   }
 

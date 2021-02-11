@@ -273,6 +273,15 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     if (listResult.isEmpty()) {
       throw new DataIsNotExistsException("Data empty");
     }
+    Integer totalExam = teacherDao.getTotalExamByModuleId(moduleId);
+    listResult.forEach(val -> {
+      Double scoreTemp = val.getAvgScore();
+      val.setStudentFirstName(val.getStudentFirstName() + " " + val.getStudentLastName());
+      val.setStudentLastName("");
+      val.setAvgScore(scoreTemp / totalExam);
+      val.setNotAssignment(totalExam - val.getTotalAssignment());
+      val.setTotalUjian(totalExam);
+    });
     return listResult;
   }
 

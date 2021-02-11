@@ -8,6 +8,7 @@ import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
+import com.lawencon.elearning.dto.course.DashboardCourseResponseDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
@@ -54,4 +55,5 @@ public interface CourseService {
 
   Integer getRegisterStudent() throws Exception;
 
+  DashboardCourseResponseDTO getCourseForDashboard(String courseId) throws Exception;
 }

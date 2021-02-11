@@ -37,4 +37,6 @@ public interface ModuleDao {
 
   List<FileResponseDto> getLessonByIdModule(String idModule) throws Exception;
 
+  List<Module> getModuleList(String courseId) throws Exception;
+
 }

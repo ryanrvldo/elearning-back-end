@@ -14,7 +14,6 @@ import com.lawencon.util.Callback;
 
 public interface TeacherDao {
 
-
   List<Teacher> getAllTeachers() throws Exception;
 
   List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception;
@@ -46,5 +45,7 @@ public interface TeacherDao {
   DashboardTeacherResponseDto countTotalTeachers() throws Exception;
 
   Integer countTeachersHaveExperience() throws Exception;
+
+  Integer getTotalExamByModuleId(String moduleId) throws Exception;
 
 }

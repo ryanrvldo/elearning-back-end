@@ -16,6 +16,7 @@ import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModulRequestDTO;
+import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
 import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
@@ -321,6 +322,29 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       rollback();
       throw e;
     }
+  }
+
+  @Override
+  public List<ModuleListReponseDTO> getModuleList(String idCourse) throws Exception {
+    validationUtil.validateUUID(idCourse);
+    Optional.ofNullable(courseService.getCourseById(idCourse))
+        .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
+    List<Module> listResult = moduleDao.getModuleList(idCourse);
+    if (listResult.isEmpty()) {
+      throw new DataIsNotExistsException("There is no module yet");
+    }
+    List<ModuleListReponseDTO> listModuleDTO = new ArrayList<>();
+    for (int i = 0; i < listResult.size(); i++) {
+      ModuleListReponseDTO moduleDTO = new ModuleListReponseDTO();
+      moduleDTO.setId(listResult.get(i).getId());
+      moduleDTO.setCode(listResult.get(i).getCode());
+      moduleDTO.setTitle(listResult.get(i).getTitle());
+      moduleDTO.setDescription(listResult.get(i).getDescription());
+      moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
+
+      listModuleDTO.add(moduleDTO);
+    }
+    return listModuleDTO;
   }
 
 }
