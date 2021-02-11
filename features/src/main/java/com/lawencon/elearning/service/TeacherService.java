@@ -2,6 +2,7 @@ package com.lawencon.elearning.service;
 
 import java.util.List;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.admin.DashboardTeacherResponseDto;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
@@ -39,5 +40,9 @@ public interface TeacherService {
   List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception;
 
   List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId) throws Exception;
+
+  DashboardTeacherResponseDto getDashboardTeacher() throws Exception;
+
+
 
 }

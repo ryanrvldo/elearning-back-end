@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.admin.DashboardTeacherResponseDto;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.teacher.DashboardTeacherDTO;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
@@ -18,6 +19,7 @@ import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
 import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
 import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.model.Role;
@@ -272,6 +274,17 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       throw new DataIsNotExistsException("Data empty");
     }
     return listResult;
+  }
+
+  @Override
+  public DashboardTeacherResponseDto getDashboardTeacher() throws Exception {
+    Integer experienceTeachers = teacherDao.countTeachersHaveExperience();
+    DashboardTeacherResponseDto responseResult =
+        Optional.ofNullable(teacherDao.countTotalTeachers())
+            .orElseThrow(() -> new IllegalRequestException("Failed get count data teachers"));
+    responseResult.setExperienced(experienceTeachers);
+
+    return responseResult;
   }
 
 }

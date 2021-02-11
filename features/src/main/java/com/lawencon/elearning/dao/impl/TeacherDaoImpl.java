@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
+import com.lawencon.elearning.dto.admin.DashboardTeacherResponseDto;
 import com.lawencon.elearning.dto.teacher.TeacherForAdminDTO;
 import com.lawencon.elearning.dto.teacher.TeacherProfileDTO;
 import com.lawencon.elearning.dto.teacher.TeacherReportResponseDTO;
@@ -254,5 +255,41 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         .setParameter(2, updatedBy).getSingleResult();
     return bigInteger.intValue();
   }
+
+  @Override
+  public Integer countTeachersHaveExperience() throws Exception {
+    String query =
+        buildQueryOf(
+            "SELECT count(tmt.id) FROM tb_m_teachers tmt ",
+            "INNER JOIN tb_m_experiences tme ON tmt.id = tme.id_teacher")
+            .toString();
+    return ((BigInteger) createNativeQuery(query).getSingleResult()).intValue();
+  }
+
+  @Override
+  public DashboardTeacherResponseDto countTotalTeachers() throws Exception {
+    String query =
+        buildQueryOf("SELECT COUNT(id) AS all_teachers, ",
+            "SUM(CASE WHEN is_active = TRUE THEN 1 ELSE 0 END) AS ACTIVE, ",
+            "SUM(CASE WHEN is_active = FALSE THEN 1 ELSE 0 END) AS INACTIVE, ",
+            "SUM(CASE WHEN gender = 'MALE' THEN 1 ELSE 0 END) AS MALE, ",
+            "SUM(CASE WHEN gender = 'FEMALE' THEN 1 ELSE 0 END) AS FEMALE FROM tb_m_teachers")
+            .toString();
+    List<DashboardTeacherResponseDto> listDto = new ArrayList<>();
+    List<?> listObj = createNativeQuery(query).getResultList();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      DashboardTeacherResponseDto countDto = new DashboardTeacherResponseDto();
+      countDto.setTotal(((BigInteger) objArr[0]).intValue());
+      countDto.setActive(((BigInteger) objArr[1]).intValue());
+      countDto.setInactive(((BigInteger) objArr[2]).intValue());
+      countDto.setMale(((BigInteger) objArr[3]).intValue());
+      countDto.setFemale(((BigInteger) objArr[4]).intValue());
+      listDto.add(countDto);
+    });
+    return listDto.size() > 0 ? listDto.get(0) : null;
+  }
+
+
 
 }
