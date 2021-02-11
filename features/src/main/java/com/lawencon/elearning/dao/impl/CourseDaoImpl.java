@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
@@ -258,34 +259,26 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public Integer countAvailableCourse() throws Exception {
-    String sql = "SELECT count(id) FROM tb_m_courses WHERE period_start > current_timestamp";
-    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
+  public DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception {
+    String sql = buildQueryOf("SELECT COUNT(id) AS all_course, ",
+        "SUM(CASE WHEN is_active = TRUE THEN 1 ELSE 0 END) AS course_active, ",
+        "SUM(CASE WHEN is_active = FALSE THEN 1 ELSE 0 END) AS course_inactive, ",
+        "SUM(CASE WHEN period_end < current_timestamp THEN 1 ELSE 0 END) AS course_expired ,",
+        "SUM(CASE WHEN period_start > current_timestamp THEN 1 ELSE 0 END) AS course_available ",
+        "FROM tb_m_courses");
+    List<?> objList = createNativeQuery(sql).getResultList();
+    DashboardCourseResponseDto dashboardRespon = new DashboardCourseResponseDto();
+    objList.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      dashboardRespon.setTotal(((BigInteger) objArr[0]).intValue());
+      dashboardRespon.setActive(((BigInteger) objArr[1]).intValue());
+      dashboardRespon.setInactive(((BigInteger) objArr[2]).intValue());
+      dashboardRespon.setExpired(((BigInteger) objArr[3]).intValue());
+      dashboardRespon.setAvailable(((BigInteger) objArr[4]).intValue());
+    });
+    return dashboardRespon;
   }
 
-  @Override
-  public Integer countExpiredCourse() throws Exception {
-    String sql = "SELECT count(id) FROM tb_m_courses WHERE period_end < current_timestamp";
-    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
-  }
-
-  @Override
-  public Integer countActiveCourse() throws Exception {
-    String sql = "SELECT count(id) FROM tb_m_courses WHERE is_active = true";
-    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
-  }
-
-  @Override
-  public Integer countInActiveCourse() throws Exception {
-    String sql = "SELECT count(id) FROM tb_m_courses WHERE is_active = false";
-    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
-  }
-
-  @Override
-  public Integer countTotalCourse() throws Exception {
-    String sql = "SELECT count(id) FROM tb_m_courses";
-    return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
-  }
 
   /**
    * @author Rian Rivaldo
@@ -344,5 +337,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     });
     return listResult;
   }
+
+
 
 }

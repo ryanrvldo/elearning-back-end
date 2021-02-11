@@ -19,7 +19,6 @@ import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
@@ -88,7 +87,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void updateIsActive(String id, String userId) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     begin();
     dtlExamDao.updateIsActive(id, userId);
     commit();
@@ -109,7 +108,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Override
   public void deleteDetailExam(String id) throws Exception {
-    validateNullId(id, "id");
+    validationUtil.validateUUID(id);
     begin();
     dtlExamDao.deleteDetailExam(id);
     commit();
@@ -153,7 +152,6 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     newRequestDto.setUserId(studentId);
     String content = objMapper.writeValueAsString(newRequestDto);
 
-
     validationUtil.validateUUID(examId);
     validationUtil.validateUUID(studentId);
 
@@ -189,12 +187,6 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
       throw e;
     }
 
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
   @Override

@@ -2,6 +2,7 @@ package com.lawencon.elearning.dao;
 
 import java.util.List;
 import java.util.Map;
+import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
 
@@ -39,13 +40,5 @@ public interface CourseDao {
 
   Integer checkDataRegisterCourse(String courseId, String studentId) throws Exception;
 
-  Integer countAvailableCourse() throws Exception;
-
-  Integer countExpiredCourse() throws Exception;
-
-  Integer countActiveCourse() throws Exception;
-
-  Integer countInActiveCourse() throws Exception;
-
-  Integer countTotalCourse() throws Exception;
+  DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception;
 }

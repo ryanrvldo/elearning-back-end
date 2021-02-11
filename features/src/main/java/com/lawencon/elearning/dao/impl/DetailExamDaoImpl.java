@@ -214,6 +214,4 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
     return listResult;
   }
 
-
-
 }

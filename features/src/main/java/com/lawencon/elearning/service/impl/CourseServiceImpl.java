@@ -27,12 +27,15 @@ import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.TeacherService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -58,6 +61,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private TeacherService teacherService;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public List<CourseResponseDTO> getAllCourse() throws Exception {
@@ -99,6 +105,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public void updateCourse(CourseUpdateRequestDTO courseDTO) throws Exception {
     validateUtil.validate(courseDTO);
+    User user = userService.getById(courseDTO.getUpdateBy());
+    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
+      throw new IllegalAccessException("only admin can update data !");
+    }
     Course course = new Course();
     course.setId(courseDTO.getId());
     course.setCapacity(courseDTO.getCapacity());
@@ -133,6 +143,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public void deleteCourse(CourseDeleteRequestDTO courseDTO) throws Exception {
+    validateUtil.validate(courseDTO);
     try {
       begin();
       courseDao.deleteCourse(courseDTO.getId());
@@ -173,6 +184,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public List<CourseResponseDTO> getCourseByStudentId(String id) throws Exception {
+    validateUtil.validateUUID(id);
+    studentService.getStudentById(id);
     List<Course> listCourse = courseDao.getCourseByStudentId(id);
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
@@ -261,7 +274,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public DetailCourseResponseDTO getDetailCourse(String courseId, String studentId)
       throws Exception {
-    validateNullId(courseId, "id");
+    validateUtil.validateUUID(courseId);
     DetailCourseResponseDTO detailDTO = new DetailCourseResponseDTO();
     setData(courseId, detailDTO, studentId);
     return detailDTO;
@@ -269,7 +282,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public List<StudentByCourseResponseDTO> getStudentByCourseId(String id) throws Exception {
-    validateNullId(id, "id");
+    validateUtil.validateUUID(id);
     Course course = courseDao.getCourseById(id);
     if (course == null) {
       throw new DataIsNotExistsException("id", id);
@@ -284,7 +297,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
-    validateNullId(id, "id");
+    validateUtil.validateUUID(id);
     Map<Course, Integer[]> listCourse = courseDao.getTeacherCourse(id);
     if (listCourse.isEmpty()) {
       throw new DataIsNotExistsException("Data is empty");
@@ -294,7 +307,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public Course getCourseById(String id) throws Exception {
-    validateNullId(id, "id");
+    validateUtil.validateUUID(id);
     return courseDao.getCourseById(id);
   }
 
@@ -322,12 +335,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     List<ModuleResponseDTO> listModule = new ArrayList<>();
     listModule = moduleService.getModuleListByIdCourse(courseId, studentId);
     detailDTO.setModules(listModule);
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
   private List<CourseResponseDTO> getAndSetupCourseResponse(List<Course> courseList,
@@ -370,17 +377,16 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     return responseList;
   }
-
   @Override
   public DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception {
-    DashboardCourseResponseDto dashboardCourse = new DashboardCourseResponseDto();
+    DashboardCourseResponseDto dashboardCourse = courseDao.dashboardCourseByAdmin();
+    System.out.println(dashboardCourse.getTotal());
+    System.out.println(dashboardCourse.getAvailable());
+    System.out.println(dashboardCourse.getExpired());
+    System.out.println(dashboardCourse.getActive());
+    System.out.println(dashboardCourse.getInactive());
     dashboardCourse.setRegisteredStudent(studentService.countTotalStudent());
     dashboardCourse.setRegisteredTeacher(teacherService.countTotalTeacher());
-    dashboardCourse.setActive(courseDao.countActiveCourse());
-    dashboardCourse.setExpired(courseDao.countExpiredCourse());
-    dashboardCourse.setAvailable(courseDao.countAvailableCourse());
-    dashboardCourse.setInactive(courseDao.countInActiveCourse());
-    dashboardCourse.setTotal(courseDao.countTotalCourse());
     return dashboardCourse;
   }
 

@@ -12,7 +12,10 @@ import com.lawencon.elearning.dto.course.type.CourseTypeResponseDTO;
 import com.lawencon.elearning.dto.course.type.CourseTypeUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.CourseType;
+import com.lawencon.elearning.model.Roles;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseTypeService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -26,6 +29,9 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
 
   @Autowired
   private ValidationUtil validateUtil;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public List<CourseTypeResponseDTO> getListCourseType() throws Exception {
@@ -61,6 +67,10 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   @Override
   public void updateCourseType(CourseTypeUpdateRequestDTO courseTypeDTO) throws Exception {
     validateUtil.validate(courseTypeDTO);
+    User user = userService.getById(courseTypeDTO.getUpdatedBy());
+    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
+      throw new IllegalAccessException("only admin can update data !");
+    }
     CourseType courseType = new CourseType();
     courseType.setId(courseTypeDTO.getId());
     courseType.setUpdatedBy(courseTypeDTO.getUpdatedBy());
@@ -78,6 +88,10 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   @Override
   public void deleteCourseType(String id) throws Exception {
     validateUtil.validateUUID(id);
+    CourseType courseType = courseTypeDao.getTypeById(id);
+    if (courseType == null) {
+      throw new DataIsNotExistsException("course type id", id);
+    }
     try {
       begin();
       courseTypeDao.deleteCourseType(id);

@@ -11,9 +11,11 @@ import com.lawencon.elearning.dto.course.category.CourseCategoryCreateRequestDTO
 import com.lawencon.elearning.dto.course.category.CourseCategoryResponseDTO;
 import com.lawencon.elearning.dto.course.category.CourseCategoryUpdateRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.CourseCategory;
+import com.lawencon.elearning.model.Roles;
+import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseCategoryService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -27,6 +29,9 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
 
   @Autowired
   private ValidationUtil validateUtil;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public List<CourseCategoryResponseDTO> getListCourseCategory() throws Exception {
@@ -63,6 +68,10 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   public void updateCourseCategory(CourseCategoryUpdateRequestDTO courseCategoryDTO)
       throws Exception {
     validateUtil.validate(courseCategoryDTO);
+    User user = userService.getById(courseCategoryDTO.getUpdatedBy());
+    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
+      throw new IllegalAccessException("only admin can update data !");
+    }
     CourseCategory courseCategory = new CourseCategory();
     courseCategory.setId(courseCategoryDTO.getId());
     courseCategory.setCode(courseCategoryDTO.getCode());
@@ -79,7 +88,11 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   @Override
   public void deleteCourseCategory(String id)
       throws Exception {
-    validateNullId(id, "id");
+    validateUtil.validateUUID(id);
+    CourseCategory courseCategory = courseCategoryDao.getCategoryById(id);
+    if (courseCategory == null) {
+      throw new DataIsNotExistsException("course category id", id);
+    }
     try {
       begin();
       courseCategoryDao.deleteCourseCategory(id);
@@ -105,12 +118,6 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
       throw e;
     }
 
-  }
-
-  private void validateNullId(String id, String msg) throws Exception {
-    if (id == null || id.trim().isEmpty()) {
-      throw new IllegalRequestException(msg, id);
-    }
   }
 
 }
