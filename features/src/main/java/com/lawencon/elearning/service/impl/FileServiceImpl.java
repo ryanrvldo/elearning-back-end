@@ -35,6 +35,9 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
   @Autowired
   private ValidationUtil validationUtil;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @Override
   public FileResponseDto createFile(MultipartFile file, String content) throws Exception {
     return uploadFile(file, content);
@@ -73,7 +76,6 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     if (file == null) {
       throw new IllegalRequestException("File is not inputted!");
     }
-    ObjectMapper objectMapper = new ObjectMapper();
     FileUpdateRequestDto requestContent;
     try {
       requestContent = objectMapper.readValue(content, FileUpdateRequestDto.class);
@@ -111,7 +113,6 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
       throw new IllegalRequestException("file name", multipartFileName);
     }
 
-    ObjectMapper objectMapper = new ObjectMapper();
     FileCreateRequestDto fileRequestDto;
     try {
       fileRequestDto = objectMapper.readValue(content, FileCreateRequestDto.class);

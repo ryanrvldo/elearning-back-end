@@ -10,8 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.EncoderUtils;
+import com.lawencon.elearning.util.SecurityUtils;
 
 /**
  * @author Rian Rivaldo
@@ -26,7 +27,10 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
   private UserService userService;
 
   @Autowired
-  private EncoderUtils encoderUtils;
+  private SecurityUtils encoderUtils;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -38,8 +42,9 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .anyRequest()
         .authenticated();
 
-    http.addFilter(new AuthenticationFilter(super.authenticationManager(), userService));
-    http.addFilter(new AuthorizationFilter(super.authenticationManager()));
+    http.addFilter(
+        new AuthenticationFilter(super.authenticationManager(), userService, objectMapper));
+    http.addFilter(new AuthorizationFilter(super.authenticationManager(), objectMapper));
   }
 
   @Override

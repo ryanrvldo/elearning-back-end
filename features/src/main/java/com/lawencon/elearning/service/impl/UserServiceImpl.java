@@ -1,6 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import javax.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.EncoderUtils;
+import com.lawencon.elearning.util.SecurityUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -23,7 +24,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   private UserDao userDao;
 
   @Autowired
-  private EncoderUtils encoderUtils;
+  private SecurityUtils encoderUtils;
 
   @Autowired
   private ValidationUtil validationUtil;
@@ -60,13 +61,8 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
   @Override
   public void updateUser(User user) throws Exception {
-    User prevUser = getById(user.getId());
-    user.setEmail(prevUser.getEmail());
-    user.setPassword(prevUser.getPassword());
-    user.setRole(prevUser.getRole());
-    user.setUserPhoto(prevUser.getUserPhoto());
-
-    setupUpdatedValue(user, () -> prevUser);
+    Optional.ofNullable(getById(user.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("user id", user.getId()));
     userDao.updateUser(user);
   }
 

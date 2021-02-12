@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
  * @author Rian Rivaldo
  */
 @Component
-public class EncoderUtils {
+public class SecurityUtils {
 
   public BCryptPasswordEncoder getEncoder() {
     return new BCryptPasswordEncoder();

@@ -122,29 +122,31 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       }
     }
 
+    Student newStudent = new Student();
+    newStudent.setCode(prevStudent.getCode());
+    newStudent.setCourses(prevStudent.getCourses());
+    newStudent.setIsActive(prevStudent.getIsActive());
+    newStudent.setUser(prevStudent.getUser());
+    newStudent.setPhone(request.getPhone());
+    newStudent.setGender(request.getGender());
+    newStudent.setUpdatedBy(request.getUpdatedBy());
+
+    User user = new User();
+    user.setId(prevStudent.getUser().getId());
+    user.setFirstName(request.getFirstName());
+    user.setLastName(request.getLastName());
+    user.setUsername(request.getUsername());
+    user.setUpdatedBy(request.getUpdatedBy());
+
     try {
       begin();
-      Student newStudent = new Student();
-      newStudent.setCode(prevStudent.getCode());
-      newStudent.setCourses(prevStudent.getCourses());
-      newStudent.setIsActive(prevStudent.getIsActive());
-      newStudent.setUser(prevStudent.getUser());
-      newStudent.setPhone(request.getPhone());
-      newStudent.setGender(request.getGender());
-      newStudent.setUpdatedBy(request.getUpdatedBy());
-
-      User user = new User();
-      user.setId(prevStudent.getUser().getId());
-      user.setFirstName(request.getFirstName());
-      user.setLastName(request.getLastName());
-      user.setUsername(request.getUsername());
       userService.updateUser(user);
       setupUpdatedValue(newStudent, () -> prevStudent);
       studentDao.updateStudentProfile(newStudent, null);
       commit();
     } catch (Exception e) {
       rollback();
-      throw new InternalServerErrorException(e.getCause());
+      throw new InternalServerErrorException(e.fillInStackTrace());
     }
   }
 

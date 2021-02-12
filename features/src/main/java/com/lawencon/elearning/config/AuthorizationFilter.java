@@ -1,9 +1,6 @@
 package com.lawencon.elearning.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import static com.lawencon.elearning.util.WebResponseUtils.createFailedAuthResponse;
 import java.io.IOException;
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
@@ -17,14 +14,25 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * @author Rian Rivaldo
  */
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-  public AuthorizationFilter(AuthenticationManager authManager) {
+  private final String KEY =
+      "VPnEQ4KjAfPk8LHxxvyoQF52RgWagpgLPTUaZXa26caoFGS9ddnpwdgVwWKXiyI1vM9KRzNai-2L7GLym_SMoUFI65kPeiHHSfwF-y28vNUBlXia-300JoWaqdm644XwsWui05leT6bRFjXyqWKxLzKsy36Zm7NPyS2l1pRqfBEEOZgeuI1LO2uim9RYuYxTnweAQndFx0WEX-Pe3pHlxUNxnn0lpOi_fvF7KCVto43cAV0-WCPBe-eNi7SEPs8ZNkgu0DKFXcCeeAqVnNTNIOyYKNNmCnr7qzuvaBhBkeqHVevZU7HJma347fFvdM0SVeAEX8HxgTsBPtpEUjqB";
+
+  private ObjectMapper objectMapper;
+
+  public AuthorizationFilter(AuthenticationManager authManager, ObjectMapper objectMapper) {
     super(authManager);
+    this.objectMapper = objectMapper;
   }
 
   @Override
@@ -32,13 +40,15 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
       FilterChain chain)
       throws IOException, ServletException {
     String header = request.getHeader("Authorization");
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     if (header == null || header.isEmpty() || !header.startsWith("Bearer")) {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
+      response.getWriter().write(objectMapper.writeValueAsString(
+          createFailedAuthResponse("Please put your token key in your header request.")));
       return;
     }
 
-    String secretKey = "JDJhJDEwJFNQSXhydGhIeS56RmdiaWlJRmVlWnVvSHVqai50WVJqV1RHWGhnUzI3eS5xSjdLa1p6enNp";
-    SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    SecretKey key = Keys.hmacShaKeyFor(KEY.getBytes());
 
     Claims claims;
     try {
@@ -49,17 +59,14 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
           .parseClaimsJws(bodyToken)
           .getBody();
     } catch (Exception e) {
-      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
       if (e instanceof ExpiredJwtException) {
-        response.getWriter()
-            .append(String.format("{\"code\":%d,", HttpStatus.UNAUTHORIZED.value()))
-            .append("\"result\":\"Unauthorized request, your token is expired. Please get new token.\"}");
+        response.getWriter().write(objectMapper.writeValueAsString(
+            createFailedAuthResponse("Your token is expired. Please get new token.")));
         return;
       }
-      response.getWriter()
-          .append(String.format("{\"code\":%d,", HttpStatus.UNAUTHORIZED.value()))
-          .append("\"result\":\"Unauthorized request.\"}");
+      response.getWriter().write(
+          objectMapper.writeValueAsString(createFailedAuthResponse("Unauthorized request.")));
       return;
     }
 

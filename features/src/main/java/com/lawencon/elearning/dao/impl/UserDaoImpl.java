@@ -14,7 +14,7 @@ import com.lawencon.elearning.model.User;
 public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   private final String singleUserQuery = buildQueryOf(
-      "SELECT u.id, u.email, u.username, u.password, u.isActive, r.id AS roleId, u.role.code, u.role.name, u.userPhoto.id ",
+      "SELECT u.id, u.email, u.username, u.password, u.isActive, u.version, r.id AS roleId, u.role.code, u.role.name, u.userPhoto.id, u.userPhoto.version ",
       "FROM User AS u INNER JOIN u.role AS r ",
       "LEFT JOIN u.userPhoto ");
 
@@ -35,7 +35,12 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   @Override
   public void updateUser(User user) throws Exception {
-    save(user, null, null, false, false);
+    updateNativeSQL("UPDATE tb_m_users SET username = ?1, first_name = ?2, last_name = ?3",
+        user.getId(),
+        user.getUpdatedBy(),
+        user.getUsername(),
+        user.getFirstName(),
+        user.getLastName());
   }
 
   @Override
@@ -75,15 +80,17 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     user.setUsername((String) objArr[2]);
     user.setPassword((String) objArr[3]);
     user.setIsActive((Boolean) objArr[4]);
+    user.setVersion((Long) objArr[5]);
 
     Role role = new Role();
-    role.setId((String) objArr[5]);
-    role.setCode((String) objArr[6]);
-    role.setName((String) objArr[7]);
+    role.setId((String) objArr[6]);
+    role.setCode((String) objArr[7]);
+    role.setName((String) objArr[8]);
     user.setRole(role);
 
     File file = new File();
-    file.setId((String) objArr[8]);
+    file.setId((String) objArr[9]);
+    file.setVersion((Long) objArr[10]);
     user.setUserPhoto(file);
     return user;
   }

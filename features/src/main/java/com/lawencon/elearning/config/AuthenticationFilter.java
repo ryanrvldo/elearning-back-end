@@ -1,10 +1,6 @@
 package com.lawencon.elearning.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import static com.lawencon.elearning.util.WebResponseUtils.createFailedAuthResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,19 +17,32 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawencon.elearning.dto.TokenResponseDto;
+import com.lawencon.elearning.dto.role.RoleResponseDto;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.WebResponseUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * @author Rian Rivaldo
  */
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+  private final String KEY =
+      "VPnEQ4KjAfPk8LHxxvyoQF52RgWagpgLPTUaZXa26caoFGS9ddnpwdgVwWKXiyI1vM9KRzNai-2L7GLym_SMoUFI65kPeiHHSfwF-y28vNUBlXia-300JoWaqdm644XwsWui05leT6bRFjXyqWKxLzKsy36Zm7NPyS2l1pRqfBEEOZgeuI1LO2uim9RYuYxTnweAQndFx0WEX-Pe3pHlxUNxnn0lpOi_fvF7KCVto43cAV0-WCPBe-eNi7SEPs8ZNkgu0DKFXcCeeAqVnNTNIOyYKNNmCnr7qzuvaBhBkeqHVevZU7HJma347fFvdM0SVeAEX8HxgTsBPtpEUjqB";
+
   private final AuthenticationManager authenticationManager;
   private final UserService userService;
+  private final ObjectMapper objectMapper;
 
-  public AuthenticationFilter(AuthenticationManager authenticationManager,
-      UserService userService) {
+  public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService,
+      ObjectMapper objectMapper) {
     this.authenticationManager = authenticationManager;
     this.userService = userService;
+    this.objectMapper = objectMapper;
     super.setFilterProcessesUrl("/authentication");
   }
 
@@ -42,7 +51,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       HttpServletResponse response) throws AuthenticationException {
     User user = new User();
     try {
-      user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+      user = objectMapper.readValue(request.getInputStream(), User.class);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -53,38 +62,37 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   @Override
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
       FilterChain chain, Authentication authResult) throws IOException, ServletException {
-    String secretKey =
-        "JDJhJDEwJFNQSXhydGhIeS56RmdiaWlJRmVlWnVvSHVqai50WVJqV1RHWGhnUzI3eS5xSjdLa1p6enNp";
-    SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    SecretKey key = Keys.hmacShaKeyFor(KEY.getBytes());
     String token = Jwts.builder()
         .signWith(key)
         .setSubject(authResult.getName())
         .setExpiration(
-            Date.from(LocalDateTime.now().plusDays(1).atZone(ZoneId.systemDefault()).toInstant()))
+            Date.from(LocalDateTime.now()
+                .plusDays(1)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()))
         .compact();
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     try {
       User user = userService.getByUsername(authResult.getName());
       String userRoleId = userService.getUserRoleId(user.getId());
-      response.getWriter()
-          .append(String.format("{\"code\":%d,", HttpStatus.OK.value()))
-          .append("\"result\":")
-          .append(String.format("{\"token\":\"%s\",", token))
-          .append(String.format("\"userId\":\"%s\",", user.getId()))
-          .append(String.format("\"userRoleId\":\"%s\",", userRoleId))
-          .append(String.format("\"username\":\"%s\",", user.getUsername()))
-          .append(String.format("\"photoId\":\"%s\",", user.getUserPhoto().getId()))
-          .append("\"role\":")
-          .append(String.format("{\"id\":\"%s\",", user.getRole().getId()))
-          .append(String.format("\"code\":\"%s\",", user.getRole().getCode()))
-          .append(String.format("\"name\":\"%s\"", user.getRole().getName()))
-          .append("}}}");
+
+      RoleResponseDto roleResponse = new RoleResponseDto();
+      roleResponse.setId(user.getRole().getId());
+      roleResponse.setCode(user.getRole().getCode());
+      roleResponse.setName(user.getRole().getName());
+
+      TokenResponseDto tokenResponse = new TokenResponseDto(token, user.getId(), userRoleId,
+          user.getUsername(), user.getUserPhoto().getId(), roleResponse);
+
+      response.getWriter().write(objectMapper
+          .writeValueAsString(WebResponseUtils.createSuccessAuthResponse(tokenResponse)));
     } catch (Exception e) {
       e.printStackTrace();
       response.getWriter()
-          .append(String.format("{\"code\":%d,", HttpStatus.OK.value()))
-          .append(String.format("\"result\":\"%s\"}", e.getMessage()));
+          .write(objectMapper.writeValueAsString(
+              createFailedAuthResponse(e.getMessage())));
     }
   }
 
@@ -94,8 +102,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       throws IOException, ServletException {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
-    response.getWriter()
-        .append(String.format("{\"code\":%d,", HttpStatus.UNAUTHORIZED.value()))
-        .append("\"result\":\"Invalid user. Please try again.\"}");
+    response.getWriter().write(objectMapper.writeValueAsString(
+        createFailedAuthResponse("Invalid user. Please try again.")));
   }
 }

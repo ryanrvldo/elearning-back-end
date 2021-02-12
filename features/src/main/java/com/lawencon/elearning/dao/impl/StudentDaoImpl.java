@@ -123,7 +123,8 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
         "SELECT s.id, s.code, s.phone, s.gender, s.createdAt, s.isActive, u.username, u.firstName, u.lastName, u.email, f.id ",
         "FROM Student AS s ",
         "INNER JOIN User AS u ON u.id = s.user.id ",
-        "LEFT JOIN File AS f ON f.id = u.userPhoto.id ");
+        "LEFT JOIN File AS f ON f.id = u.userPhoto.id ",
+        "WHERE s.isActive = TRUE ORDER BY s.createdAt");
     List<Student> studentList = new ArrayList<>();
     List<Object[]> objList = createQuery(query, Object[].class).getResultList();
     objList.forEach(objArr -> {
@@ -182,7 +183,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
     String sql = "SELECT COUNT(id) from tb_m_students";
     return ((BigInteger) createNativeQuery(sql).getSingleResult()).intValue();
   }
-  
+
   @Override
   public List<DetailExam> getStudentExamReport(String studentId) throws Exception {
     String sql = buildQueryOf(

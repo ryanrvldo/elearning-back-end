@@ -1,6 +1,5 @@
 package com.lawencon.elearning.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,7 +45,7 @@ public class User extends BaseMaster {
   @JoinColumn(name = "id_role", nullable = false, foreignKey = @ForeignKey(name = "fk_role"))
   private Role role;
 
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_photo", foreignKey = @ForeignKey(name = "fk_photo"))
   private File userPhoto;
 

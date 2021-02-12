@@ -1,6 +1,5 @@
 package com.lawencon.elearning.util;
 
-import com.lawencon.elearning.error.IllegalRequestException;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -8,6 +7,7 @@ import javax.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import com.lawencon.elearning.error.IllegalRequestException;
 
 /**
  * @author Rian Rivaldo
@@ -28,7 +28,7 @@ public class ValidationUtil {
   public void validateUUID(String... uuids) throws IllegalRequestException {
     for (String uuid : uuids) {
       if (uuid == null || uuid.trim().isEmpty() || uuid.length() < 32 || uuid.length() > 36) {
-        throw new IllegalRequestException("Id is not valid UUID.");
+        throw new IllegalRequestException(String.format("Id : %s  is not valid UUID.", uuid));
       }
     }
   }

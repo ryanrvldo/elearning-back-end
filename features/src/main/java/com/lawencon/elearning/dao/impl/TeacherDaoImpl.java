@@ -33,7 +33,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         "u.username, u.firstName, u.lastName, u.email, f.id ",
         "FROM Teacher AS t INNER JOIN t.user AS u ",
         "LEFT JOIN u.userPhoto AS f ",
-        "WHERE t.isActive = true ORDER BY t.createdAt ");
+        "WHERE t.isActive = TRUE ORDER BY t.createdAt");
     List<Object[]> objList = createQuery(sql, Object[].class)
         .getResultList();
     if (objList.isEmpty()) {
@@ -72,7 +72,8 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     String sql = buildQueryOf("SELECT tmt.id , tmt.code , tmu.first_name , tmu.last_name , ",
         "tmt.phone , tmt.gender , tmu.username , tmt.is_active , tmu.email, tmt.title_degree, tmu.id_photo ",
         "FROM tb_m_teachers tmt ",
-        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id");
+        "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id ",
+        "WHERE tmt.is_active = TRUE ORDER BY tmt.created_at");
 
     List<?> listObj = createNativeQuery(sql).getResultList();
 
