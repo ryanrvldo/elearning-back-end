@@ -1,14 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -23,6 +14,15 @@ import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -406,7 +406,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
             "INNER JOIN tb_m_subject_categories AS sc ON sc.id = m.id_subject ",
             "LEFT JOIN tb_r_attendances AS a ON a.id_module = m.id ",
             "LEFT JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
-            "WHERE m.id_course = ?1 AND now() < s.schedule_date AND a.id_student = ?2 ");
+            "WHERE m.id_course = ?1 AND now() > s.schedule_date AND a.id_student = ?2 ");
     return ((BigInteger) createNativeQuery(sql).setParameter(1, courseId).setParameter(2, studentId)
         .getSingleResult()).intValue();
   }

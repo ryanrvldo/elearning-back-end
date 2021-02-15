@@ -1,5 +1,11 @@
 package com.lawencon.elearning.controller;
 
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.dto.module.ModuleRequestDTO;
+import com.lawencon.elearning.dto.module.UpdateModuleDTO;
+import com.lawencon.elearning.service.ModuleService;
+import com.lawencon.elearning.util.WebResponseUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,12 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.file.FileResponseDto;
-import com.lawencon.elearning.dto.module.ModulRequestDTO;
-import com.lawencon.elearning.dto.module.UpdateModuleDTO;
-import com.lawencon.elearning.service.ModuleService;
-import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author : Galih Dika Permana
@@ -39,7 +39,7 @@ public class ModuleController {
   }
 
   @PostMapping
-  public ResponseEntity<?> insertModule(@RequestBody List<ModulRequestDTO> data) throws Exception {
+  public ResponseEntity<?> insertModule(@RequestBody List<ModuleRequestDTO> data) throws Exception {
     moduleService.insertModule(data);
     return WebResponseUtils.createWebResponse("Insert data success", HttpStatus.CREATED);
   }

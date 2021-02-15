@@ -1,14 +1,14 @@
 package com.lawencon.elearning.service;
 
-import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.file.FileResponseDto;
-import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
+import com.lawencon.elearning.dto.module.ModuleRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
 import com.lawencon.elearning.model.Module;
+import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -24,7 +24,7 @@ public interface ModuleService {
   List<ModuleResponseDTO> getModuleListByIdCourse(String idCourse, String idStudent)
       throws Exception;
 
-  void insertModule(List<ModulRequestDTO> data) throws Exception;
+  void insertModule(List<ModuleRequestDTO> data) throws Exception;
 
   void updateModule(UpdateModuleDTO data) throws Exception;
 

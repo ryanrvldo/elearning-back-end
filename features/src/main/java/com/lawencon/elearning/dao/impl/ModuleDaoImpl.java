@@ -1,10 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.file.FileResponseDto;
@@ -16,6 +11,11 @@ import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * 
@@ -87,7 +87,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
       ModuleResponseDTO module = new ModuleResponseDTO();
       module.setId((String) objArr[0]);
       module.setCode((String) objArr[1]);
-      module.setTittle((String) objArr[2]);
+      module.setTitle((String) objArr[2]);
       module.setDescription((String) objArr[3]);
       module.setSubjectName((String) objArr[4]);
       module.setAttendanceId((String) objArr[9]);

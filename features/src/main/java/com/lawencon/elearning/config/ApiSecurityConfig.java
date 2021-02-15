@@ -1,5 +1,8 @@
 package com.lawencon.elearning.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -10,9 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.SecurityUtils;
 
 /**
  * @author Rian Rivaldo
@@ -60,7 +60,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/course/module/**")
         .antMatchers(HttpMethod.GET, "/course/all")
         .antMatchers(HttpMethod.GET, "/teacher/all")
-        .antMatchers(HttpMethod.GET, "/**/report/**");
+        .antMatchers(HttpMethod.GET, "/**/report/**")
+        .antMatchers(HttpMethod.PATCH, "/user/email/**");
   }
 
   @Bean

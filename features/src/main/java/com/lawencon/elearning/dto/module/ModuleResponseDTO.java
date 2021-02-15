@@ -11,7 +11,7 @@ public class ModuleResponseDTO {
 
   private String id;
   private String code;
-  private String tittle;
+  private String title;
   private String description;
   private String subjectName;
   private String attendanceId;

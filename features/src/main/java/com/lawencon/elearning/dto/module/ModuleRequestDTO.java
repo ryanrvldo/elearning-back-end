@@ -1,27 +1,26 @@
 package com.lawencon.elearning.dto.module;
 
+import com.lawencon.elearning.dto.ScheduleRequestDTO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.lawencon.elearning.dto.ScheduleRequestDTO;
 import lombok.Data;
 
 /**
  * @author : Galih Dika Permana
  */
 @Data
-public class ModulRequestDTO {
+public class ModuleRequestDTO {
 
   @NotBlank
-  private String moduleCode;
+  @Size(max = 50)
+  private String code;
 
   @NotBlank
-  @Size(min = 32, max = 36)
-  private String moduleCreatedBy;
+  private String title;
+
   @NotBlank
-  private String moduleTittle;
-  @NotBlank
-  private String moduleDescription;
+  private String description;
 
   @NotBlank
   @Size(min = 32, max = 36)
@@ -32,5 +31,10 @@ public class ModulRequestDTO {
   private String subjectId;
 
   @NotNull
-  private ScheduleRequestDTO scheduleRequestDTO;
+  private ScheduleRequestDTO schedule;
+
+  @NotBlank
+  @Size(min = 32, max = 36)
+  private String createdBy;
+
 }

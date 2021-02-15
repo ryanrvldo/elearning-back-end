@@ -1,22 +1,13 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.file.FileCreateRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
-import com.lawencon.elearning.dto.module.ModulRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
+import com.lawencon.elearning.dto.module.ModuleRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
 import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
@@ -37,6 +28,15 @@ import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -90,7 +90,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         ModuleResponseDTO moduleDTO = new ModuleResponseDTO();
         moduleDTO.setId(listResult.get(i).getId());
         moduleDTO.setCode(listResult.get(i).getCode());
-        moduleDTO.setTittle(listResult.get(i).getTitle());
+        moduleDTO.setTitle(listResult.get(i).getTitle());
         moduleDTO.setDescription(listResult.get(i).getDescription());
         moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
 
@@ -126,24 +126,24 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public void insertModule(List<ModulRequestDTO> data) throws Exception {
-    for (ModulRequestDTO moduleRequestDTO : data) {
+  public void insertModule(List<ModuleRequestDTO> data) throws Exception {
+    for (ModuleRequestDTO moduleRequestDTO : data) {
       validationUtil.validate(moduleRequestDTO);
-      validationUtil.validate(moduleRequestDTO.getScheduleRequestDTO());
+      validationUtil.validate(moduleRequestDTO.getSchedule());
       Course courseDb = Optional
           .ofNullable(courseService.getCourseById(moduleRequestDTO.getCourseId())).orElseThrow(
               () -> new DataIsNotExistsException("course id", moduleRequestDTO.getCourseId()));
-      if (moduleRequestDTO.getScheduleRequestDTO().getScheduleDate()
+      if (moduleRequestDTO.getSchedule().getDate()
           .isBefore(courseDb.getPeriodStart().toLocalDate())
-          || moduleRequestDTO.getScheduleRequestDTO().getScheduleDate()
-              .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+          || moduleRequestDTO.getSchedule().getDate()
+          .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
         throw new IllegalRequestException("You can't insert module outside course period");
       }
       Schedule schedule = new Schedule();
-      schedule.setCreatedBy(moduleRequestDTO.getScheduleRequestDTO().getScheduleCreatedBy());
-      schedule.setDate(moduleRequestDTO.getScheduleRequestDTO().getScheduleDate());
-      schedule.setEndTime(moduleRequestDTO.getScheduleRequestDTO().getScheduleEnd());
-      schedule.setStartTime(moduleRequestDTO.getScheduleRequestDTO().getScheduleStart());
+      schedule.setCreatedBy(moduleRequestDTO.getSchedule().getCreatedBy());
+      schedule.setDate(moduleRequestDTO.getSchedule().getDate());
+      schedule.setEndTime(moduleRequestDTO.getSchedule().getEndTime());
+      schedule.setStartTime(moduleRequestDTO.getSchedule().getStartTime());
 
       Teacher teacher = new Teacher();
       teacher.setId(courseDb.getTeacher().getId());
@@ -151,11 +151,11 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
       Module module = new Module();
       module.setSchedule(schedule);
-      module.setCode(moduleRequestDTO.getModuleCode());
+      module.setCode(moduleRequestDTO.getCode());
       module.setCreatedAt(LocalDateTime.now());
-      module.setCreatedBy(moduleRequestDTO.getModuleCreatedBy());
-      module.setDescription(moduleRequestDTO.getModuleDescription());
-      module.setTitle(moduleRequestDTO.getModuleTittle());
+      module.setCreatedBy(moduleRequestDTO.getCreatedBy());
+      module.setDescription(moduleRequestDTO.getDescription());
+      module.setTitle(moduleRequestDTO.getTitle());
 
       Course course = new Course();
       course.setId(moduleRequestDTO.getCourseId());
@@ -181,7 +181,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   @Override
   public void updateModule(UpdateModuleDTO data) throws Exception {
     validationUtil.validate(data);
-    validationUtil.validate(data.getScheduleRequestDTO());
+    validationUtil.validate(data.getSchedule());
     Module moduleDb = Optional.ofNullable(moduleDao.getModuleById(data.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("id module", data.getId()));
     Course courseDb = Optional.ofNullable(courseService.getCourseById(data.getCourseId()))
@@ -189,10 +189,10 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     User userDb = Optional.ofNullable(userService.getById(data.getUpdatedBy()))
         .orElseThrow(() -> new DataIsNotExistsException("id user", data.getUpdatedBy()));
 
-    if (data.getScheduleRequestDTO().getScheduleDate()
+    if (data.getSchedule().getDate()
         .isBefore(courseDb.getPeriodStart().toLocalDate())
-        || data.getScheduleRequestDTO().getScheduleDate()
-            .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+        || data.getSchedule().getDate()
+        .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
       throw new IllegalRequestException("You can't insert module outside course period");
     }
 
@@ -202,9 +202,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
     Schedule schedule = Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
         .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
-    schedule.setDate(data.getScheduleRequestDTO().getScheduleDate());
-    schedule.setEndTime(data.getScheduleRequestDTO().getScheduleEnd());
-    schedule.setStartTime(data.getScheduleRequestDTO().getScheduleStart());
+    schedule.setDate(data.getSchedule().getDate());
+    schedule.setEndTime(data.getSchedule().getEndTime());
+    schedule.setStartTime(data.getSchedule().getStartTime());
 
     Teacher teacher = new Teacher();
     teacher.setId(courseDb.getTeacher().getId());
@@ -212,9 +212,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
     Module module = new Module();
     module.setSchedule(schedule);
-    module.setCode(data.getModuleCode());
-    module.setTitle(data.getModuleTittle());
-    module.setDescription(data.getModuleDescription());
+    module.setCode(data.getCode());
+    module.setTitle(data.getTitle());
+    module.setDescription(data.getDescription());
     module.setId(data.getId());
     module.setUpdatedBy(data.getUpdatedBy());
 

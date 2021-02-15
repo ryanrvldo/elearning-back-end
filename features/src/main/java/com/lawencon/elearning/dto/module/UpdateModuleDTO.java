@@ -6,14 +6,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 
  * @author WILLIAM
- *
  */
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class UpdateModuleDTO extends ModulRequestDTO {
+public class UpdateModuleDTO extends ModuleRequestDTO {
 
   @NotBlank
   @Size(min = 32, max = 36)

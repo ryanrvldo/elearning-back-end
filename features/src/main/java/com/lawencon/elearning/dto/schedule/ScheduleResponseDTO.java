@@ -1,8 +1,8 @@
 package com.lawencon.elearning.dto.schedule;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -16,9 +16,9 @@ public class ScheduleResponseDTO {
   @JsonFormat(pattern = "dd MMM yyyy")
   private LocalDate date;
 
-  @JsonFormat(pattern = "HH:mm:ss")
+  @JsonFormat(pattern = "HH:mm")
   private LocalTime startTime;
 
-  @JsonFormat(pattern = "HH:mm:ss")
+  @JsonFormat(pattern = "HH:mm")
   private LocalTime endTime;
 }
