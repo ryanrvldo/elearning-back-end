@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
+import com.lawencon.elearning.dto.EmailSetupDTO;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
@@ -32,15 +33,18 @@ import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
+import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -69,6 +73,12 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private TeacherService teacherService;
+
+  @Autowired
+  private MailUtils mailUtils;
+
+  @Autowired
+  private GeneralService generalService;
 
   @Override
   public List<CourseResponseDTO> getAllCourse() throws Exception {
@@ -267,15 +277,33 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (count == 0) {
       Integer capacityRegist = courseDao.getCapacityCourse(courseId);
       if (capacityRegist < course.getCapacity()) {
-        begin();
-        courseDao.registerCourse(courseId, studentId);
-        commit();
+        try {
+          begin();
+          courseDao.registerCourse(courseId, studentId);
+
+          String template = generalService.getTemplateHTML(GeneralCode.REGISTER_COURSE.getCode());
+
+          String[] emailTo = {"lawerning.acc@gmail.com"};
+          EmailSetupDTO email = new EmailSetupDTO();
+          email.setTo(emailTo);
+          email.setSubject("Register Course Success!");
+          email.setBody(template);
+          new EmailServiceImpl(mailUtils, email).start();
+          commit();
+
+        } catch (Exception e) {
+          e.printStackTrace();
+          rollback();
+          throw e;
+        }
       } else {
         throw new IllegalRequestException("capacity already full");
       }
     } else {
       throw new DataAlreadyExistException("student id", studentId);
     }
+
+
   }
 
   @Override

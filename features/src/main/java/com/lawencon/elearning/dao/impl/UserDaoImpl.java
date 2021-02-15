@@ -70,6 +70,24 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     super.deleteById(id);
   }
 
+  @Override
+  public String getIdByEmail(String email) throws Exception {
+    String query = buildQueryOf("SELECT id from tb_m_users WHERE email = ?1");
+    Object objResult = createNativeQuery(query).setParameter(1, email).getSingleResult();
+    return (String) objResult;
+  }
+
+  @Override
+  public void updatePasswordUser(String userId, String newPassword, String updatedBy)
+      throws Exception {
+    String query = buildQueryOf("UPDATE tb_m_users SET user_password = ?1 , updated_at = now() , ",
+        "updated_by = ?2, version = (version + 1) WHERE id = ?3").toString();
+
+    createNativeQuery(query).setParameter(1, newPassword).setParameter(2, updatedBy)
+        .setParameter(3, userId).executeUpdate();
+
+  }
+
   private User getAndSetupUser(String query, Object param) {
     Object[] objArr = createQuery(query, Object[].class)
         .setParameter(1, param)
@@ -94,5 +112,7 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     user.setUserPhoto(file);
     return user;
   }
+
+
 
 }

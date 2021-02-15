@@ -21,4 +21,8 @@ public interface UserDao {
 
   void deleteById(String id) throws Exception;
 
+  void updatePasswordUser(String userId, String newPassword, String updatedBy) throws Exception;
+
+  String getIdByEmail(String email) throws Exception;
+
 }

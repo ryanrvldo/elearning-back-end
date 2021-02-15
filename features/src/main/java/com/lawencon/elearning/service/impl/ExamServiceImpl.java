@@ -26,10 +26,12 @@ import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.FileType;
+import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.service.FileService;
+import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -55,6 +57,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Autowired
   private MailUtils mailUtils;
+
+  @Autowired
+  private GeneralService generalService;
 
   @Override
   public void saveExam(MultipartFile multiPartFile, String body) throws Exception {
@@ -115,16 +120,20 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       throw e;
     }
 
+    String[] emailTo = {"lawerning.acc@gmail.com"};
+    setupEmail(emailTo, "New Exam Posted", GeneralCode.TEACHER_EXAM.getCode());
+  }
+
+  private void setupEmail(String emailTo[], String subject, String generalCode) throws Exception {
     // SENGAJA DI COMMENT!
     // String[] emailTo = {"ryanrumapea@gmail.com", "muhammadapry14@gmail.com",
     // "williamgolden54@gmail.com", "galihdikapermana98@gmail.com",
     // "farrelyudapraditya96@gmail.com", "dzakyfadhl@gmail.com"};
-
-    String[] emailTo = {"lawerning.acc@gmail.com"};
+    String template = generalService.getTemplateHTML(generalCode);
     EmailSetupDTO email = new EmailSetupDTO();
     email.setTo(emailTo);
     email.setSubject("New Exam posted");
-    email.setBody("ORANG ORANG TOLOL");
+    email.setBody(template);
     new EmailServiceImpl(mailUtils, email).start();
   }
 
