@@ -65,12 +65,11 @@ error
 #### Request:
 
 - Method : `POST`
-- Endpoint : `/student/register`
+- Endpoint : `/student`
 - Body :
 
 ```json
 {
-  "id": "",
   "firstName": "",
   "lastName": "",
   "username": "",
@@ -117,13 +116,16 @@ success`
   "code": 200,
   "result": {
     "id": "",
-    "photo": "",
-    "firstName": "",
+    "code": "",
+    "username": "",
+    "firstName"; "",
     "lastName": "",
     "email": "",
-    "phoneNumber": "",
+    "phone": "",
     "gender": "",
-    "createdAt": ""
+    "idPhoto": "",
+    "createdAt": "",
+    "isActive": ""
   }
 }
 ```
@@ -140,7 +142,7 @@ error
 ### Student's Score
 
 - Method: `GET`
-- Endpoint: `exam/avarage-scores/student/:id`
+- Endpoint: `exam/average-scores/student/:id`
 
 #### Response:
 
@@ -150,8 +152,8 @@ success
 {
   "code": 200,
   "result": {
-    "grade": "",
     "code": "",
+    "averageScore": "",
     "title": "",
     "startTime": "",
     "endTime": ""
@@ -191,14 +193,21 @@ error
       "periodStart": "",
       "periodEnd": "",
       "categoryName": "",
+      "categoryCode": "",
       "teacher": {
         "id": "",
         "code": "",
         "firstName": "",
         "lastName": "",
         "title": "",
-        "photoId": ""
-      }
+        "photoId": "",
+        "experience": ""
+      },
+      "isRegist": "",
+      "courseStatus": "",
+      "courseDescription": "",
+      "periodStart": "",
+      "periodEnd": ""
     }
   ]
 }
@@ -209,7 +218,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/modules/course/:id`
+- Endpoint : `/course/:id?studentId=:studentId`
 
 #### Response :
 
@@ -222,6 +231,11 @@ success
     "id": "",
     "code": "",
     "name": "",
+    "capacity": "",
+    "totalStudent": "",
+    "description": "",
+    "periodStart": "",
+    "periodEnd": "",
     "modules": [
       {
         "id": "",
@@ -229,6 +243,8 @@ success
         "tittle": "",
         "description": "",
         "subjectName": "",
+        "attendanceId": "",
+        "verifyStatus": "",
         "schedule": {
           "id": "",
           "date": "",
@@ -285,7 +301,7 @@ error
 }
 ```
 
-### MY COURSE
+### STUDENT COURSE
 
 #### Request :
 
@@ -303,17 +319,23 @@ success
     {
       "id": "",
       "code": "",
-      "name": "",
+      "typeName": "",
       "capacity": "",
+      "isRegist": "",
+      "courseStatus": "",
+      "courseDescription": "",
       "periodStart": "",
       "periodEnd": "",
-      "category": "",
+      "categoryName": "",
+      "categoryCode": "",
       "teacher": {
         "id": "",
         "code": "",
         "firstName": "",
         "lastName": "",
-        "tittle": ""
+        "tittle": "",
+        "experience": "",
+        "photoId": ""
       }
     }
   ]
@@ -336,13 +358,13 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/student/attendance`
+- Endpoint : `/attendance/student`
 - Body:
 
 ```json
 {
-  "moduleId": "",
-  "studentId": ""
+  "idStudent": "",
+  "idModule": ""
 }
 ```
 
@@ -366,17 +388,80 @@ error
 }
 ```
 
+### Check attendance status
+
+#### Request :
+
+- Method : `GET`
+- Endpoint : `/attendance/status?idModule=:idModule?idStudent=:idStudent`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": {
+    "status": ""
+  }
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Get List Attendance
+
+#### Request :
+
+- Method : `GET`
+- Endpoint : `/attendance/status?idCourse=:idCourse?idModule=:idModule`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+	  {
+	    "attendanceId": "",
+	    "attendanceTime": "",
+	    "attendanceVersion": "",
+	    "attendanceIsVerified": ""
+	  }
+  ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
 ### Verify attendance
 
 #### Request :
 
 - Method : `PATCH`
-- Endpoint : `/student/attendance`
+- Endpoint : `/attendance?id=:id?userId=:userId`
 - Body:
 
 ```json
 {
-  "attendanceId": "",
+  "id": "",
   "userId": ""
 }
 ```
@@ -421,12 +506,6 @@ success
     "title": "",
     "code": "",
     "description": "",
-    "files": [
-      {
-        "id": "",
-        "name": ""
-      }
-    ],
     "schedule": {
       "date": "",
       "startTime": "",
@@ -455,18 +534,15 @@ success
   "result": [
     {
       "id": "",
+      "title": "",
       "code": "",
       "description": "",
       "type": "",
       "start_time": "",
       "end_time": "",
-      "file": [
-        {
-          "id": "",
-          "name": "",
-          "extensions": ""
-        }
-      ]
+      "fileId": "",
+      "version": "",
+      "fileName": ""
     }
   ]
 }
@@ -486,15 +562,12 @@ error
 #### Request:
 
 - Method: `POST`
-- Endpoint: `exam/student/`
+- Endpoint: `exam/student?examId=:examId?studentId=:studentId`
 - Body:
 
 ```json
 {
-  "examId": "",
-  "studentId": "",
   "file": {
-    "id": "",
     "data": ""
   }
 }
@@ -518,13 +591,17 @@ error
 
 ```json
 {
-  "moduleId": "",
-  "description": "",
-  "startTime": "",
-  "endTime": "",
+  "body": {
+  	"moduleId": "",
+    "title": "",
+    "description": "",
+    "startTime": "",
+    "endTime": "",
+    "createdBy": "",
+    "type": ""
+  },
   "files": [
     {
-      "id": "",
       "data": ""
     }
   ]
@@ -548,14 +625,13 @@ error
       "id": "",
       "code": "",
       "content": "",
-      "message_time": "",
-      "user": {
-        "id": "",
-        "firstName": "",
-        "lastName": "",
-        "roleCode": "",
-        "photo_id": ""
-      }
+      "createdAt": "",
+      "userId": "",
+      "firstName": "",
+      "lastName": "",
+      "roleId": "",
+      "roleCode": "",
+      "photoId": ""
     }
   ]
 }
@@ -564,13 +640,14 @@ error
 #### Request:
 
 - Method: `POST`
-- Endpoint: `forum/module/:id`
+- Endpoint: `forum`
 - body:
 
 ```json
 {
   "content": "lorem",
-  "userId": ""
+  "userId": "",
+  "moduleId": ""
 }
 ```
 
@@ -614,7 +691,8 @@ error
     "name": "",
     "description": "",
     "capacity": "",
-    "student": 0,
+    "totalStudent": "",
+    "totalModule": "",
     "periodStart": "",
     "periodEnd": ""
   }
@@ -637,11 +715,25 @@ error
     {
       "id": "",
       "code": "",
-      "firstName": "",
-      "lastName": "",
-      "email": "",
-      "phone": "",
-      "gender": ""
+      "typeName": "",
+      "capacity": "",
+      "isRegist": "",
+      "courseStatus": "",
+      "courseDescription": "",
+      "periodStart": "",
+      "periodEnd": "",
+      "categoryName": "",
+      "categoryCode": "",
+      "teacher": {
+        "id": "",
+        "code": "",
+        "firstName": "",
+        "lastName": "",
+        "title": "",
+        "experience": "",
+        "photoId": ""
+      }
+      
     }
   ]
 }
@@ -652,7 +744,7 @@ error
 #### Request
 
 - Method: `GET`,
-- Endpoint: `exam/:id/submission`
+- Endpoint: `exam/:examId/submission/:studentId`
 
 #### Response
 
@@ -661,7 +753,9 @@ error
   "code": 200,
   "result": [
     {
-      "id": "",
+      "detailId": "",
+      "fileId": "",
+      "fileName": "",
       "code": "",
       "firstName": "",
       "lastName": "",
@@ -676,14 +770,15 @@ error
 
 #### Request
 
-- Method: `PATCH`
+- Method: `PUT`
 - Endpoint: `exam/submission`
 - Body:
 
 ```json
 {
-  "submissionId": "",
-  "score": ""
+  "id": "",
+  "grade": "",
+  "updatedBy": ""
 }
 ```
 
@@ -708,13 +803,16 @@ error
   "code": "",
   "result": {
     "teacher": {
+      "id": "",
+      "username": "",
       "firstName": "",
       "lastName": "",
       "email": "",
-      "title": "",
+      "titleDegree": "",
       "createdAt": "",
       "gender": "",
-      "address": ""
+      "phone": "",
+      "photoId": ""
     },
     "experiences": [
       {
@@ -734,54 +832,18 @@ error
 #### Request
 
 - Method: `PUT`
-- Endpoint: `teacher/:id`
+- Endpoint: `teacher`
 - Body:
 
 ```json
 {
-  "teacher": {
-    "firstName": "",
-    "lastName": "",
-    "email": "",
-    "title": "",
-    "createdAt": "",
-    "gender": "",
-    "address": ""
-  },
-  "experiences": [
-    {
-      "id": "",
-      "title": "",
-      "description": "",
-      "startDate": "",
-      "endDate": ""
-    }
-  ],
-  "userId": ""
-}
-```
-
-### GET Student Profile
-
-#### Request
-
-- Method: `GET`
-- Endpoint: `student/:id`
-
-#### Response
-
-```json
-{
-  "code": "",
-  "result": {
-    "firstName": "",
-    "lastName": "",
-    "email": "",
-    "title": "",
-    "createdAt": "",
-    "gender": "",
-    "address": ""
-  }
+   "id": "",
+   "firstName": "",
+   "lastName": "",
+   "phone": "",
+   "titleDegree": "",
+   "updatedBy": "",
+   "gender": ""
 }
 ```
 
@@ -798,13 +860,13 @@ error
 {
   "code": "",
   "result": {
+    "id": "",
     "firstName": "",
     "lastName": "",
-    "email": "",
-    "title": "",
-    "createdAt": "",
-    "gender": "",
-    "address": ""
+    "username": "",
+    "phone": "",
+    "updatedBy": "",
+    "gender": ""
   }
 }
 ```
@@ -814,7 +876,7 @@ error
 #### Request
 
 - Method: `GET`
-- Endpoint: `admin/teachers`
+- Endpoint: `teacher/all`
 
 ### Response
 
@@ -825,11 +887,15 @@ error
     {
       "id": "",
       "code": "",
-      "first_name": "",
-      "last_name": "",
+      "username": "",
+      "firstName": "",
+      "lastName": "",
+      "titleDegree": "",
+      "email": "",
       "phone": "",
       "gender": "",
-      "username": ""
+      "photoId": "",
+      "isActive": ""
     }
   ]
 }
@@ -840,20 +906,21 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/admin/teacher/register`
+- Endpoint : `/teacher`
 - Body :
 
 ```json
 {
   "code": "",
-  "first_name": "",
-  "last_name": "",
+  "firstName": "",
+  "lastName": "",
   "phone": "",
   "gender": "",
   "username": "",
   "password": "",
   "email": "",
-  "role_id": ""
+  "createdBy": "",
+  "titleDegree": ""
 }
 ```
 
@@ -882,7 +949,7 @@ error
 #### Request
 
 - Method: `PUT`
-- Endpoint: `admin/teacher/:id`
+- Endpoint: `teacher`
 - Body:
 
 ```json
@@ -890,8 +957,8 @@ error
   "id": "",
   "firstName": "",
   "lastName": "",
-  "email": "",
-  "title": "",
+  "phone": "",
+  "titleDegree": "",
   "gender": "",
   "updatedBy": ""
 }
@@ -920,7 +987,7 @@ error
 #### Request
 
 - Method: `DELETE`
-- Endpoint: `admin/teacher/:id`
+- Endpoint: `teacher/id/:id`
 
 #### Response
 
@@ -947,7 +1014,7 @@ error
 #### Request :
 
 - Method : `GET`
-- Endpoint : `/admin/courses`
+- Endpoint : `/course/admin`
 
 #### Response :
 
@@ -957,15 +1024,17 @@ error
   "result": [
     {
       "id": "",
-      "courseCode": "",
-      "courseName": "",
+      "code": "",
+      "categoryName": "",
       "typeName": "",
       "capacity": "",
       "periodStart": "",
       "status": "",
       "periodEnd": "",
-      "courseCategory": "",
-      "description": ""
+      "typeId": "",
+      "description": "",
+      "categoryId": "",
+      "teacherId": ""
     }
   ]
 }
@@ -976,21 +1045,20 @@ error
 #### Request :
 
 - Method : `POST`
-- Endpoint : `/admin/course`
+- Endpoint : `/course`
 - Body:
 
 ```json
 {
-  "courseCode": "",
-  "courseName": "",
-  "typeName": "",
+  "code": "",
+  "description": "",
+  "courseTypeId": "",
+  "teacherId": "",
+  "courseCategoryId": "",
   "capacity": "",
   "periodStart": "",
-  "status": "",
   "periodEnd": "",
-  "courseCategory": "",
-  "description": "",
-  "teacherId": ""
+  "createdBy": ""
 }
 ```
 
@@ -1019,7 +1087,14 @@ error
 #### Request :
 
 - Method : `DELETE`
-- EndPoint : `/admin/course/:id`
+- EndPoint : `/course`
+
+```json
+{
+	"id": "",
+	"updateBy": ""
+}
+```
 
 #### Response :
 
@@ -1046,7 +1121,7 @@ error
 #### Request
 
 - Method : `GET`
-- Endpoint : `/admin/subject-categories`
+- Endpoint : `/subjectcategory`
 
 #### Response :
 
@@ -1060,7 +1135,7 @@ success
       "id": "",
       "code": "",
       "description": "",
-      "subjectName": ""
+      "name": ""
     }
   ]
 }
@@ -1075,19 +1150,21 @@ error
 }
 ```
 
-### Update Categories
+### Update Subject Category
 
 #### Request :
 
 - Method : `PUT`
-- Endpoint : `/admin/subject-categories`
+- Endpoint : `/subjectcategory`
 - Body:
 
 ```json
-{
+{ 
+  "id": "",
   "code": "",
+  "subjectName": "",
   "description": "",
-  "subjectName": ""
+  "updatedBy": ""
 }
 ```
 
@@ -1111,19 +1188,20 @@ error
 }
 ```
 
-### Add Categories
+### Add Subject Category
 
 #### Request :
 
 - method : `POST`
-- Endpoint : `/admin/subject-categories`
+- Endpoint : `subjectcategory`
 - Body:
 
 ```json
 {
   "code": "",
   "description": "",
-  "subjectName": ""
+  "subjectName": "",
+  "createdBy": "",
 }
 ```
 
@@ -1135,6 +1213,701 @@ success
 {
   "code": 200,
   "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Delete Subject Category
+
+#### Request :
+
+- method : `DELETE`
+- Endpoint : `subjectcategory`
+- Body:
+
+```json
+{
+  "id": "",
+  "updatedBy": "",
+  "status": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 203,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 404,
+  "result": "message"
+}
+```
+
+### Get List Course Category
+
+#### Request
+
+- Method : `GET`
+- Endpoint : `/course/category`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "version": "",
+      "name": ""
+    }
+  ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Create Course Category
+
+#### Request
+
+- Method : `POST`
+- Endpoint : `/course/category`
+- Body:
+
+```json
+{
+  "code": "",
+  "name": "",
+  "createdBy": "",
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Update Course Category
+
+#### Request
+
+- Method : `PUT`
+- Endpoint : `/course/category`
+- Body:
+
+```json
+{
+  "code": "",
+  "name": "",
+  "createdBy": "",
+  "id": "",
+  "updatedBy": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Delete Course Category
+
+#### Request
+
+- Method : `DELETE`
+- Endpoint : `/course/category/id/:id`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 404,
+  "result": "message"
+}
+```
+
+### Get List Course Type
+
+#### Request
+
+- Method : `GET`
+- Endpoint : `/course/type`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "version": "",
+      "name": ""
+    }
+  ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Create Course Type
+
+#### Request
+
+- Method : `POST`
+- Endpoint : `/course/type`
+- Body:
+
+```json
+{
+  "code": "",
+  "name": "",
+  "createdBy": "",
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Update Course Type
+
+#### Request
+
+- Method : `PUT`
+- Endpoint : `/course/type`
+- Body:
+
+```json
+{
+  "code": "",
+  "name": "",
+  "id": "",
+  "updatedBy": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Delete Course Type
+
+#### Request
+
+- Method : `DELETE`
+- Endpoint : `/course/type/id/:id`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 404,
+  "result": "message"
+}
+```
+
+### Create Experience
+
+#### Request
+
+- Method : `POST`
+- Endpoint : `/experience`
+- Body:
+
+```json
+{
+  "title": "",
+  "description": "",
+  "startDate": "",
+  "endDate": "",
+  "teacherId": "",
+  "userId": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Update Experience
+
+#### Request
+
+- Method : `PUT`
+- Endpoint : `/experience`
+- Body:
+
+```json
+{
+  "title": "",
+  "description": "",
+  "startDate": "",
+  "endDate": "",
+  "teacherId": "",
+  "userId": "",
+  "id": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Delete Experience
+
+#### Request
+
+- Method : `DELETE`
+- Endpoint : `/experience/:id`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 203,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 404,
+  "result": "message"
+}
+```
+
+### Get Module Discussion
+
+#### Request
+
+- Method : `GET`
+- Endpoint : `/forum/module/:id`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "content": "",
+      "createdAt": "",
+      "userId": "",
+      "firstName": "",
+      "lastName": "",
+      "roleId": "",
+      "roleCode": "",
+      "photoId": ""
+    }
+  ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Create Discussion
+
+#### Request
+
+- Method : `POST`
+- Endpoint : `/forum`
+- Body:
+
+```json
+{
+  "content": "",
+  "moduleId": "",
+  "userId": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Delete Discussion
+
+#### Request
+
+- Method : `DELETE`
+- Endpoint : `/forum/?id=:id?userId=:userId`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 203,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 404,
+  "result": "message"
+}
+```
+
+### Get Role List
+
+#### Request
+
+- Method : `GET`
+- Endpoint : `/roles`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "name": "",
+      "createdAt": "",
+      "version": "",
+      "updatedAt": ""
+    }
+  ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Get Role By Id
+
+#### Request
+
+- Method : `GET`
+- Endpoint : `/role/id/:id`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "name": "",
+      "createdAt": "",
+      "version": "",
+      "updatedAt": ""
+    }
+  ]
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Create Role
+
+#### Request
+
+- Method : `POST`
+- Endpoint : `/role`
+- Body:
+
+```json
+{
+  "code": "",
+  "name": "",
+  "userId": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Update Role
+
+#### Request
+
+- Method : `PUT`
+- Endpoint : `/role`
+- Body:
+
+```json
+{
+  "code": "",
+  "name": "",
+  "userId": "",
+  "id": ""
+}
+```
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": "message"
+}
+```
+
+error
+
+```json
+{
+  "code": 400,
+  "result": "message"
+}
+```
+
+### Get Schedules By Teacher Id
+
+#### Request
+
+- Method : `GET`
+- Endpoint : `/schedules/teacher/:id`
+
+#### Response :
+
+success
+
+```json
+{
+  "code": 200,
+  "result": [
+    {
+      "id": "",
+      "code": "",
+      "version": "",
+      "date": "",
+      "startTime": "",
+      "endTime": ""
+    }
+  ]
 }
 ```
 
