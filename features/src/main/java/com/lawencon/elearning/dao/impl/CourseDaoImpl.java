@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
+import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
@@ -373,6 +374,41 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       listResult.add(object);
     });
     return listResult;
+  }
+
+  @Override
+  public List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId)
+      throws Exception {
+    String sql =
+        buildQueryOf("SELECT c.id ,ct.type_name ,count(DISTINCT m.id) ", "FROM tb_m_courses AS c ",
+            "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
+            "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
+            "LEFT JOIN tb_m_modules AS m ON m.id_course = c.id WHERE sc.id_student = ?1 ",
+        "GROUP BY c.id ,ct.type_name");
+
+    List<?> listObj = createNativeQuery(sql).setParameter(1, studentId).getResultList();
+    List<CourseProgressResponseDTO> listResult = new ArrayList<>();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      CourseProgressResponseDTO courseProgress = new CourseProgressResponseDTO();
+      courseProgress.setCourseId((String) objArr[0]);
+      courseProgress.setCourseName((String) objArr[1]);
+      courseProgress.setTotalModule(((BigInteger) objArr[2]).intValue());
+      listResult.add(courseProgress);
+    });
+    return listResult;
+  }
+
+  @Override
+  public Integer getModuleCompleteByStudentId(String courseId, String studentId) throws Exception {
+    String sql =
+        buildQueryOf("SELECT count(DISTINCT m.id) FROM tb_m_modules AS m ",
+            "INNER JOIN tb_m_subject_categories AS sc ON sc.id = m.id_subject ",
+            "LEFT JOIN tb_r_attendances AS a ON a.id_module = m.id ",
+            "LEFT JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
+            "WHERE m.id_course = ?1 AND now() < s.schedule_date AND a.id_student = ?2 ");
+    return ((BigInteger) createNativeQuery(sql).setParameter(1, courseId).setParameter(2, studentId)
+        .getSingleResult()).intValue();
   }
 
 }

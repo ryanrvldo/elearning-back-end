@@ -3,6 +3,7 @@ package com.lawencon.elearning.dao;
 import java.util.List;
 import java.util.Map;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
+import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
@@ -31,7 +32,7 @@ public interface CourseDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  void registerCourse(String course, String student) throws Exception;
+  void registerCourse(String courseId, String studentId) throws Exception;
 
   Course getCourseById(String id) throws Exception;
 
@@ -45,6 +46,10 @@ public interface CourseDao {
 
   Integer getRegisterStudent() throws Exception;
 
-  List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseid) throws Exception;
+  List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId) throws Exception;
+
+  List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId) throws Exception;
+
+  Integer getModuleCompleteByStudentId(String courseId, String studentId) throws Exception;
 
 }

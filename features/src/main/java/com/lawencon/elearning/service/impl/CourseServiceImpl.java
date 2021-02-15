@@ -13,6 +13,7 @@ import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
+import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DashboardCourseResponseDTO;
@@ -141,7 +142,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throw new DataIsNotExistsException("id", course.getId());
     }
     setupUpdatedValue(course, () -> courseDaoModel);
-
     courseDao.updateCourse(course, null);
   }
 
@@ -445,6 +445,31 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public Integer getRegisterStudent() throws Exception {
     return courseDao.getRegisterStudent();
+  }
+
+  @Override
+  public List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId)
+      throws Exception {
+    validateUtil.validateUUID(studentId);
+    studentService.getStudentById(studentId);
+    List<CourseProgressResponseDTO> listCourse = courseDao.getCourseProgressByStudentId(studentId);
+    if (listCourse.isEmpty()) {
+      throw new DataIsNotExistsException("student id", studentId);
+    }
+    listCourse.forEach(val -> {
+      if (val.getTotalModule() == null || val.getTotalModule() == 0) {
+        val.setModuleComplete(0);
+        return;
+      }
+      Integer moduleComplete = 0;
+      try {
+        moduleComplete = courseDao.getModuleCompleteByStudentId(val.getCourseId(), studentId);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      val.setModuleComplete(moduleComplete);
+    });
+    return listCourse;
   }
 
 }

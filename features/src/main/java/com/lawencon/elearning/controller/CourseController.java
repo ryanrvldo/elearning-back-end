@@ -155,4 +155,11 @@ public class CourseController {
         HttpStatus.OK);
   }
 
+  @GetMapping("progress/{id}")
+  public ResponseEntity<?> getCourseProgressByIdStudent(@PathVariable("id") String studentId)
+      throws Exception {
+    return WebResponseUtils.createWebResponse(courseService.getCourseProgressByStudentId(studentId),
+        HttpStatus.OK);
+  }
+
 }

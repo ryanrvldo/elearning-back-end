@@ -57,6 +57,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
     web.ignoring()
         .antMatchers(HttpMethod.POST, "/student")
         .antMatchers(HttpMethod.GET, "/file/**")
+        .antMatchers(HttpMethod.GET, "/course/module/**")
         .antMatchers(HttpMethod.GET, "/course/all")
         .antMatchers(HttpMethod.GET, "/teacher/all")
         .antMatchers(HttpMethod.GET, "/**/report/**");
