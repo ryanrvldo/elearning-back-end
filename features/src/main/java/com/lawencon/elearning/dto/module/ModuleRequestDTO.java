@@ -17,7 +17,15 @@ public class ModuleRequestDTO {
   private String code;
 
   @NotBlank
+<<<<<<< Updated upstream:features/src/main/java/com/lawencon/elearning/dto/module/ModuleRequestDTO.java
   private String title;
+=======
+  @Size(min = 32, max = 36)
+  private String moduleCreatedBy;
+
+  @NotBlank
+  private String moduleTittle;
+>>>>>>> Stashed changes:features/src/main/java/com/lawencon/elearning/dto/module/ModulRequestDTO.java
 
   @NotBlank
   private String description;

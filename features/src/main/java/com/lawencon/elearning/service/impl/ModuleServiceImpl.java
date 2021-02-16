@@ -1,5 +1,14 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
@@ -28,15 +37,6 @@ import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -192,7 +192,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     if (data.getSchedule().getDate()
         .isBefore(courseDb.getPeriodStart().toLocalDate())
         || data.getSchedule().getDate()
-        .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+            .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
       throw new IllegalRequestException("You can't insert module outside course period");
     }
 
@@ -200,11 +200,14 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       throw new IllegalAccessException("You are unauthorized");
     }
 
-    Schedule schedule = Optional.ofNullable(scheduleService.findScheduleById(data.getIdSchedule()))
-        .orElseThrow(() -> new DataIsNotExistsException("id schedule", data.getIdSchedule()));
+    Schedule schedule = Optional
+        .ofNullable(scheduleService.findScheduleById(data.getSchedule().getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id schedule",
+            data.getSchedule().getId()));
     schedule.setDate(data.getSchedule().getDate());
     schedule.setEndTime(data.getSchedule().getEndTime());
     schedule.setStartTime(data.getSchedule().getStartTime());
+    schedule.setUpdatedBy(data.getUpdatedBy());
 
     Teacher teacher = new Teacher();
     teacher.setId(courseDb.getTeacher().getId());
@@ -213,7 +216,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     Module module = new Module();
     module.setSchedule(schedule);
     module.setCode(data.getCode());
-    module.setTitle(data.getTitle());
+    module.setTitle(data.getTittle());
     module.setDescription(data.getDescription());
     module.setId(data.getId());
     module.setUpdatedBy(data.getUpdatedBy());
@@ -226,10 +229,11 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     subject.setId(data.getSubjectId());
     module.setSubject(subject);
 
+    begin();
     scheduleService.updateSchedule(schedule);
-
     setupUpdatedValue(module, () -> moduleDb);
     moduleDao.updateModule(module, null);
+    commit();
 
   }
 
@@ -270,7 +274,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
   }
 
   @Override
-  public void saveLesson(List<MultipartFile> multiPartFiles, String idUser, String idModule)
+  public void saveLesson(MultipartFile multiPartFiles, String idUser, String idModule)
       throws Exception {
     validationUtil.validateUUID(idUser);
     validationUtil.validateUUID(idModule);
@@ -283,11 +287,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     contentString.setType(FileType.MODULE_LESSON.toString());
     contentString.setUserId(idUser);
     String content = new ObjectMapper().writeValueAsString(contentString);
-
-    for (MultipartFile file : multiPartFiles) {
       try {
         begin();
-        FileResponseDto fileResponseDTO = fileService.createFile(file, content);
+        FileResponseDto fileResponseDTO = fileService.createFile(multiPartFiles, content);
         moduleDao.insertLesson(idModule, fileResponseDTO.getId());
         commit();
       } catch (Exception e) {
@@ -295,7 +297,6 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         rollback();
         throw e;
       }
-    }
   }
 
   @Override

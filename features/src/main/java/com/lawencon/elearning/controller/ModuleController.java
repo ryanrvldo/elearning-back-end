@@ -64,7 +64,7 @@ public class ModuleController {
   }
   
   @PostMapping("/lesson")
-  public ResponseEntity<?> insertLesson(@RequestPart("file") List<MultipartFile> multiPartFiles,
+  public ResponseEntity<?> insertLesson(@RequestPart("file") MultipartFile multiPartFiles,
       @RequestParam("idUser") String idUser, @RequestParam("idModule") String idModule)
       throws Exception {
     moduleService.saveLesson(multiPartFiles, idUser, idModule);

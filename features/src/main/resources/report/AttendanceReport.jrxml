@@ -49,7 +49,7 @@
 				<reportElement mode="Opaque" x="-20" y="0" width="842" height="196" forecolor="#006699" backcolor="#ADD8E6" uuid="e8bc167b-bf12-4977-b458-b029eaaafdfb"/>
 				<image>
 					<reportElement x="20" y="63" width="120" height="110" uuid="9d23c546-91a7-4b64-9fbc-493c160b90b9"/>
-					<imageExpression><![CDATA["src/main/resources/report/logo.png"]]></imageExpression>
+					<imageExpression><![CDATA["report/logo.png"]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement x="251" y="4" width="340" height="57" uuid="6c33418b-4dda-4eb3-b463-0532a8872330"/>
