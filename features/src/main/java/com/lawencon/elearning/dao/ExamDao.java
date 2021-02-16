@@ -26,4 +26,6 @@ public interface ExamDao {
   Long getCountDataByModule(String id) throws Exception;
 
   String getIdByCode(String code) throws Exception;
+
+  void deleteExam(String id) throws Exception;
 }

@@ -140,7 +140,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public Teacher findTeacherById(String id) throws Exception {
     validUtil.validateUUID(id);
-    return teacherDao.findTeacherById(id);
+    return Optional.ofNullable(teacherDao.findTeacherById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
@@ -238,7 +239,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public Teacher findByIdForCourse(String id) throws Exception {
     validUtil.validateUUID(id);
-    return teacherDao.findByIdForCourse(id);
+    return Optional.ofNullable(teacherDao.findByIdForCourse(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
   @Override
