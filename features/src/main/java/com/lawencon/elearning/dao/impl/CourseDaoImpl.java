@@ -380,7 +380,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   public List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId)
       throws Exception {
     String sql =
-        buildQueryOf("SELECT c.id ,ct.type_name ,count(DISTINCT m.id) ", "FROM tb_m_courses AS c ",
+        buildQueryOf("SELECT c.id ,ct.type_name,c.period_end,c.period_start ,count(DISTINCT m.id) ",
+            "FROM tb_m_courses AS c ",
             "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
             "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
             "LEFT JOIN tb_m_modules AS m ON m.id_course = c.id WHERE sc.id_student = ?1 ",
@@ -393,7 +394,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       CourseProgressResponseDTO courseProgress = new CourseProgressResponseDTO();
       courseProgress.setCourseId((String) objArr[0]);
       courseProgress.setCourseName((String) objArr[1]);
-      courseProgress.setTotalModule(((BigInteger) objArr[2]).intValue());
+      Timestamp inTime = (Timestamp) objArr[2];
+      courseProgress.setPeriodEnd(inTime.toLocalDateTime());
+      inTime = (Timestamp) objArr[3];
+      courseProgress.setPeriodStart(inTime.toLocalDateTime());
+      courseProgress.setTotalModule(((BigInteger) objArr[4]).intValue());
       listResult.add(courseProgress);
     });
     return listResult;

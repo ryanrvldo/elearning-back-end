@@ -22,6 +22,6 @@ public class CourseTypeUpdateRequestDTO {
 
   @NotBlank
   @Size(min = 32, max = 36)
-  private String updatedBy;
+  private String updateBy;
 
 }

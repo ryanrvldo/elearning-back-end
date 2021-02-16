@@ -18,6 +18,6 @@ public class CourseCategoryUpdateRequestDTO extends CourseCategoryCreateRequestD
 
   @NotBlank
   @Size(min = 32, max = 36)
-  private String updatedBy;
+  private String updateBy;
 
 }

@@ -67,13 +67,13 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   @Override
   public void updateCourseType(CourseTypeUpdateRequestDTO courseTypeDTO) throws Exception {
     validateUtil.validate(courseTypeDTO);
-    User user = userService.getById(courseTypeDTO.getUpdatedBy());
+    User user = userService.getById(courseTypeDTO.getUpdateBy());
     if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
       throw new IllegalAccessException("only admin can update data !");
     }
     CourseType courseType = new CourseType();
     courseType.setId(courseTypeDTO.getId());
-    courseType.setUpdatedBy(courseTypeDTO.getUpdatedBy());
+    courseType.setUpdatedBy(courseTypeDTO.getUpdateBy());
     courseType.setCode(courseTypeDTO.getCode());
     courseType.setName(courseTypeDTO.getName());
 

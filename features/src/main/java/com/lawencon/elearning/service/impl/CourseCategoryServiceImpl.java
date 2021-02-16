@@ -68,14 +68,14 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   public void updateCourseCategory(CourseCategoryUpdateRequestDTO courseCategoryDTO)
       throws Exception {
     validateUtil.validate(courseCategoryDTO);
-    User user = userService.getById(courseCategoryDTO.getUpdatedBy());
+    User user = userService.getById(courseCategoryDTO.getUpdateBy());
     if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
       throw new IllegalAccessException("only admin can update data !");
     }
     CourseCategory courseCategory = new CourseCategory();
     courseCategory.setId(courseCategoryDTO.getId());
     courseCategory.setCode(courseCategoryDTO.getCode());
-    courseCategory.setUpdatedBy(courseCategoryDTO.getUpdatedBy());
+    courseCategory.setUpdatedBy(courseCategoryDTO.getUpdateBy());
     courseCategory.setName(courseCategoryDTO.getName());
     CourseCategory courseCategories = courseCategoryDao.getCategoryById(courseCategory.getId());
     if (courseCategories == null) {

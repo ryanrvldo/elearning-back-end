@@ -458,6 +458,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
         Integer totalStudent = courseDao.getTotalStudentByIdCourse(courseId);
         val.setTotalStudent(totalStudent);
         val.setAbsent(totalStudent - val.getPresent());
+
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -487,6 +488,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     listCourse.forEach(val -> {
       if (val.getTotalModule() == null || val.getTotalModule() == 0) {
         val.setModuleComplete(0);
+        val.setPercentProgress(0.0);
         return;
       }
       Integer moduleComplete = 0;
@@ -496,6 +498,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
         e.printStackTrace();
       }
       val.setModuleComplete(moduleComplete);
+      val.setPercentProgress(
+          ((double) val.getModuleComplete() / (double) val.getTotalModule()) * 100);
     });
     return listCourse;
   }
