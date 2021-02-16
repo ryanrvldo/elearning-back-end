@@ -1,14 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
@@ -37,6 +28,15 @@ import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -216,7 +216,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     Module module = new Module();
     module.setSchedule(schedule);
     module.setCode(data.getCode());
-    module.setTitle(data.getTittle());
+    module.setTitle(data.getTitle());
     module.setDescription(data.getDescription());
     module.setId(data.getId());
     module.setUpdatedBy(data.getUpdatedBy());

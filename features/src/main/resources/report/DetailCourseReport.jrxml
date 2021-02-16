@@ -47,8 +47,9 @@
 			<frame>
 				<reportElement mode="Opaque" x="-20" y="0" width="842" height="208" forecolor="#006699" backcolor="#ADD8E6" uuid="e8bc167b-bf12-4977-b458-b029eaaafdfb"/>
 				<image>
-					<reportElement x="10" y="65" width="109" height="125" uuid="9d23c546-91a7-4b64-9fbc-493c160b90b9"/>
-					<imageExpression><![CDATA["src/main/resources/report/logo.png"]]></imageExpression>
+					<reportElement x="10" y="65" width="109" height="125"
+						uuid="9d23c546-91a7-4b64-9fbc-493c160b90b9"/>
+					<imageExpression><![CDATA["report/logo.png"]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement x="130" y="80" width="101" height="30" uuid="a35751bf-5c3f-46cb-8ac5-fe1c54f5b229"/>

@@ -48,11 +48,6 @@ public class ReportServiceImpl implements ReportService {
   }
 
   @Override
-  public Teacher getTeacherById(String teacherId) throws Exception {
-    return courseService.getTeacherById(teacherId);
-  }
-
-  @Override
   public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
       throws Exception {
     return courseService.getCourseAttendanceReport(courseId);

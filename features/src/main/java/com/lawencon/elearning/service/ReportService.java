@@ -20,8 +20,6 @@ public interface ReportService {
 
   Course getCourseById(String id) throws Exception;
 
-  Teacher getTeacherById(String teacherId) throws Exception;
-
   List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId) throws Exception;
 
   Teacher findTeacherById(String id) throws Exception;

@@ -2,7 +2,6 @@ package com.lawencon.elearning.controller;
 
 import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
 import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
-import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.WebResponseUtils;
@@ -46,12 +45,6 @@ public class StudentController {
   @GetMapping("/{id}/course")
   public ResponseEntity<?> getStudentCourse(@PathVariable("id") String id) throws Exception {
     return WebResponseUtils.createWebResponse(studentService.getStudentCourse(id), HttpStatus.OK);
-  }
-
-  @PostMapping
-  public ResponseEntity<?> registerStudent(@RequestBody RegisterStudentDTO body) throws Exception {
-    studentService.insertStudent(body);
-    return WebResponseUtils.createWebResponse("Register Success", HttpStatus.OK);
   }
 
   @PutMapping

@@ -1,9 +1,9 @@
 package com.lawencon.elearning.dto.module;
 
+import com.lawencon.elearning.dto.schedule.ScheduleUpdateRequestDTO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import com.lawencon.elearning.dto.schedule.ScheduleUpdateRequestDTO;
 import lombok.Data;
 
 /**
@@ -25,7 +25,7 @@ public class UpdateModuleDTO {
   private String code;
 
   @NotBlank
-  private String tittle;
+  private String title;
 
   @NotBlank
   private String description;

@@ -64,7 +64,7 @@ public class ReportController {
   public ResponseEntity<?> getCourseAttendanceReport(@RequestParam("courseId") String courseId)
       throws Exception {
     Course course = service.getCourseById(courseId);
-    Teacher teacher = service.getTeacherById(course.getTeacher().getId());
+    Teacher teacher = course.getTeacher();
     Map<String, Object> mapTeacher = new HashMap<>();
     mapTeacher.put("teacherFName", teacher.getUser().getFirstName());
     mapTeacher.put("teacherLName", teacher.getUser().getLastName());

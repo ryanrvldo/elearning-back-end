@@ -20,8 +20,9 @@
 	<title>
 		<band height="114" splitType="Stretch">
 			<image>
-				<reportElement x="2" y="1" width="100" height="90" uuid="a40e9888-49e2-48ef-8328-fc7004d3fb2a"/>
-				<imageExpression><![CDATA["src/main/resources/report/logo.png"]]></imageExpression>
+				<reportElement x="2" y="1" width="100" height="90"
+					uuid="a40e9888-49e2-48ef-8328-fc7004d3fb2a"/>
+				<imageExpression><![CDATA["report/logo.png"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="113" y="43" width="58" height="14" uuid="28f01edc-b9d1-4b48-b83a-efb84931dce6"/>

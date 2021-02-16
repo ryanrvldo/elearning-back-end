@@ -7,7 +7,6 @@ import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,22 +84,10 @@ public class CourseController {
     return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
   }
 
-  @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<?> getAllCourse() throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getAllCourse(), HttpStatus.OK);
-  }
-
   @GetMapping("attendance/reports/{id}")
   public ResponseEntity<?> getCourseAttendanceReports(@PathVariable("id") String courseId)
       throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getCourseAttendanceReport(courseId),
-        HttpStatus.OK);
-  }
-
-  @GetMapping("module/{id}")
-  public ResponseEntity<?> getModuleListByIdCourse(@PathVariable("id") String courseId)
-      throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getCourseForDashboard(courseId),
         HttpStatus.OK);
   }
 
