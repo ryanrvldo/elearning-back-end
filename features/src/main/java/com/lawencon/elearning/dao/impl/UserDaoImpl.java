@@ -1,11 +1,11 @@
 package com.lawencon.elearning.dao.impl;
 
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -112,7 +112,5 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     user.setUserPhoto(file);
     return user;
   }
-
-
 
 }

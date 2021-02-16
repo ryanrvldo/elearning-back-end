@@ -1,11 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Random;
-import javax.persistence.NoResultException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
@@ -18,6 +12,12 @@ import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.SecurityUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.Random;
+import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
@@ -90,7 +90,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     String id = userDao.getUserRoleId(user.getId());
     if (id == null) {
       return null;
-    } else if (id != null && id.trim().isEmpty()) {
+    } else if (id.trim().isEmpty()) {
       throw new DataIsNotExistsException("user id", userId);
     }
     return id;
@@ -131,7 +131,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     String template = generalService.getTemplateHTML(GeneralCode.RESET_PASSWORD.getCode());
     template = template.replace("?1", generatePass);
 
-    String[] emailTo = {"lawerning.acc@gmail.com"};
+    String[] emailTo = {email};
     EmailSetupDTO emailSent = new EmailSetupDTO();
     emailSent.setTo(emailTo);
     emailSent.setSubject("Reset Password");
@@ -151,7 +151,6 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
   }
 
-
   private String generatePassString() {
     String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
     StringBuilder salt = new StringBuilder();
@@ -160,9 +159,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
       int index = (int) (rnd.nextFloat() * SALTCHARS.length());
       salt.append(SALTCHARS.charAt(index));
     }
-    String saltStr = salt.toString();
-    return saltStr;
-
+    return salt.toString();
   }
 
 }

@@ -6,6 +6,7 @@ import com.lawencon.elearning.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -49,7 +50,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(apiSecurityService).passwordEncoder(encoderUtils.getEncoder());
+    auth.userDetailsService(apiSecurityService)
+        .passwordEncoder(encoderUtils.getEncoder());
   }
 
   @Override
@@ -60,7 +62,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/course/module/**")
         .antMatchers(HttpMethod.GET, "/course/all")
         .antMatchers(HttpMethod.GET, "/teacher/all")
-        .antMatchers(HttpMethod.GET, "/**/report/**")
+        .antMatchers(HttpMethod.GET, "/report/**")
         .antMatchers(HttpMethod.PATCH, "/user/email/**");
   }
 
@@ -68,11 +70,15 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
   public WebMvcConfigurer coresConfigure() {
     return new WebMvcConfigurer() {
       @Override
-      public void addCorsMappings(CorsRegistry registry) {
+      public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
             .allowedOrigins("http://localhost:4200")
-            .allowedMethods(HttpMethod.POST.name(), HttpMethod.GET.name(), HttpMethod.PATCH.name(),
-                HttpMethod.PUT.name(), HttpMethod.DELETE.name());
+            .allowedMethods(
+                HttpMethod.GET.name(),
+                HttpMethod.POST.name(),
+                HttpMethod.PUT.name(),
+                HttpMethod.PATCH.name(),
+                HttpMethod.DELETE.name());
       }
     };
   }

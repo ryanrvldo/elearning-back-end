@@ -1,11 +1,11 @@
 package com.lawencon.elearning.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
+import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
+import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
+import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
-import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
-import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
-import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
-import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
-import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.service.CourseService;
-import com.lawencon.elearning.util.WebResponseUtils;
-import com.lawencon.util.JasperUtil;
 
 /**
  * @author : Galih Dika Permana
@@ -34,6 +25,7 @@ import com.lawencon.util.JasperUtil;
 @RestController
 @RequestMapping("course")
 public class CourseController {
+
   @Autowired
   private CourseService courseService;
 
@@ -49,22 +41,6 @@ public class CourseController {
       @RequestParam(name = "studentId", required = false) String studentId) throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getDetailCourse(courseId, studentId),
         HttpStatus.OK);
-  }
-
-  @GetMapping("/report/{id}")
-  public ResponseEntity<?> getDetailCourseReport(@PathVariable("id") String courseId,
-      @RequestParam(name = "studentId", required = false) String studentId) throws Exception {
-    DetailCourseResponseDTO detailCourseDTO = courseService.getDetailCourse(courseId, studentId);
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_PDF);
-    Map<String, Object> params = new HashMap<>();
-    params.put("name", detailCourseDTO.getName());
-    params.put("description", detailCourseDTO.getDescription());
-    params.put("capacity", detailCourseDTO.getCapacity());
-    params.put("total", detailCourseDTO.getTotalStudent());
-    byte[] out =
-        JasperUtil.responseToByteArray(detailCourseDTO.getModules(), "DetailCourseReport", params);
-    return ResponseEntity.ok().headers(headers).body(out);
   }
 
   @PostMapping("register")
@@ -112,31 +88,6 @@ public class CourseController {
   @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> getAllCourse() throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getAllCourse(), HttpStatus.OK);
-  }
-
-
-  @GetMapping("attendance/report/{id}")
-  public ResponseEntity<?> getCourseAttendanceReport(@PathVariable("id") String courseId)
-      throws Exception {
-    Course course = courseService.getCourseById(courseId);
-    Map<String, Object> mapTeacher = new HashMap<>();
-    mapTeacher.put("teacherFName", course.getTeacher().getUser().getFirstName());
-    mapTeacher.put("teacherLName", course.getTeacher().getUser().getLastName());
-    mapTeacher.put("teacherEmail", course.getTeacher().getUser().getEmail());
-    mapTeacher.put("teacherGender", course.getTeacher().getGender().toString());
-    mapTeacher.put("teacherPhone", course.getTeacher().getPhone());
-    byte[] out;
-    try {
-      List<CourseAttendanceReportByTeacher> listData =
-          courseService.getCourseAttendanceReport(courseId);
-      out = JasperUtil.responseToByteArray(listData, "CourseAttendanceReport", mapTeacher);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    HttpHeaders header = new HttpHeaders();
-    header.setContentType(MediaType.APPLICATION_PDF);
-    return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
   }
 
   @GetMapping("attendance/reports/{id}")
