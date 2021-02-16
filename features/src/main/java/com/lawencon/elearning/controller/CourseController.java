@@ -24,7 +24,6 @@ import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
-import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.util.WebResponseUtils;
 import com.lawencon.util.JasperUtil;
@@ -120,13 +119,12 @@ public class CourseController {
   public ResponseEntity<?> getCourseAttendanceReport(@PathVariable("id") String courseId)
       throws Exception {
     Course course = courseService.getCourseById(courseId);
-    Teacher teacher = courseService.getTeacherById(course.getTeacher().getId());
     Map<String, Object> mapTeacher = new HashMap<>();
-    mapTeacher.put("teacherFName", teacher.getUser().getFirstName());
-    mapTeacher.put("teacherLName", teacher.getUser().getLastName());
-    mapTeacher.put("teacherEmail", teacher.getUser().getEmail());
-    mapTeacher.put("teacherGender", teacher.getGender().toString());
-    mapTeacher.put("teacherPhone", teacher.getPhone());
+    mapTeacher.put("teacherFName", course.getTeacher().getUser().getFirstName());
+    mapTeacher.put("teacherLName", course.getTeacher().getUser().getLastName());
+    mapTeacher.put("teacherEmail", course.getTeacher().getUser().getEmail());
+    mapTeacher.put("teacherGender", course.getTeacher().getGender().toString());
+    mapTeacher.put("teacherPhone", course.getTeacher().getPhone());
     byte[] out;
     try {
       List<CourseAttendanceReportByTeacher> listData =
@@ -160,6 +158,11 @@ public class CourseController {
       throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getCourseProgressByStudentId(studentId),
         HttpStatus.OK);
+  }
+
+  @GetMapping("test/{id}")
+  public ResponseEntity<?> testingTest(@PathVariable("id") String courseId) throws Exception {
+    return WebResponseUtils.createWebResponse(courseService.getCourseById(courseId), HttpStatus.OK);
   }
 
 }

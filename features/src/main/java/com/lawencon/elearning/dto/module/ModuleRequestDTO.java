@@ -1,9 +1,9 @@
 package com.lawencon.elearning.dto.module;
 
-import com.lawencon.elearning.dto.ScheduleRequestDTO;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import com.lawencon.elearning.dto.ScheduleRequestDTO;
 import lombok.Data;
 
 /**
@@ -17,15 +17,7 @@ public class ModuleRequestDTO {
   private String code;
 
   @NotBlank
-<<<<<<< Updated upstream:features/src/main/java/com/lawencon/elearning/dto/module/ModuleRequestDTO.java
   private String title;
-=======
-  @Size(min = 32, max = 36)
-  private String moduleCreatedBy;
-
-  @NotBlank
-  private String moduleTittle;
->>>>>>> Stashed changes:features/src/main/java/com/lawencon/elearning/dto/module/ModulRequestDTO.java
 
   @NotBlank
   private String description;

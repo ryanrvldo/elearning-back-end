@@ -42,7 +42,6 @@ import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentService;
-import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -70,9 +69,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private UserService userService;
-
-  @Autowired
-  private TeacherService teacherService;
 
   @Autowired
   private MailUtils mailUtils;
@@ -365,7 +361,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public Course getCourseById(String id) throws Exception {
     validateUtil.validateUUID(id);
-    return courseDao.getCourseById(id);
+    Course course = courseDao.getCourseById(id);
+    validateUtil.validate(course);
+    return course;
   }
 
   private void setData(String courseId, DetailCourseResponseDTO detailDTO, String studentId)
@@ -381,6 +379,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     detailDTO.setDescription(course.getDescription());
     detailDTO.setPeriodStart(course.getPeriodStart());
     detailDTO.setPeriodEnd(course.getPeriodEnd());
+    detailDTO.setTeacherFirstName(course.getTeacher().getUser().getFirstName());
+    detailDTO.setTeacherLastName(course.getTeacher().getUser().getLastName());
+    detailDTO.setIdPhoto(course.getTeacher().getUser().getUserPhoto().getId());
     detailDTO.setModules(listModule);
     if (studentId != null) {
       setDataWithStudentId(courseId, detailDTO, studentId);
@@ -464,11 +465,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       }
     });
     return listData;
-  }
-
-  @Override
-  public Teacher getTeacherById(String teacherId) throws Exception {
-    return teacherService.findTeacherById(teacherId);
   }
 
   @Override

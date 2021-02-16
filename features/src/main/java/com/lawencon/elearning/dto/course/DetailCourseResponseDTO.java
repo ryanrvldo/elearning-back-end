@@ -23,4 +23,7 @@ public class DetailCourseResponseDTO {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
   private LocalDateTime periodEnd;
   private List<ModuleResponseDTO> modules;
+  private String teacherFirstName;
+  private String teacherLastName;
+  private String idPhoto;
 }

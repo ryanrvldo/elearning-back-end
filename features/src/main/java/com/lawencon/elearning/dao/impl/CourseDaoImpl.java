@@ -1,5 +1,14 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -11,18 +20,10 @@ import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -182,7 +183,68 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
   @Override
   public Course getCourseById(String id) throws Exception {
-    return getById(id);
+    String sql = buildQueryOf(
+        "SELECT c.id ,c.capacity ,c.code ,c.created_at,c.created_by ,c.description ",
+        ",c.id_category ,c.id_course_type ,c.id_teacher ",
+        ",c.is_active ,c.period_end,c.period_start ,c.status ,c.updated_at ,c.updated_by ,c.\"version\" ",
+        ", u.first_name ,u.last_name ,u.id_photo,u.email ,t.gender ,t.phone  ",
+        "FROM tb_m_courses AS c INNER JOIN tb_m_teachers AS t ON t.id = c.id_teacher ",
+        "INNER JOIN tb_m_users AS u ON u.id = t.id_user WHERE c.id = ?1 ");
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    Course course = new Course();
+    listObj.forEach(val -> {
+      Object[] obj = (Object[]) val;
+
+      Teacher teacher = new Teacher();
+      User user = new User();
+
+      course.setId((String) obj[0]);
+      course.setCapacity((Integer) obj[1]);
+      course.setCode((String) obj[2]);
+      Timestamp inTime = (Timestamp) obj[3];
+      course.setCreatedAt(inTime != null ? inTime.toLocalDateTime() : null);
+      course.setCreatedBy((String) obj[4]);
+      course.setDescription((String) obj[5]);
+
+      CourseCategory cCategory = new CourseCategory();
+      cCategory.setId((String) obj[6]);
+      course.setCategory(cCategory);
+
+      CourseType cType = new CourseType();
+      cType.setId((String) obj[7]);
+      course.setCourseType(cType);
+
+      teacher.setId((String) obj[8]);
+
+      course.setIsActive((Boolean) obj[9]);
+
+      inTime = (Timestamp) obj[10];
+      course.setPeriodEnd(inTime != null ? inTime.toLocalDateTime() : null);
+
+      inTime = (Timestamp) obj[11];
+      course.setPeriodStart(inTime != null ? inTime.toLocalDateTime() : null);
+
+      course.setStatus(CourseStatus.valueOf((String) obj[12]));
+
+      inTime = (Timestamp) obj[13];
+
+      course.setUpdatedAt(inTime != null ? inTime.toLocalDateTime() : null);
+
+      course.setUpdatedBy((String) obj[14]);
+      BigInteger bigInteger = (BigInteger) obj[15];
+      course.setVersion(bigInteger.longValue());
+      user.setFirstName((String) obj[16]);
+      user.setLastName((String) obj[17]);
+      File file = new File();
+      file.setId((String) obj[18]);
+      user.setUserPhoto(file);
+      user.setEmail((String) obj[19]);
+      teacher.setUser(user);
+      teacher.setGender(Gender.valueOf((String) obj[20]));
+      teacher.setPhone((String) obj[21]);
+      course.setTeacher(teacher);
+    });
+    return course;
   }
 
   @Override
