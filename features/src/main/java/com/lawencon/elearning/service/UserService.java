@@ -1,5 +1,6 @@
 package com.lawencon.elearning.service;
 
+import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
 import com.lawencon.elearning.model.User;
 
 /**
@@ -21,7 +22,7 @@ public interface UserService {
 
   void deleteById(String id) throws Exception;
 
-  void updatePasswordUser(String userId, String newPassword) throws Exception;
+  void updatePasswordUser(UpdatePasswordRequestDTO request) throws Exception;
 
   void resetPassword(String email) throws Exception;
 

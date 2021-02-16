@@ -3,6 +3,7 @@ package com.lawencon.elearning.service.impl;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
+import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.GeneralCode;
@@ -103,12 +104,19 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   }
 
   @Override
-  public void updatePasswordUser(String userId, String newPassword) throws Exception {
-    validationUtil.validateUUID(userId);
-    User checkUser = Optional.ofNullable(getById(userId))
-        .orElseThrow(() -> new DataIsNotExistsException("Id", userId));
+  public void updatePasswordUser(UpdatePasswordRequestDTO request) throws Exception {
+    validationUtil.validate(request);
+    User checkUser = Optional.ofNullable(getById(request.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("Id", request.getId()));
 
-    newPassword = encoderUtils.getHashPassword(newPassword);
+    boolean bool =
+        encoderUtils.getEncoder().matches(request.getOldPassword(), checkUser.getPassword());
+
+    if (!bool) {
+      throw new IllegalRequestException("password not match");
+    }
+
+    String newPassword = encoderUtils.getHashPassword(request.getNewPassword());
     try {
       begin();
       userDao.updatePasswordUser(checkUser.getId(), newPassword, checkUser.getId());

@@ -151,6 +151,20 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
+  public void deleteExam(String id) throws Exception {
+    try {
+      begin();
+      examDao.deleteExam(id);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
+  }
+
+  @Override
   public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
     validateUtil.validateUUID(moduleId);
     return Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(

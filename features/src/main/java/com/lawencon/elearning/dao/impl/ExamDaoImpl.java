@@ -77,5 +77,10 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
     return (String) createNativeQuery(sql).setParameter(1, code).getSingleResult();
   }
 
+  @Override
+  public void deleteExam(String id) throws Exception {
+    deleteById(id);
+  }
+
 
 }

@@ -24,6 +24,8 @@ public interface ExamService {
 
   List<ExamsModuleResponseDTO> getExamsByModule(String id) throws Exception;
 
+  void deleteExam(String id) throws Exception;
+
 
   // ----------------------- Detail Exam ------------------------
   void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
