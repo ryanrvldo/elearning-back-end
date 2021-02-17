@@ -43,6 +43,6 @@ public interface TeacherService {
 
   DashboardTeacherResponseDto getDashboardTeacher() throws Exception;
 
-
+  void verifyRegisterStudentCourse(String studentCourseId, String teacherId) throws Exception;
 
 }

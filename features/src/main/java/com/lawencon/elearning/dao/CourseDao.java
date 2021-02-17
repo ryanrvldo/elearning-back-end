@@ -32,7 +32,7 @@ public interface CourseDao {
 
   void updateIsActive(String id, String userId) throws Exception;
 
-  void registerCourse(String courseId, String studentId) throws Exception;
+  void registerCourse(String course, String student) throws Exception;
 
   Course getCourseById(String id) throws Exception;
 

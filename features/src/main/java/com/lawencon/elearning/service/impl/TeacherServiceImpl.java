@@ -23,6 +23,7 @@ import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.RoleService;
+import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -62,6 +63,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Autowired
   private ModuleService moduleService;
+
+  @Autowired
+  private StudentCourseService studentCourseService;
 
   @Override
   public List<TeacherForAdminDTO> getAllTeachers() throws Exception {
@@ -286,7 +290,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       val.setStudentLastName("");
       val.setAvgScore(scoreTemp / totalExam);
       val.setNotAssignment(totalExam - val.getTotalAssignment());
-      val.setTotalUjian(totalExam);
+      val.setTotalExam(totalExam);
     });
     return listResult;
   }
@@ -300,6 +304,18 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     responseResult.setExperienced(experienceTeachers);
 
     return responseResult;
+  }
+
+  @Override
+  public void verifyRegisterStudentCourse(String studentCourseId, String teacherId)
+      throws Exception {
+    validUtil.validateUUID(studentCourseId, teacherId);
+    Teacher teacher = teacherDao.findTeacherById(teacherId);
+    studentCourseService.getStudentCourseById(studentCourseId);
+    if (teacher == null) {
+      throw new DataIsNotExistsException("teacher id" + teacherId);
+    }
+    studentCourseService.verifyRegisterCourse(studentCourseId, teacher.getUser().getId());
   }
 
 }

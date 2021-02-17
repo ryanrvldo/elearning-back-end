@@ -11,7 +11,7 @@ public class TeacherReportResponseDTO {
   private String studentCode;
   private String studentFirstName;
   private String studentLastName;
-  private Integer totalUjian;
+  private Integer totalExam;
   private Integer totalAssignment;
   private Integer notAssignment;
   private Double avgScore;

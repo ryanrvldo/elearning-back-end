@@ -42,5 +42,7 @@ public interface ExamService {
 
   List<ScoreReportDTO> getListScoreReport(String id) throws Exception;
 
+  void deleteExamSubmission(String detailId) throws Exception;
+
 
 }

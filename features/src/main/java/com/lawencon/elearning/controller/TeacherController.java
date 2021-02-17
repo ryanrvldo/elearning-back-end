@@ -1,10 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
-import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
-import com.lawencon.elearning.service.TeacherService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +11,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.teacher.TeacherRequestDTO;
+import com.lawencon.elearning.dto.teacher.UpdateTeacherRequestDTO;
+import com.lawencon.elearning.service.TeacherService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -79,5 +80,13 @@ public class TeacherController {
   public ResponseEntity<?> getReport(@PathVariable("id") String moduleId) throws Exception {
     return WebResponseUtils.createWebResponse(teacherService.getTeacherDetailCourseReport(moduleId),
         HttpStatus.OK);
+  }
+
+  @PutMapping("verify/student")
+  public ResponseEntity<?> verifyStudentRegisterCourse(
+      @RequestParam("studentCourseId") String studentCourseId,
+      @RequestParam("teacherId") String teacherId) throws Exception {
+    teacherService.verifyRegisterStudentCourse(studentCourseId, teacherId);
+    return WebResponseUtils.createWebResponse("Register Success", HttpStatus.OK);
   }
 }

@@ -114,18 +114,14 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
     Student prevStudent = Optional.ofNullable(studentDao.getStudentById(request.getId()))
         .orElseThrow(() -> new DataIsNotExistsException("student id", request.getId()));
-    System.out.println(userDb.getRole().getCode());
     if (userDb.getRole().getCode().equalsIgnoreCase(Roles.STUDENT.getCode())) {
-      System.out.println("galih 12");
       if (!userDb.getId().equalsIgnoreCase(prevStudent.getUser().getId())) {
-        System.out.println("galih 2");
         throw new IllegalAccessException("You Are Unauthorized");
       }
     }
 
     Student newStudent = new Student();
     newStudent.setCode(prevStudent.getCode());
-    newStudent.setCourses(prevStudent.getCourses());
     newStudent.setIsActive(prevStudent.getIsActive());
     newStudent.setUser(prevStudent.getUser());
     newStudent.setPhone(request.getPhone());
@@ -231,10 +227,6 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       listDto.add(studentDto);
     }
     return listDto;
-  }
-
-  public void RegisterCourse(String student, String course) throws Exception {
-    courseService.registerCourse(student, course);
   }
 
   @Override

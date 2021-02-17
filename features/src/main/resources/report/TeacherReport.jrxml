@@ -12,7 +12,7 @@
 	<field name="studentCode" class="java.lang.String"/>
 	<field name="studentFirstName" class="java.lang.String"/>
 	<field name="studentLastName" class="java.lang.String"/>
-	<field name="totalUjian" class="java.lang.Integer"/>
+	<field name="totalExam" class="java.lang.Integer"/>
 	<field name="totalAssignment" class="java.lang.Integer"/>
 	<field name="notAssignment" class="java.lang.Integer"/>
 	<field name="avgScore" class="java.lang.Double"/>
@@ -22,8 +22,7 @@
 	<title>
 		<band height="124" splitType="Stretch">
 			<image>
-				<reportElement x="2" y="1" width="100" height="90"
-					uuid="283e39ae-f3c9-43a1-a27b-94d5ad1baeb4"/>
+				<reportElement x="2" y="1" width="100" height="90" uuid="283e39ae-f3c9-43a1-a27b-94d5ad1baeb4"/>
 				<imageExpression><![CDATA["report/logo.png"]]></imageExpression>
 			</image>
 			<staticText>
@@ -212,12 +211,6 @@
 				<textFieldExpression><![CDATA[$F{studentLastName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="185" y="7" width="90" height="30" uuid="23ab76bc-94c6-42e1-b100-2c424025c368">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="b3ab0132-0685-4273-8e53-0fdd73288a14"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{totalUjian}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement x="299" y="7" width="72" height="30" uuid="55d44b5f-26a5-4f93-99a0-0e8b26bc8f32">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f2955405-54d0-47a6-bc09-72127b6d57a6"/>
 				</reportElement>
@@ -234,6 +227,12 @@
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cee7a3bf-0d6e-40f0-a525-b2a2b6239b56"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{avgScore}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="175" y="8" width="100" height="30" uuid="87d9604a-d144-4586-ad4b-c0c1fa9db88d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce16aa98-ad3a-45c1-af67-e74a7cd67da5"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{totalExam}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

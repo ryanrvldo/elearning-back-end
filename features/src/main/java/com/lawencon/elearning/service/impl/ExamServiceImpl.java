@@ -230,4 +230,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
         .orElse(Collections.emptyList());
   }
 
+  @Override
+  public void deleteExamSubmission(String detailId) throws Exception {
+    dtlExamService.deleteDetailExam(detailId);
+  }
+
 }

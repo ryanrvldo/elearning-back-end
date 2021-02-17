@@ -92,9 +92,4 @@ public class CourseController {
         HttpStatus.OK);
   }
 
-  @GetMapping("test/{id}")
-  public ResponseEntity<?> testingTest(@PathVariable("id") String courseId) throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getCourseById(courseId), HttpStatus.OK);
-  }
-
 }

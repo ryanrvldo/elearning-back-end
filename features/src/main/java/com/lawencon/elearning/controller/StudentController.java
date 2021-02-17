@@ -1,9 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.student.RegisterStudentDTO;
-import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
-import com.lawencon.elearning.service.StudentService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.student.RegisterStudentDTO;
+import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
+import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * 
@@ -63,14 +63,7 @@ public class StudentController {
     studentService.insertStudent(body);
     return WebResponseUtils.createWebResponse("Register Success", HttpStatus.OK);
   }
-
-  @PostMapping("register/{student}/{course}")
-  public ResponseEntity<?> registerCourse(@PathVariable("student") String student,
-      @PathVariable("course") String course) throws Exception {
-    studentService.RegisterCourse(student, course);
-    return WebResponseUtils.createWebResponse("Success Register Course", HttpStatus.CREATED);
-  }
-
+  
   @GetMapping("report")
   public ResponseEntity<?> getStudentReport(@RequestParam("studentId") String studentId)
       throws Exception {

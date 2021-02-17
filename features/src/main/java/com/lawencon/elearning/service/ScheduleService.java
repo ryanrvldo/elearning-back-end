@@ -1,8 +1,8 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
-import com.lawencon.elearning.dto.ScheduleResponseDTO;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.schedule.ScheduleResponseDTO;
 import com.lawencon.elearning.model.Schedule;
 
 /**

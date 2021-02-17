@@ -10,13 +10,16 @@ import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.dto.file.FileRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.service.DetailExamService;
+import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.service.FileService;
+import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
@@ -44,6 +47,12 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
 
   @Autowired
   private ValidationUtil validationUtil;
+
+  @Autowired
+  private ExamService examService;
+
+  @Autowired
+  private StudentService studentService;
 
   @Override
   public List<ScoreAverageResponseDTO> getListScoreAvg(String id) throws Exception {
@@ -112,9 +121,18 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   @Override
   public void deleteDetailExam(String id) throws Exception {
     validationUtil.validateUUID(id);
-    begin();
-    dtlExamDao.deleteDetailExam(id);
-    commit();
+    DetailExam detailExam = dtlExamDao.getDetailById(id);
+    if (detailExam == null) {
+      throw new DataIsNotExistsException(id);
+    }
+    if (detailExam.getGrade() == null
+        && LocalDateTime.now().isBefore(detailExam.getExam().getEndTime())) {
+      begin();
+      dtlExamDao.deleteDetailExam(id);
+      commit();
+    } else {
+      throw new IllegalRequestException("id" + id);
+    }
   }
 
   @Override
@@ -153,11 +171,13 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     validationUtil.validateUUID(examId);
     validationUtil.validateUUID(studentId);
 
-    Exam exam = new Exam();
-    exam.setId(examId);
+    LocalDateTime timeNow = LocalDateTime.now();
+    Exam exam = examService.findExamById(examId);
+    if (exam.getStartTime().isAfter(timeNow) || exam.getEndTime().isBefore(timeNow)) {
+      throw new IllegalRequestException("Cannot send submission at this time");
+    }
 
-    Student student = new Student();
-    student.setId(studentId);
+    Student student = studentService.getStudentById(studentId);
 
     File file = new File();
 
@@ -170,7 +190,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     detailExam.setStudent(student);
     detailExam.setExam(exam);
     detailExam.setFile(file);
-
+    
     try {
       begin();
       FileResponseDto fileResponseDTO =
@@ -184,7 +204,6 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
       rollback();
       throw e;
     }
-
   }
 
   @Override

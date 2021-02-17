@@ -1,8 +1,19 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
+import com.lawencon.elearning.dto.StudentCourseRegisterRequestDTO;
+import com.lawencon.elearning.dto.StudentListByCourseResponseDTO;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
@@ -15,7 +26,6 @@ import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
-import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.error.DataAlreadyExistException;
@@ -35,19 +45,11 @@ import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.ModuleService;
+import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -78,6 +80,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private GeneralService generalService;
+
+  @Autowired
+  private StudentCourseService studentCourseService;
 
   @Override
   public List<CourseResponseDTO> getAllCourse() throws Exception {
@@ -303,8 +308,11 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       Integer capacityRegist = courseDao.getCapacityCourse(courseId);
       if (capacityRegist < course.getCapacity()) {
         try {
-          begin();
-          courseDao.registerCourse(courseId, student.getId());
+          StudentCourseRegisterRequestDTO registerDTO = new StudentCourseRegisterRequestDTO();
+          registerDTO.setCourseId(courseId);
+          registerDTO.setStudentId(studentId);
+          registerDTO.setCreatedBy(student.getUser().getId());
+          studentCourseService.registerCourse(registerDTO);
 
           String template = generalService.getTemplateHTML(GeneralCode.REGISTER_COURSE.getCode());
 
@@ -314,7 +322,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
           email.setSubject("Register Course Success!");
           email.setBody(template);
           new EmailServiceImpl(mailUtils, email).start();
-          commit();
 
         } catch (Exception e) {
           e.printStackTrace();
@@ -362,14 +369,14 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public List<StudentByCourseResponseDTO> getStudentByCourseId(String id) throws Exception {
+  public List<StudentListByCourseResponseDTO> getStudentByCourseId(String id) throws Exception {
     validateUtil.validateUUID(id);
     Course course = courseDao.getCourseById(id);
     if (course == null) {
       throw new DataIsNotExistsException("id", id);
     }
-    return studentService.getListStudentByIdCourse(id);
 
+    return studentCourseService.getListStudentCourseById(id);
   }
 
   @Override
@@ -390,6 +397,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throws Exception {
     Course course = courseDao.getCourseById(courseId);
     List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, "");
+    if (course == null) {
+      throw new DataIsNotExistsException("course id" + courseId);
+    }
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
@@ -514,7 +524,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       }
       val.setModuleComplete(moduleComplete);
       val.setPercentProgress(
-          ((double) val.getModuleComplete() / (double) val.getTotalModule()) * 100);
+          Math.floor(((double) val.getModuleComplete() / (double) val.getTotalModule()) * 100));
     });
     return listCourse;
   }
