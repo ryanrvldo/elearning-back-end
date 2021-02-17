@@ -19,6 +19,10 @@ public class TokenResponseDto {
 
   private String userRoleId;
 
+  private String firstName;
+
+  private String lastName;
+
   private String username;
 
   private String photoId;

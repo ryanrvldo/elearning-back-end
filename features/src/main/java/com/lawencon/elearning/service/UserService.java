@@ -1,8 +1,9 @@
 package com.lawencon.elearning.service;
 
-import java.util.List;
 import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
 import com.lawencon.elearning.model.User;
+import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Rian Rivaldo
@@ -28,5 +29,7 @@ public interface UserService {
   void resetPassword(String email) throws Exception;
 
   List<String> getEmailUsersPerModule(String idModule) throws Exception;
+
+  void saveUserPhoto(MultipartFile file, String content) throws Exception;
 
 }

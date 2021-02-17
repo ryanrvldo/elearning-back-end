@@ -10,8 +10,8 @@ public class InternalServerErrorException extends Exception {
 
   private static final long serialVersionUID = -171403067147528222L;
 
-  public InternalServerErrorException(String message, Throwable cause) {
-    super(message, cause);
+  public InternalServerErrorException(String message) {
+    super(message);
   }
 
   public InternalServerErrorException(Throwable cause) {

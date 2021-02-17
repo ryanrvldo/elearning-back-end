@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class FileUpdateRequestDto {
 
   @NotBlank
-  @Size(max = 36)
+  @Size(min = 32, max = 36)
   private String id;
 
   @NotBlank
-  @Size(max = 36)
-  private String userId;
+  @Size(min = 32, max = 36)
+  private String updatedBy;
 
 }

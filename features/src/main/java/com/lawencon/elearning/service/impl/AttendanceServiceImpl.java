@@ -1,13 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
@@ -25,6 +17,15 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -64,7 +65,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
     List<StudentByCourseResponseDTO> listStudent =
         studentService.getListStudentByIdCourse(idCourse);
     if (listStudent.isEmpty()) {
-      throw new DataIsNotExistsException("No student register yet.");
+      return Collections.emptyList();
     }
     List<AttendanceResponseDTO> listDTO = new ArrayList<>();
     for (StudentByCourseResponseDTO studentDTO : listStudent) {
@@ -148,9 +149,9 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
     if (null == attendance) {
       return "0";
     } else {
-      if (attendance.getIsVerified() == false) {
+      if (!attendance.getIsVerified()) {
         return "1";
-      } else if (attendance.getIsVerified() == true) {
+      } else if (attendance.getIsVerified()) {
         return "2";
       }
     }

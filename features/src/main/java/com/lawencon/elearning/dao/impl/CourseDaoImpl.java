@@ -257,7 +257,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type ",
         "INNER JOIN tb_m_course_categories AS cc ON cc.id = c.id_category ",
         "INNER JOIN tb_m_teachers AS t ON t.id = c.id_teacher ",
-        "INNER JOIN student_course AS sc ON sc.id_course = c.id WHERE t.id = ?1 ",
+        "LEFT JOIN student_course AS sc ON sc.id_course = c.id WHERE t.id = ?1 ",
         "group by course_id , course_code ,type_name , c.capacity  , c.description, c.period_start , c.period_end ");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
     Map<Course, Integer[]> courseMap = new HashMap<>();

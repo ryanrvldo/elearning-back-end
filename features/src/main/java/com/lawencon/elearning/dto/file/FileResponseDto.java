@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FileResponseDto {
 
-  public String id;
-  public String fileName;
-  public FileType fileType;
-  public Long size;
-  public String contentType;
-  public Long version;
+  private String id;
+  private String fileName;
+  private FileType fileType;
+  private Long size;
+  private String contentType;
+  private Long version;
 
 }

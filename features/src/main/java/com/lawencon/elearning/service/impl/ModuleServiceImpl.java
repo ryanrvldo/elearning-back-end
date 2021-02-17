@@ -1,19 +1,9 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.file.FileCreateRequestDto;
+import com.lawencon.elearning.dto.file.FileRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
 import com.lawencon.elearning.dto.module.ModuleRequestDTO;
@@ -37,11 +27,18 @@ import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 
  * @author WILLIAM
- *
  */
 @Service
 public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService {
@@ -83,7 +80,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     if (idStudent == null || idStudent.trim().isEmpty()) {
       List<Module> listResult = moduleDao.getDetailCourse(idCourse);
       if (listResult.isEmpty()) {
-        throw new DataIsNotExistsException("There is no module yet");
+        return Collections.emptyList();
       }
       List<ModuleResponseDTO> listModuleDTO = new ArrayList<>();
       for (int i = 0; i < listResult.size(); i++) {
@@ -102,25 +99,16 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         moduleDTO.setSchedule(scheduleDTO);
         listModuleDTO.add(moduleDTO);
       }
-      Collections.sort(listModuleDTO, new Comparator<ModuleResponseDTO>() {
-        public int compare(ModuleResponseDTO module1, ModuleResponseDTO module2) {
-          return module1.getSchedule().getDate().compareTo(module2.getSchedule().getDate());
-        }
-      });
+      listModuleDTO.sort(Comparator.comparing(module -> module.getSchedule().getDate()));
       return listModuleDTO;
-    }
-    else {
+    } else {
       Optional.ofNullable(studentService.getStudentById(idStudent))
           .orElseThrow(() -> new DataIsNotExistsException("student id", idStudent));
       List<ModuleResponseDTO> listResult = moduleDao.getDetailCourseStudent(idCourse, idStudent);
       if (listResult.isEmpty()) {
-        throw new DataIsNotExistsException("There is no module yet");
+        return Collections.emptyList();
       }
-      Collections.sort(listResult, new Comparator<ModuleResponseDTO>() {
-        public int compare(ModuleResponseDTO module1, ModuleResponseDTO module2) {
-          return module1.getSchedule().getDate().compareTo(module2.getSchedule().getDate());
-        }
-      });
+      listResult.sort(Comparator.comparing(module -> module.getSchedule().getDate()));
       return listResult;
     }
   }
@@ -192,7 +180,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     if (data.getSchedule().getDate()
         .isBefore(courseDb.getPeriodStart().toLocalDate())
         || data.getSchedule().getDate()
-            .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+        .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
       throw new IllegalRequestException("You can't insert module outside course period");
     }
 
@@ -283,20 +271,19 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       throw new IllegalRequestException("File cannot be empty!");
     }
 
-    FileCreateRequestDto contentString = new FileCreateRequestDto();
-    contentString.setType(FileType.MODULE_LESSON.toString());
-    contentString.setUserId(idUser);
-    String content = new ObjectMapper().writeValueAsString(contentString);
-      try {
-        begin();
-        FileResponseDto fileResponseDTO = fileService.createFile(multiPartFiles, content);
-        moduleDao.insertLesson(idModule, fileResponseDTO.getId());
-        commit();
-      } catch (Exception e) {
-        e.printStackTrace();
-        rollback();
-        throw e;
-      }
+    FileRequestDto fileRequest = new FileRequestDto();
+    fileRequest.setType(FileType.MODULE_LESSON.toString());
+    fileRequest.setUserId(idUser);
+    try {
+      begin();
+      FileResponseDto fileResponseDTO = fileService.createFile(multiPartFiles, fileRequest);
+      moduleDao.insertLesson(idModule, fileResponseDTO.getId());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
   }
 
   @Override
@@ -304,12 +291,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     validationUtil.validateUUID(idModule);
     Optional.ofNullable(moduleDao.getModuleById(idModule))
         .orElseThrow(() -> new DataIsNotExistsException("id module", idModule));
-    System.out.println(idModule);
-    List<FileResponseDto> listFileDto = moduleDao.getLessonByIdModule(idModule);
-    if (listFileDto.isEmpty()) {
-      throw new DataIsNotExistsException("No Lesson File Yet");
-    }
-    return listFileDto;
+    return moduleDao.getLessonByIdModule(idModule);
   }
 
   @Override
@@ -332,7 +314,7 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
     List<Module> listResult = moduleDao.getModuleList(idCourse);
     if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("There is no module yet");
+      return Collections.emptyList();
     }
     List<ModuleListReponseDTO> listModuleDTO = new ArrayList<>();
     for (int i = 0; i < listResult.size(); i++) {

@@ -28,6 +28,7 @@ import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.Roles;
+import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
@@ -40,6 +41,7 @@ import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,7 +83,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   public List<CourseResponseDTO> getAllCourse() throws Exception {
     List<Course> listCourse = courseDao.findAll();
     if (listCourse.isEmpty()) {
-      throw new DataIsNotExistsException("Data is not exist");
+      return Collections.emptyList();
     }
     return getAndSetupCourseResponse(listCourse, null);
   }
@@ -181,7 +183,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     List<Course> listCourseAvailable = courseDao.getCurrentAvailableCourse();
     List<Course> listCourseByStudent = courseDao.getCourseByStudentId(studentId);
     if (listCourseAvailable.isEmpty()) {
-      throw new DataIsNotExistsException("Data is empty");
+      return Collections.emptyList();
     }
     return getAndSetupCourseResponse(listCourseAvailable, (course, response) -> {
       response.setIsRegist(false);
@@ -196,12 +198,14 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public List<CourseResponseDTO> getCourseByStudentId(String id) throws Exception {
     validateUtil.validateUUID(id);
-    studentService.getStudentById(id);
-    List<Course> listCourse = courseDao.getCourseByStudentId(id);
-    List<CourseProgressResponseDTO> progressList = courseDao.getCourseProgressByStudentId(id);
+    Student student = studentService.getStudentById(id);
+    List<Course> listCourse = courseDao.getCourseByStudentId(student.getId());
+    List<CourseProgressResponseDTO> progressList = courseDao
+        .getCourseProgressByStudentId(student.getId());
     if (listCourse.isEmpty()) {
-      throw new DataIsNotExistsException("You haven't select any course");
+      return Collections.emptyList();
     }
+
     List<CourseResponseDTO> responseList = new ArrayList<>();
     listCourse.forEach(val -> {
       CourseResponseDTO courseDto = new CourseResponseDTO();
@@ -261,7 +265,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     List<Course> listCourse = courseDao.getCourseForAdmin();
     List<CourseAdminResponseDTO> listResult = new ArrayList<>();
     if (listCourse.isEmpty()) {
-      throw new DataIsNotExistsException("Data is empty");
+      return Collections.emptyList();
     }
     listCourse.forEach(val -> {
       CourseAdminResponseDTO data = new CourseAdminResponseDTO();
@@ -286,7 +290,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public void registerCourse(String studentId, String courseId) throws Exception {
     validateUtil.validateUUID(studentId, courseId);
-    studentService.getStudentById(studentId);
+    Student student = studentService.getStudentById(studentId);
     Course course = courseDao.getCourseById(courseId);
     if (course == null) {
       throw new DataIsNotExistsException("course id", courseId);
@@ -294,13 +298,13 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (LocalDateTime.now().isAfter(course.getPeriodStart())) {
       throw new IllegalRequestException("can't register to course when course already on going");
     }
-    Integer count = courseDao.checkDataRegisterCourse(courseId, studentId);
+    Integer count = courseDao.checkDataRegisterCourse(courseId, student.getId());
     if (count == 0) {
       Integer capacityRegist = courseDao.getCapacityCourse(courseId);
       if (capacityRegist < course.getCapacity()) {
         try {
           begin();
-          courseDao.registerCourse(courseId, studentId);
+          courseDao.registerCourse(courseId, student.getId());
 
           String template = generalService.getTemplateHTML(GeneralCode.REGISTER_COURSE.getCode());
 
@@ -364,22 +368,14 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (course == null) {
       throw new DataIsNotExistsException("id", id);
     }
-    List<StudentByCourseResponseDTO> listStudent = studentService.getListStudentByIdCourse(id);
-    if (listStudent.isEmpty()) {
-      throw new DataIsNotExistsException("Data is empty");
-    }
-    return listStudent;
+    return studentService.getListStudentByIdCourse(id);
 
   }
 
   @Override
   public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
     validateUtil.validateUUID(id);
-    Map<Course, Integer[]> listCourse = courseDao.getTeacherCourse(id);
-    if (listCourse.isEmpty()) {
-      throw new DataIsNotExistsException("Data is empty");
-    }
-    return listCourse;
+    return courseDao.getTeacherCourse(id);
   }
 
   @Override
@@ -475,7 +471,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     List<CourseAttendanceReportByTeacher> listData = courseDao.getCourseAttendanceReport(courseId);
     if (listData.isEmpty()) {
-      throw new DataIsNotExistsException("Data empty");
+      return Collections.emptyList();
     }
     listData.forEach(val -> {
       try {
@@ -502,7 +498,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     studentService.getStudentById(studentId);
     List<CourseProgressResponseDTO> listCourse = courseDao.getCourseProgressByStudentId(studentId);
     if (listCourse.isEmpty()) {
-      throw new DataIsNotExistsException("student id", studentId);
+      return Collections.emptyList();
     }
     listCourse.forEach(val -> {
       if (val.getTotalModule() == null || val.getTotalModule() == 0) {

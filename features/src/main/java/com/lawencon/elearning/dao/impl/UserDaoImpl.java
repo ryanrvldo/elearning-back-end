@@ -16,7 +16,8 @@ import com.lawencon.elearning.model.User;
 public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   private final String singleUserQuery = buildQueryOf(
-      "SELECT u.id, u.email, u.username, u.password, u.isActive, u.version, r.id AS roleId, u.role.code, u.role.name, u.userPhoto.id, u.userPhoto.version ",
+      "SELECT u.id, u.firstName, u.lastName, u.email, u.username, u.password, u.isActive, ",
+      "u.version, r.id AS roleId, u.role.code, u.role.name, u.userPhoto.id, u.userPhoto.version ",
       "FROM User AS u INNER JOIN u.role AS r ",
       "LEFT JOIN u.userPhoto ");
 
@@ -51,6 +52,14 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
         .setParameter(1, status)
         .setParameter(2, id)
         .executeUpdate();
+  }
+
+  @Override
+  public void updateUserPhoto(User user) throws Exception {
+    updateNativeSQL("UPDATE tb_m_users SET id_photo = ?1",
+        user.getId(),
+        user.getUpdatedBy(),
+        user.getUserPhoto().getId());
   }
 
   @Override
@@ -96,21 +105,23 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
         .getSingleResult();
     User user = new User();
     user.setId((String) objArr[0]);
-    user.setEmail((String) objArr[1]);
-    user.setUsername((String) objArr[2]);
-    user.setPassword((String) objArr[3]);
-    user.setIsActive((Boolean) objArr[4]);
-    user.setVersion((Long) objArr[5]);
+    user.setFirstName((String) objArr[1]);
+    user.setLastName((String) objArr[2]);
+    user.setEmail((String) objArr[3]);
+    user.setUsername((String) objArr[4]);
+    user.setPassword((String) objArr[5]);
+    user.setIsActive((Boolean) objArr[6]);
+    user.setVersion((Long) objArr[7]);
 
     Role role = new Role();
-    role.setId((String) objArr[6]);
-    role.setCode((String) objArr[7]);
-    role.setName((String) objArr[8]);
+    role.setId((String) objArr[8]);
+    role.setCode((String) objArr[9]);
+    role.setName((String) objArr[10]);
     user.setRole(role);
 
     File file = new File();
-    file.setId((String) objArr[9]);
-    file.setVersion((Long) objArr[10]);
+    file.setId((String) objArr[11]);
+    file.setVersion((Long) objArr[12]);
     user.setUserPhoto(file);
     return user;
   }

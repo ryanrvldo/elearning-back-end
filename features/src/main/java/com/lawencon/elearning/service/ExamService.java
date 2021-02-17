@@ -1,7 +1,5 @@
 package com.lawencon.elearning.service;
 
-import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
@@ -9,6 +7,8 @@ import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
 import com.lawencon.elearning.model.Exam;
+import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -28,7 +28,7 @@ public interface ExamService {
 
 
   // ----------------------- Detail Exam ------------------------
-  void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
+  void submitAssignment(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception;
 
   void updateScoreAssignment(UpdateScoreRequestDTO data) throws Exception;

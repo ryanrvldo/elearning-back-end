@@ -1,10 +1,10 @@
 package com.lawencon.elearning.model;
 
+import com.lawencon.model.BaseMaster;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "tb_m_subject_categories",
     uniqueConstraints = {@UniqueConstraint(name = "bk_subject", columnNames = {"code"})})
 public class SubjectCategory extends BaseMaster {
+
   private static final long serialVersionUID = 1L;
 
   @Column(nullable = false, length = 50)
@@ -26,5 +27,6 @@ public class SubjectCategory extends BaseMaster {
   @Column(name = "subject_name", nullable = false, length = 100)
   private String subjectName;
 
+  @Column(columnDefinition = "TEXT")
   private String description;
 }

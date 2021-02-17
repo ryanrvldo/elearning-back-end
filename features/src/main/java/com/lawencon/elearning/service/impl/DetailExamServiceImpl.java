@@ -1,14 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
@@ -16,7 +7,7 @@ import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
-import com.lawencon.elearning.dto.file.FileCreateRequestDto;
+import com.lawencon.elearning.dto.file.FileRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.DetailExam;
@@ -29,12 +20,22 @@ import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author : Galih Dika Permana
  */
 @Service
 public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExamService {
+
   @Autowired
   private DetailExamDao dtlExamDao;
 
@@ -49,7 +50,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     validationUtil.validateUUID(id);
     List<DetailExam> listDetail = dtlExamDao.getListScoreAvg(id);
     if (listDetail == null) {
-      throw new DataIsNotExistsException("Data is not exist");
+      return Collections.emptyList();
     }
     List<ScoreAverageResponseDTO> scoreAveragesDTO = new ArrayList<>();
     listDetail.forEach(val -> {
@@ -67,10 +68,12 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   @Override
   public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
     validationUtil.validateUUID(id);
-    List<DetailExam> detailExams = Optional.ofNullable(dtlExamDao.getListScoreReport(id))
-        .orElseThrow(() -> new DataIsNotExistsException("id", id));
-    List<ScoreReportDTO> scoreReports = new ArrayList<ScoreReportDTO>();
+    List<DetailExam> detailExams = dtlExamDao.getListScoreReport(id);
+    if (detailExams == null) {
+      return Collections.emptyList();
+    }
 
+    List<ScoreReportDTO> scoreReports = new ArrayList<>();
     for (DetailExam detail : detailExams) {
       ScoreReportDTO dataScore = new ScoreReportDTO();
       dataScore.setCourseCode(detail.getExam().getModule().getCourse().getCode());
@@ -127,7 +130,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   public List<SubmissionsByExamResponseDTO> getExamSubmission(String id) throws Exception {
     validationUtil.validateUUID(id);
     return Optional.ofNullable(dtlExamDao.getExamSubmission(id))
-        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+        .orElse(Collections.emptyList());
   }
 
   @Override
@@ -137,20 +140,15 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     validationUtil.validateUUID(examId);
     SubmissionStudentResponseDTO result =
         dtlExamDao.getStudentExamSubmission(examId, studentId);
-    if (result == null) {
-      return null;
-    }
     return result;
   }
 
   @Override
   public void sendStudentExam(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception {
-    ObjectMapper objMapper = new ObjectMapper();
-    FileCreateRequestDto newRequestDto = new FileCreateRequestDto();
-    newRequestDto.setType(FileType.ASSIGNMENT.name());
-    newRequestDto.setUserId(studentId);
-    String content = objMapper.writeValueAsString(newRequestDto);
+    FileRequestDto fileRequest = new FileRequestDto();
+    fileRequest.setType(FileType.ASSIGNMENT.name());
+    fileRequest.setUserId(studentId);
 
     validationUtil.validateUUID(examId);
     validationUtil.validateUUID(studentId);
@@ -176,7 +174,7 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     try {
       begin();
       FileResponseDto fileResponseDTO =
-          Optional.ofNullable(fileService.createFile(multiPartFile, content))
+          Optional.ofNullable(fileService.createFile(multiPartFile, fileRequest))
               .orElseThrow(() -> new DataIsNotExistsException("Id file not found!"));
       file.setId(fileResponseDTO.getId());
       dtlExamDao.sendStudentExam(detailExam);
@@ -193,7 +191,5 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
   public List<DetailExam> getStudentExamReport(String studentId) throws Exception {
     return dtlExamDao.getStudentExamReport(studentId);
   }
-
-
 
 }

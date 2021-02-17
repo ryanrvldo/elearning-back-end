@@ -18,6 +18,8 @@ public interface UserDao {
 
   void updateActivateStatus(String id, boolean status) throws Exception;
 
+  void updateUserPhoto(User user) throws Exception;
+
   String getUserRoleId(String userId) throws Exception;
 
   void deleteById(String id) throws Exception;

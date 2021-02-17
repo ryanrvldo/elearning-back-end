@@ -1,11 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.RoleDao;
 import com.lawencon.elearning.dto.role.RoleCreateRequestDto;
@@ -16,6 +10,13 @@ import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
@@ -64,7 +65,7 @@ public class RoleServiceImpl extends BaseServiceImpl implements RoleService {
   public List<RoleResponseDto> findAll() throws Exception {
     List<Role> roles = roleDao.findAll();
     if (roles.isEmpty()) {
-      throw new DataIsNotExistsException("Role is empty and has not been initialized.");
+      return Collections.emptyList();
     }
     return roles.stream()
         .map(this::mapEntityToResponse)

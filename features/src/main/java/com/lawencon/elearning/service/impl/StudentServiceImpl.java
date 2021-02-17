@@ -27,6 +27,7 @@ import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -205,11 +206,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     validationUtil.validateUUID(id);
     Optional.ofNullable(studentDao.getStudentById(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
-    List<CourseResponseDTO> listResult = courseService.getCourseByStudentId(id);
-    if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("You haven't select any course");
-    }
-    return listResult;
+    return courseService.getCourseByStudentId(id);
   }
 
   @Override
@@ -217,6 +214,10 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       throws Exception {
     validationUtil.validateUUID(idCourse);
     List<Student> listStudent = studentDao.getListStudentByIdCourse(idCourse);
+    if (listStudent.isEmpty()) {
+      return Collections.emptyList();
+    }
+
     List<StudentByCourseResponseDTO> listDto = new ArrayList<>();
     for (Student element : listStudent) {
       StudentByCourseResponseDTO studentDto = new StudentByCourseResponseDTO();
@@ -240,17 +241,18 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   public List<Student> getAllStudentByCourseId(String idCourse) throws Exception {
     validationUtil.validateUUID(idCourse);
     return Optional.ofNullable(studentDao.getListStudentByIdCourse(idCourse))
-        .orElseThrow(() -> new DataIsNotExistsException("course id", idCourse));
+        .orElse(Collections.emptyList());
   }
 
   @Override
   public List<StudentReportDTO> getStudentExamReport(String studentId) throws Exception {
     validationUtil.validateUUID(studentId);
     List<DetailExam> listDetail = detailExamService.getStudentExamReport(studentId);
-    List<StudentReportDTO> listResult = new ArrayList<>();
     if (listDetail.isEmpty()) {
-      throw new DataIsNotExistsException("id", studentId);
+      return Collections.emptyList();
     }
+
+    List<StudentReportDTO> listResult = new ArrayList<>();
     for (DetailExam detailExam : listDetail) {
       StudentReportDTO studentDTO = new StudentReportDTO();
       studentDTO.setCourseName(
@@ -271,7 +273,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   public List<StudentDashboardDTO> getAll() throws Exception {
     List<Student> studentList = studentDao.findAll();
     if (studentList.isEmpty()) {
-      throw new DataIsNotExistsException("There is no student yet.");
+      return Collections.emptyList();
     }
     return studentList.stream()
         .map(student -> new StudentDashboardDTO(
@@ -304,12 +306,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
 
   @Override
   public List<RegisteredStudentMonthlyDto> countRegisteredStudentMonthly() throws Exception {
-    List<RegisteredStudentMonthlyDto> listDto =
-        studentDao.countTotalRegisteredStudent();
-    if (listDto.isEmpty()) {
-      throw new DataIsNotExistsException("No register student yet");
-    }
-    return listDto;
+    return studentDao.countTotalRegisteredStudent();
   }
 
 }

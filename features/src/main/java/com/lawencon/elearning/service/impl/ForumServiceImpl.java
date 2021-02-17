@@ -1,16 +1,9 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ForumDao;
 import com.lawencon.elearning.dto.forum.ForumModuleResponseDTO;
 import com.lawencon.elearning.dto.forum.ForumRequestDTO;
-import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Forum;
 import com.lawencon.elearning.model.Module;
@@ -18,6 +11,13 @@ import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.ForumService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -57,10 +57,8 @@ public class ForumServiceImpl extends BaseServiceImpl implements ForumService {
   @Override
   public List<ForumModuleResponseDTO> getByModuleId(String moduleId) throws Exception {
     validateUtil.validateUUID(moduleId);
-    List<ForumModuleResponseDTO> forumResponses =
-        Optional.ofNullable(forumDao.getByModuleId(moduleId))
-            .orElseThrow(() -> new DataIsNotExistsException("Module Id", moduleId));
-    return forumResponses;
+    return Optional.ofNullable(forumDao.getByModuleId(moduleId))
+        .orElse(Collections.emptyList());
   }
 
   @Override

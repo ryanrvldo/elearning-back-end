@@ -1,6 +1,15 @@
 package com.lawencon.elearning.config;
 
 import static com.lawencon.elearning.util.WebResponseUtils.createFailedAuthResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawencon.elearning.dto.TokenResponseDto;
+import com.lawencon.elearning.dto.role.RoleResponseDto;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.WebResponseUtils;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -17,22 +26,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lawencon.elearning.dto.TokenResponseDto;
-import com.lawencon.elearning.dto.role.RoleResponseDto;
-import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.WebResponseUtils;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 /**
  * @author Rian Rivaldo
  */
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-  private final String KEY =
-      "VPnEQ4KjAfPk8LHxxvyoQF52RgWagpgLPTUaZXa26caoFGS9ddnpwdgVwWKXiyI1vM9KRzNai-2L7GLym_SMoUFI65kPeiHHSfwF-y28vNUBlXia-300JoWaqdm644XwsWui05leT6bRFjXyqWKxLzKsy36Zm7NPyS2l1pRqfBEEOZgeuI1LO2uim9RYuYxTnweAQndFx0WEX-Pe3pHlxUNxnn0lpOi_fvF7KCVto43cAV0-WCPBe-eNi7SEPs8ZNkgu0DKFXcCeeAqVnNTNIOyYKNNmCnr7qzuvaBhBkeqHVevZU7HJma347fFvdM0SVeAEX8HxgTsBPtpEUjqB";
 
   private final AuthenticationManager authenticationManager;
   private final UserService userService;
@@ -62,6 +60,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   @Override
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
       FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    String KEY = "VPnEQ4KjAfPk8LHxxvyoQF52RgWagpgLPTUaZXa26caoFGS9ddnpwdgVwWKXiyI1vM9KRzNai-2L7GLym_SMoUFI65kPeiHHSfwF-y28vNUBlXia-300JoWaqdm644XwsWui05leT6bRFjXyqWKxLzKsy36Zm7NPyS2l1pRqfBEEOZgeuI1LO2uim9RYuYxTnweAQndFx0WEX-Pe3pHlxUNxnn0lpOi_fvF7KCVto43cAV0-WCPBe-eNi7SEPs8ZNkgu0DKFXcCeeAqVnNTNIOyYKNNmCnr7qzuvaBhBkeqHVevZU7HJma347fFvdM0SVeAEX8HxgTsBPtpEUjqB";
     SecretKey key = Keys.hmacShaKeyFor(KEY.getBytes());
     String token = Jwts.builder()
         .signWith(key)
@@ -84,7 +83,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
       roleResponse.setName(user.getRole().getName());
 
       TokenResponseDto tokenResponse = new TokenResponseDto(token, user.getId(), userRoleId,
-          user.getUsername(), user.getUserPhoto().getId(), roleResponse);
+          user.getFirstName(), user.getLastName(), user.getUsername(), user.getUserPhoto().getId(),
+          roleResponse);
 
       response.getWriter().write(objectMapper
           .writeValueAsString(WebResponseUtils.createSuccessAuthResponse(tokenResponse)));

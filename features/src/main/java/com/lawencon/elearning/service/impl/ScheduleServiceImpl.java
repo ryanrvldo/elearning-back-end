@@ -1,11 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ScheduleDao;
 import com.lawencon.elearning.dto.ScheduleResponseDTO;
@@ -13,12 +7,21 @@ import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Schedule;
+import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.service.ScheduleService;
+import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- *  @author Dzaky Fadhilla Guci
+ * @author Dzaky Fadhilla Guci
  */
 
 @Service
@@ -28,12 +31,15 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   private ScheduleDao scheduleDao;
 
   @Autowired
+  private TeacherService teacherService;
+
+  @Autowired
   private ValidationUtil validateUtil;
 
   @Override
   public List<Schedule> getAllSchedules() throws Exception {
-    return Optional.ofNullable(scheduleDao.getAllSchedules()).orElseThrow(
-        () -> new DataIsNotExistsException("Schedule is empty and has not been initialized."));
+    return Optional.ofNullable(scheduleDao.getAllSchedules())
+        .orElse(Collections.emptyList());
   }
 
   @Override
@@ -81,11 +87,13 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public List<ScheduleResponseDTO> getByTeacherId(String teacherId) throws Exception {
     validateUtil.validateUUID(teacherId);
-    List<Schedule> schedules = Optional.ofNullable(scheduleDao.getByTeacherId(teacherId))
-        .orElseThrow(() -> new DataIsNotExistsException("Teacher Id", teacherId));
+    Teacher teacher = teacherService.findTeacherById(teacherId);
+    List<Schedule> schedules = scheduleDao.getByTeacherId(teacher.getId());
+    if (schedules.isEmpty()) {
+      return Collections.emptyList();
+    }
 
-    List<ScheduleResponseDTO> listResult = new ArrayList<ScheduleResponseDTO>();
-
+    List<ScheduleResponseDTO> listResult = new ArrayList<>();
     schedules.forEach(schedule -> {
       ScheduleResponseDTO scheduleDTO = new ScheduleResponseDTO();
       scheduleDTO.setId(schedule.getId());

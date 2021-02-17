@@ -1,12 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
@@ -33,6 +26,14 @@ import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -66,7 +67,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   public List<TeacherForAdminDTO> getAllTeachers() throws Exception {
     List<Teacher> teacherList = teacherDao.getAllTeachers();
     if (teacherList.isEmpty()) {
-      throw new DataIsNotExistsException("There is no teacher yet.");
+      return Collections.emptyList();
     }
 
     List<TeacherForAdminDTO> responseList = new ArrayList<>();
@@ -89,9 +90,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public List<TeacherForAdminDTO> allTeachersForAdmin() throws Exception {
-    List<TeacherForAdminDTO> listTeachers = Optional.ofNullable(teacherDao.allTeachersForAdmin())
-        .orElseThrow(() -> new DataIsNotExistsException("Teachers data have not been registered "));
-    return listTeachers;
+    return Optional.ofNullable(teacherDao.allTeachersForAdmin())
+        .orElse(Collections.emptyList());
   }
 
   @Override
@@ -246,6 +246,10 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception {
     Map<Course, Integer[]> resultMap = courseService.getTeacherCourse(id);
+    if (resultMap.isEmpty()) {
+      return Collections.emptyList();
+    }
+
     List<DashboardTeacherDTO> listResult = new ArrayList<>();
     resultMap.keySet().forEach(course -> {
       DashboardTeacherDTO dashboard = new DashboardTeacherDTO();
@@ -273,7 +277,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     }
     List<TeacherReportResponseDTO> listResult = teacherDao.getTeacherDetailCourseReport(moduleId);
     if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("Data empty");
+      return Collections.emptyList();
     }
     Integer totalExam = teacherDao.getTotalExamByModuleId(moduleId);
     listResult.forEach(val -> {

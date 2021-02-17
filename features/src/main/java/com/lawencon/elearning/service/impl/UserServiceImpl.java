@@ -1,25 +1,34 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import javax.persistence.NoResultException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
 import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
+import com.lawencon.elearning.dto.file.FileRequestDto;
+import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.error.InternalServerErrorException;
 import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.SecurityUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import javax.persistence.NoResultException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Rian Rivaldo
@@ -30,6 +39,14 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   @Autowired
   private UserDao userDao;
 
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+  @Autowired
+  private GeneralService generalService;
+
+  @Autowired
+  private FileService fileService;
+
   @Autowired
   private SecurityUtils encoderUtils;
 
@@ -37,10 +54,10 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   private ValidationUtil validationUtil;
 
   @Autowired
-  private GeneralService generalService;
+  private MailUtils mailUtils;
 
   @Autowired
-  private MailUtils mailUtils;
+  private ObjectMapper objectMapper;
 
   @Override
   public void addUser(User user) throws Exception {
@@ -158,6 +175,36 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
       throw e;
     }
 
+  }
+
+  @Override
+  public void saveUserPhoto(MultipartFile file, String content) throws Exception {
+    FileRequestDto fileRequest;
+    try {
+      fileRequest = objectMapper.readValue(content, FileRequestDto.class);
+      validationUtil.validate(fileRequest);
+    } catch (JsonProcessingException e) {
+      throw new IllegalRequestException("Invalid file content.");
+    }
+
+    User user = getById(fileRequest.getUserId());
+    logger.info(user.toString());
+    if (user.getUserPhoto().getId() != null) {
+      validationUtil.validateUUID(fileRequest.getId(), fileRequest.getUserId());
+      fileService.updateFile(file, content);
+      user.getUserPhoto().setId(fileRequest.getId());
+    } else {
+      validationUtil.validateUUID(fileRequest.getUserId());
+      begin();
+      FileResponseDto fileResponse = Optional.ofNullable(fileService.createFile(file, fileRequest))
+          .orElseThrow(() -> new InternalServerErrorException("Failed to save user photo."));
+      commit();
+      user.getUserPhoto().setId(fileResponse.getId());
+    }
+    user.setUpdatedBy(fileRequest.getId());
+    begin();
+    userDao.updateUserPhoto(user);
+    commit();
   }
 
   private String generatePassString() {

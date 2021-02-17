@@ -1,12 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lawencon.base.BaseServiceImpl;
@@ -19,7 +12,7 @@ import com.lawencon.elearning.dto.exam.detail.ScoreAverageResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.ScoreReportDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionStudentResponseDTO;
 import com.lawencon.elearning.dto.exam.detail.SubmissionsByExamResponseDTO;
-import com.lawencon.elearning.dto.file.FileCreateRequestDto;
+import com.lawencon.elearning.dto.file.FileRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
@@ -36,6 +29,14 @@ import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -51,16 +52,19 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   private FileService fileService;
 
   @Autowired
-  private ValidationUtil validateUtil;
+  private DetailExamService dtlExamService;
 
   @Autowired
-  private DetailExamService dtlExamService;
+  private GeneralService generalService;
+
+  @Autowired
+  private ValidationUtil validateUtil;
 
   @Autowired
   private MailUtils mailUtils;
 
   @Autowired
-  private GeneralService generalService;
+  private ObjectMapper objectMapper;
 
   @Autowired
   private UserService userService;
@@ -71,12 +75,11 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     if (body == null && multiPartFile == null) {
       throw new IllegalRequestException("Teacher Exam data cannot be empty!");
     }
-    ObjectMapper obj = new ObjectMapper();
-    obj.registerModule(new JavaTimeModule());
+    objectMapper.registerModule(new JavaTimeModule());
 
     TeacherExamRequestDTO teacherExam;
     try {
-      teacherExam = obj.readValue(body, TeacherExamRequestDTO.class);
+      teacherExam = objectMapper.readValue(body, TeacherExamRequestDTO.class);
     } catch (Exception e) {
       throw new IllegalRequestException("Invalid create exam request.");
     }
@@ -86,11 +89,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       throw new IllegalRequestException("End time cannot be greather than start Time");
     }
 
-    FileCreateRequestDto contentString = new FileCreateRequestDto();
-    contentString.setType(FileType.EXAM.toString());
-    contentString.setUserId(teacherExam.getCreatedBy());
-
-    String content = obj.writeValueAsString(contentString);
+    FileRequestDto fileRequest = new FileRequestDto();
+    fileRequest.setType(FileType.EXAM.toString());
+    fileRequest.setUserId(teacherExam.getCreatedBy());
 
     Module module = new Module();
     module.setId(teacherExam.getModuleId());
@@ -113,7 +114,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     try {
       begin();
       FileResponseDto fileResponseDTO =
-          Optional.ofNullable(fileService.createFile(multiPartFile, content))
+          Optional.ofNullable(fileService.createFile(multiPartFile, fileRequest))
               .orElseThrow(() -> new DataIsNotExistsException("Wrong file submission"));
       file.setId(fileResponseDTO.getId());
       examDao.saveExam(exam, null);
@@ -180,8 +181,8 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   @Override
   public List<ExamsModuleResponseDTO> getExamsByModule(String moduleId) throws Exception {
     validateUtil.validateUUID(moduleId);
-    return Optional.ofNullable(examDao.getExamsByModule(moduleId)).orElseThrow(
-        () -> new DataIsNotExistsException("Exam is empty and has not been initialized."));
+    return Optional.ofNullable(examDao.getExamsByModule(moduleId))
+        .orElse(Collections.emptyList());
   }
 
   @Override
@@ -204,7 +205,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   @Override
-  public void submitAssignemt(MultipartFile multiPartFile, String examId, String studentId)
+  public void submitAssignment(MultipartFile multiPartFile, String examId, String studentId)
       throws Exception {
     if (examId == null && studentId == null) {
       throw new IllegalRequestException("Student Exam data cannot be empty!");
@@ -226,7 +227,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   public List<ScoreReportDTO> getListScoreReport(String id) throws Exception {
     validateUtil.validateUUID(id);
     return Optional.ofNullable(dtlExamService.getListScoreReport(id))
-        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+        .orElse(Collections.emptyList());
   }
 
 }

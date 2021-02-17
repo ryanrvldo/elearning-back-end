@@ -1,6 +1,12 @@
 package com.lawencon.elearning.config;
 
 import static com.lawencon.elearning.util.WebResponseUtils.createFailedAuthResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.io.IOException;
 import javax.crypto.SecretKey;
 import javax.servlet.FilterChain;
@@ -14,21 +20,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 /**
  * @author Rian Rivaldo
  */
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 
-  private final String KEY =
-      "VPnEQ4KjAfPk8LHxxvyoQF52RgWagpgLPTUaZXa26caoFGS9ddnpwdgVwWKXiyI1vM9KRzNai-2L7GLym_SMoUFI65kPeiHHSfwF-y28vNUBlXia-300JoWaqdm644XwsWui05leT6bRFjXyqWKxLzKsy36Zm7NPyS2l1pRqfBEEOZgeuI1LO2uim9RYuYxTnweAQndFx0WEX-Pe3pHlxUNxnn0lpOi_fvF7KCVto43cAV0-WCPBe-eNi7SEPs8ZNkgu0DKFXcCeeAqVnNTNIOyYKNNmCnr7qzuvaBhBkeqHVevZU7HJma347fFvdM0SVeAEX8HxgTsBPtpEUjqB";
-
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
   public AuthorizationFilter(AuthenticationManager authManager, ObjectMapper objectMapper) {
     super(authManager);
@@ -48,6 +46,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
       return;
     }
 
+    String KEY = "VPnEQ4KjAfPk8LHxxvyoQF52RgWagpgLPTUaZXa26caoFGS9ddnpwdgVwWKXiyI1vM9KRzNai-2L7GLym_SMoUFI65kPeiHHSfwF-y28vNUBlXia-300JoWaqdm644XwsWui05leT6bRFjXyqWKxLzKsy36Zm7NPyS2l1pRqfBEEOZgeuI1LO2uim9RYuYxTnweAQndFx0WEX-Pe3pHlxUNxnn0lpOi_fvF7KCVto43cAV0-WCPBe-eNi7SEPs8ZNkgu0DKFXcCeeAqVnNTNIOyYKNNmCnr7qzuvaBhBkeqHVevZU7HJma347fFvdM0SVeAEX8HxgTsBPtpEUjqB";
     SecretKey key = Keys.hmacShaKeyFor(KEY.getBytes());
 
     Claims claims;

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.FileDao;
-import com.lawencon.elearning.dto.file.FileCreateRequestDto;
+import com.lawencon.elearning.dto.file.FileRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
-import com.lawencon.elearning.dto.file.FileUpdateRequestDto;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.File;
@@ -39,19 +38,21 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
   private ObjectMapper objectMapper;
 
   @Override
-  public FileResponseDto createFile(MultipartFile file, String content) throws Exception {
-    return uploadFile(file, content);
+  public FileResponseDto createFile(MultipartFile file, FileRequestDto fileRequest)
+      throws Exception {
+    return uploadFile(file, fileRequest);
   }
 
   @Override
-  public List<FileResponseDto> createMultipleFile(List<MultipartFile> files, String content)
+  public List<FileResponseDto> createMultipleFile(List<MultipartFile> files,
+      FileRequestDto fileRequest)
       throws Exception {
     if (files.isEmpty()) {
       throw new IllegalRequestException("There is no file have been inputted yet.");
     }
     List<FileResponseDto> responseList = new ArrayList<>();
     for (MultipartFile file : files) {
-      FileResponseDto response = uploadFile(file, content);
+      FileResponseDto response = uploadFile(file, fileRequest);
       responseList.add(response);
     }
     return responseList;
@@ -76,9 +77,9 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     if (file == null) {
       throw new IllegalRequestException("File is not inputted!");
     }
-    FileUpdateRequestDto requestContent;
+    FileRequestDto requestContent;
     try {
-      requestContent = objectMapper.readValue(content, FileUpdateRequestDto.class);
+      requestContent = objectMapper.readValue(content, FileRequestDto.class);
     } catch (JsonProcessingException e) {
       throw new IllegalRequestException("Invalid file content.");
     }
@@ -117,7 +118,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     }
   }
 
-  private FileResponseDto uploadFile(MultipartFile multipartFile, String content)
+  private FileResponseDto uploadFile(MultipartFile multipartFile, FileRequestDto fileRequest)
       throws Exception {
     if (multipartFile.isEmpty()) {
       throw new IllegalRequestException("There is no file have been inputted yet.");
@@ -127,17 +128,11 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
       throw new IllegalRequestException("file name", multipartFileName);
     }
 
-    FileCreateRequestDto fileRequestDto;
-    try {
-      fileRequestDto = objectMapper.readValue(content, FileCreateRequestDto.class);
-    } catch (JsonProcessingException jsonException) {
-      throw new IllegalRequestException("Invalid file content.");
-    }
-    validationUtil.validate(fileRequestDto);
+    validationUtil.validate(fileRequest);
 
     FileType fileType;
     try {
-      fileType = FileType.valueOf(fileRequestDto.getType().toUpperCase());
+      fileType = FileType.valueOf(fileRequest.getType().toUpperCase());
     } catch (IllegalArgumentException e) {
       throw new IllegalRequestException("Invalid file type.");
     }
@@ -151,7 +146,7 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
     file.setTrxNumber(TransactionNumberUtils.generateFileTrxNumber());
     file.setTrxDate(LocalDate.now());
     file.setCreatedAt(LocalDateTime.now());
-    file.setCreatedBy(fileRequestDto.getUserId());
+    file.setCreatedBy(fileRequest.getUserId());
     fileDao.create(file);
 
     return new FileResponseDto(

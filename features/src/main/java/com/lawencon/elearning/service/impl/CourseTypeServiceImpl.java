@@ -1,9 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseTypeDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
@@ -17,6 +13,11 @@ import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseTypeService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -36,12 +37,11 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   @Override
   public List<CourseTypeResponseDTO> getListCourseType() throws Exception {
     List<CourseType> courseTypes = courseTypeDao.getListCourseType();
-
     if (courseTypes == null) {
-      throw new DataIsNotExistsException("Data is not exist");
+      return Collections.emptyList();
     }
-    List<CourseTypeResponseDTO> responses = new ArrayList<CourseTypeResponseDTO>();
 
+    List<CourseTypeResponseDTO> responses = new ArrayList<>();
     for (CourseType ct : courseTypes) {
       CourseTypeResponseDTO response = new CourseTypeResponseDTO();
       response.setId(ct.getId());
@@ -68,7 +68,7 @@ public class CourseTypeServiceImpl extends BaseServiceImpl implements CourseType
   public void updateCourseType(CourseTypeUpdateRequestDTO courseTypeDTO) throws Exception {
     validateUtil.validate(courseTypeDTO);
     User user = userService.getById(courseTypeDTO.getUpdateBy());
-    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
+    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && !user.getIsActive()) {
       throw new IllegalAccessException("only admin can update data !");
     }
     CourseType courseType = new CourseType();

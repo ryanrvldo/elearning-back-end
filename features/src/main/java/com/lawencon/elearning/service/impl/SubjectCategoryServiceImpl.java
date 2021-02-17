@@ -1,11 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.SubjectCategoryDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
@@ -20,6 +14,13 @@ import com.lawencon.elearning.service.SubjectCategoryService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -42,11 +43,10 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   public List<SubjectCategoryResponseDTO> getAllSubject() throws Exception {
     List<SubjectCategory> listResult =  subjectCategoryDao.getAllSubject();
     if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("No subject category yet");
+      return Collections.emptyList();
     }
 
-    List<SubjectCategoryResponseDTO> subjectResponses = new ArrayList<SubjectCategoryResponseDTO>();
-
+    List<SubjectCategoryResponseDTO> subjectResponses = new ArrayList<>();
     for (SubjectCategory subject : listResult) {
       SubjectCategoryResponseDTO subjectResponse = new SubjectCategoryResponseDTO();
       subjectResponse.setId(subject.getId());
