@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ScheduleDao;
 import com.lawencon.elearning.dto.ScheduleResponseDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Schedule;
@@ -37,7 +38,6 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
 
   @Override
   public void saveSchedule(Schedule data) throws Exception {
-    validateUtil.validate(data);
     if (data.getStartTime().isAfter(data.getEndTime())) {
       throw new IllegalRequestException("Schedule end time cannot be greather than start time");
     }
@@ -53,14 +53,13 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
   @Override
   public void updateSchedule(Schedule data) throws Exception {
     validateUtil.validateUUID(data.getId());
-    validateUtil.validate(data);
     if (data.getStartTime().isAfter(data.getEndTime())) {
       throw new IllegalRequestException("Schedule end time cannot be greather than start time");
     }
-    // if (scheduleDao.validateSchedule(data.getDate(), data.getStartTime(), data.getEndTime(),
-    // data.getTeacher().getId()) > 0) {
-    // throw new IllegalRequestException("Schedule already exist");
-    // }
+    if (scheduleDao.validateSchedule(data.getDate(), data.getStartTime(), data.getEndTime(),
+        data.getTeacher().getId()) > 0) {
+      throw new IllegalRequestException("Schedule already exist");
+    }
     scheduleDao.updateSchedule(data, null);
   }
 
@@ -98,6 +97,36 @@ public class ScheduleServiceImpl extends BaseServiceImpl implements ScheduleServ
       listResult.add(scheduleDTO);
     });
     return listResult;
+  }
+
+  @Override
+  public void deleteSchedule(String id) throws Exception {
+    validateUtil.validateUUID(id);
+    try {
+      begin();
+      scheduleDao.deleteSchedule(id);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
+  }
+
+  @Override
+  public void updateIsActive(UpdateIsActiveRequestDTO request) throws Exception {
+    validateUtil.validate(request);
+    try {
+      begin();
+      scheduleDao.updateIsActive(request);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
   }
 
 }

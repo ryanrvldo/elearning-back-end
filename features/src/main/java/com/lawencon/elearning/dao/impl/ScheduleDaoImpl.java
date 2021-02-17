@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ScheduleDao;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
@@ -81,6 +82,21 @@ public class ScheduleDaoImpl extends CustomBaseDao<Schedule> implements Schedule
 
     return ((BigInteger) createNativeQuery(sql).setParameter(1, date).setParameter(2, idTeacher)
         .setParameter(3, startTime).setParameter(4, endTime).getSingleResult()).intValue();
+  }
+
+  @Override
+  public void deleteSchedule(String id) throws Exception {
+    deleteById(id);
+  }
+
+  @Override
+  public void updateIsActive(UpdateIsActiveRequestDTO request) throws Exception {
+    String sql = buildQueryOf("UPDATE tb_m_schedules SET is_active = ?1 ",
+        ", updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3").toString();
+
+    createNativeQuery(sql).setParameter(1, request.getStatus())
+        .setParameter(2, request.getUpdatedBy()).setParameter(3, request.getId()).executeUpdate();
+
   }
 
 

@@ -3,6 +3,7 @@ package com.lawencon.elearning.dao;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.model.Schedule;
 import com.lawencon.util.Callback;
 
@@ -26,4 +27,8 @@ public interface ScheduleDao {
 
   Integer validateSchedule(LocalDate time, LocalTime startTime, LocalTime endTime, String idTeacher)
       throws Exception;
+
+  void deleteSchedule(String id) throws Exception;
+
+  void updateIsActive(UpdateIsActiveRequestDTO request) throws Exception;
 }

@@ -32,6 +32,7 @@ import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.GeneralService;
+import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
@@ -60,6 +61,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Autowired
   private GeneralService generalService;
+
+  @Autowired
+  private UserService userService;
 
   @Override
   public void saveExam(MultipartFile multiPartFile, String body) throws Exception {
@@ -119,8 +123,13 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       rollback();
       throw e;
     }
-
-    String[] emailTo = {"lawerning.acc@gmail.com"};
+    List<String> emailList = userService.getEmailUsersPerModule(teacherExam.getModuleId());
+    String[] emailTo = new String[emailList.size()];
+    
+    if (!emailList.isEmpty()) {
+      emailTo = emailList.toArray(emailTo);
+    }
+    
     setupEmail(emailTo, "New Exam Posted", GeneralCode.TEACHER_EXAM.getCode());
   }
 
@@ -152,9 +161,13 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
 
   @Override
   public void deleteExam(String id) throws Exception {
+    validateUtil.validateUUID(id);
+    String idFile = Optional.ofNullable(examDao.getIdFileById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
     try {
       begin();
       examDao.deleteExam(id);
+      fileService.deleteFile(idFile);
       commit();
     } catch (Exception e) {
       e.printStackTrace();

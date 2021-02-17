@@ -1,11 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -111,6 +113,26 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     file.setVersion((Long) objArr[10]);
     user.setUserPhoto(file);
     return user;
+  }
+
+  @Override
+  public List<String> getEmailUsersPerModule(String idModule) throws Exception {
+    String query = buildQueryOf("SELECT tmu.email FROM tb_m_users tmu ",
+        "INNER JOIN tb_m_students tms ON tmu.id = tms.id_user ",
+        "INNER JOIN  student_course sc ON sc.id_student = tms.id ",
+        "INNER JOIN tb_m_courses tmc ON tmc.id = sc.id_course ",
+        "INNER JOIN tb_m_modules tmm ON tmc.id = tmm.id_course WHERE tmm.id = ?1").toString();
+
+    List<?> listObj = createNativeQuery(query).setParameter(1, idModule).getResultList();
+
+    List<String> resultList = new ArrayList<>();
+
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      resultList.add((String) objArr[0]);
+    });
+
+    return resultList.size() > 0 ? resultList : null;
   }
 
 }

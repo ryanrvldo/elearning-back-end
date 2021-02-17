@@ -28,4 +28,6 @@ public interface ExamDao {
   String getIdByCode(String code) throws Exception;
 
   void deleteExam(String id) throws Exception;
+
+  String getIdFileById(String id) throws Exception;
 }

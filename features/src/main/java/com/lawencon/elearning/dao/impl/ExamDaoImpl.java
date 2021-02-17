@@ -82,5 +82,11 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
     deleteById(id);
   }
 
+  @Override
+  public String getIdFileById(String id) throws Exception {
+    String sql = "SELECT id_file FROM tb_r_exams tre WHERE id = ?1";
+    return (String) createNativeQuery(sql).getSingleResult();
+  }
+
 
 }

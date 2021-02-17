@@ -1,5 +1,12 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
@@ -13,12 +20,6 @@ import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.SecurityUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.Random;
-import javax.persistence.NoResultException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Rian Rivaldo
@@ -168,6 +169,11 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
       salt.append(SALTCHARS.charAt(index));
     }
     return salt.toString();
+  }
+
+  @Override
+  public List<String> getEmailUsersPerModule(String idModule) throws Exception {
+    return userDao.getEmailUsersPerModule(idModule);
   }
 
 }
