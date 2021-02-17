@@ -1,12 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
@@ -45,6 +38,14 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -117,7 +118,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   public void updateCourse(CourseUpdateRequestDTO courseDTO) throws Exception {
     validateUtil.validate(courseDTO);
     User user = userService.getById(courseDTO.getUpdateBy());
-    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && user.getIsActive() == false) {
+    if (!user.getRole().getCode().equals(Roles.ADMIN.getCode()) && !user.getIsActive()) {
       throw new IllegalAccessException("only admin can update data !");
     }
     Course course = new Course();
@@ -197,8 +198,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     validateUtil.validateUUID(id);
     studentService.getStudentById(id);
     List<Course> listCourse = courseDao.getCourseByStudentId(id);
+    List<CourseProgressResponseDTO> progressList = courseDao.getCourseProgressByStudentId(id);
     if (listCourse.isEmpty()) {
-      throw new DataIsNotExistsException("Data is empty");
+      throw new DataIsNotExistsException("You haven't select any course");
     }
     List<CourseResponseDTO> responseList = new ArrayList<>();
     listCourse.forEach(val -> {
@@ -226,6 +228,29 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       }
       courseDto.setTeacher(teacherDTO);
       courseDto.setCategoryName(val.getCategory().getName());
+
+      progressList.stream()
+          .filter(p -> p.getCourseId().equals(val.getId()))
+          .findFirst()
+          .ifPresent(p -> {
+            courseDto.setTotalModule(Optional.of(p.getTotalModule())
+                .orElse(0));
+            if (courseDto.getTotalModule().equals(0)) {
+              courseDto.setModuleComplete(0);
+              courseDto.setPercentProgress(0.0);
+              return;
+            }
+            Integer moduleComplete = 0;
+            try {
+              moduleComplete = courseDao.getModuleCompleteByStudentId(p.getCourseId(), id);
+            } catch (Exception e) {
+              e.printStackTrace();
+            }
+            courseDto.setModuleComplete(moduleComplete);
+            courseDto.setPercentProgress(
+                ((double) courseDto.getModuleComplete() / (double) courseDto.getTotalModule())
+                    * 100);
+          });
       responseList.add(courseDto);
     });
     return responseList;
@@ -319,8 +344,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (course == null) {
       throw new DataIsNotExistsException("course id", courseId);
     }
-    List<ModuleListReponseDTO> listModule = new ArrayList<>();
-    listModule = moduleService.getModuleList(courseId);
+    List<ModuleListReponseDTO> listModule = moduleService.getModuleList(courseId);
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
@@ -369,8 +393,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   private void setData(String courseId, DetailCourseResponseDTO detailDTO, String studentId)
       throws Exception {
     Course course = courseDao.getCourseById(courseId);
-    List<ModuleResponseDTO> listModule = new ArrayList<>();
-    listModule = moduleService.getModuleListByIdCourse(courseId, "");
+    List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, "");
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
@@ -390,8 +413,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   private void setDataWithStudentId(String courseId, DetailCourseResponseDTO detailDTO,
       String studentId) throws Exception {
-    List<ModuleResponseDTO> listModule = new ArrayList<>();
-    listModule = moduleService.getModuleListByIdCourse(courseId, studentId);
+    List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, studentId);
     detailDTO.setModules(listModule);
   }
 
@@ -435,6 +457,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     return responseList;
   }
+
   @Override
   public DashboardCourseResponseDto dashboardCourseByAdmin() throws Exception {
     DashboardCourseResponseDto dashboardCourse = courseDao.dashboardCourseByAdmin();

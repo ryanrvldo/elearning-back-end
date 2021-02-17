@@ -1,9 +1,9 @@
 package com.lawencon.elearning.service;
 
-import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.model.File;
+import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Rian Rivaldo
@@ -18,5 +18,7 @@ public interface FileService {
   File getFileById(String id) throws Exception;
 
   void updateFile(MultipartFile file, String content) throws Exception;
+
+  void deleteFile(String id) throws Exception;
 
 }

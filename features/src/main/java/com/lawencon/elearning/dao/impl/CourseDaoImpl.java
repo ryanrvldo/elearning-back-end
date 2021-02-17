@@ -1,14 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -24,6 +15,15 @@ import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -80,10 +80,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
         "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
-        "INNER JOIN tb_m_students AS s ON sc.id_student = s.id WHERE sc.id_student = ?");
+        "INNER JOIN tb_m_students AS s ON sc.id_student = s.id WHERE sc.id_student = ?1 ",
+        "ORDER BY c.period_start");
     List<Course> listResult = new ArrayList<>();
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
-
 
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
@@ -348,9 +348,9 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
 
   /**
-   * @author Rian Rivaldo
    * @param query sql query for get course list
    * @return list course of query result
+   * @author Rian Rivaldo
    */
   private List<Course> getAndSetupListCourseByQuery(String query) {
     List<?> listObj = createNativeQuery(query).getResultList();
@@ -447,7 +447,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
             "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
             "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
             "LEFT JOIN tb_m_modules AS m ON m.id_course = c.id WHERE sc.id_student = ?1 ",
-        "GROUP BY c.id ,ct.type_name");
+            "GROUP BY c.id ,ct.type_name ",
+            "ORDER BY c.period_start");
 
     List<?> listObj = createNativeQuery(sql).setParameter(1, studentId).getResultList();
     List<CourseProgressResponseDTO> listResult = new ArrayList<>();

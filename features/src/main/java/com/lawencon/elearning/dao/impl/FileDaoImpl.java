@@ -1,13 +1,12 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.FileDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.FileType;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -49,8 +48,7 @@ public class FileDaoImpl extends CustomBaseDao<File> implements FileDao {
   }
 
   @Override
-  public List<File> getAllFile() throws Exception {
-    return getAll();
+  public void deleteById(String id) throws Exception {
+    super.deleteById(id);
   }
-
 }

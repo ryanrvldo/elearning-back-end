@@ -1,7 +1,5 @@
 package com.lawencon.elearning.service;
 
-import java.util.List;
-import java.util.Map;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
@@ -14,6 +12,8 @@ import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author : Galih Dika Permana
@@ -56,4 +56,5 @@ public interface CourseService {
   DashboardCourseResponseDTO getCourseForDashboard(String courseId) throws Exception;
 
   List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId) throws Exception;
+  
 }

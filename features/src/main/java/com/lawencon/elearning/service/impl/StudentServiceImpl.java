@@ -1,12 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
 import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
@@ -32,6 +25,13 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 
@@ -251,16 +251,16 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     if (listDetail.isEmpty()) {
       throw new DataIsNotExistsException("id", studentId);
     }
-    for (int i = 0; i < listDetail.size(); i++) {
+    for (DetailExam detailExam : listDetail) {
       StudentReportDTO studentDTO = new StudentReportDTO();
       studentDTO.setCourseName(
-          listDetail.get(i).getExam().getModule().getCourse().getCourseType().getName());
+          detailExam.getExam().getModule().getCourse().getCourseType().getName());
       studentDTO
-          .setModuleName(listDetail.get(i).getExam().getModule().getSubject().getSubjectName());
-      studentDTO.setExamType(listDetail.get(i).getExam().getExamType().toString());
-      studentDTO.setExamTitle(listDetail.get(i).getExam().getTitle());
-      studentDTO.setDateExam(listDetail.get(i).getExam().getTrxDate().toString());
-      studentDTO.setGrade(listDetail.get(i).getGrade());
+          .setModuleName(detailExam.getExam().getModule().getSubject().getSubjectName());
+      studentDTO.setExamType(detailExam.getExam().getExamType().toString());
+      studentDTO.setExamTitle(detailExam.getExam().getTitle());
+      studentDTO.setDateExam(detailExam.getExam().getTrxDate().toString());
+      studentDTO.setGrade(detailExam.getGrade());
       listResult.add(studentDTO);
     }
 
@@ -273,7 +273,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     if (studentList.isEmpty()) {
       throw new DataIsNotExistsException("There is no student yet.");
     }
-    List<StudentDashboardDTO> responseList = studentList.stream()
+    return studentList.stream()
         .map(student -> new StudentDashboardDTO(
             student.getId(),
             student.getCode(),
@@ -287,7 +287,6 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
             student.getCreatedAt(),
             student.getIsActive()))
         .collect(Collectors.toList());
-    return responseList;
   }
 
   @Override

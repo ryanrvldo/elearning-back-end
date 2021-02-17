@@ -58,10 +58,10 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
   public void configure(WebSecurity web) throws Exception {
     web.ignoring()
         .antMatchers(HttpMethod.GET, "/file/**")
-        .antMatchers(HttpMethod.GET, "/guest/**")
-        .antMatchers(HttpMethod.POST, "/guest/student/register")
         .antMatchers(HttpMethod.GET, "/report/**")
-        .antMatchers(HttpMethod.PATCH, "/user/email/**");
+        .antMatchers(HttpMethod.GET, "/public/**")
+        .antMatchers(HttpMethod.POST, "/student/register")
+        .antMatchers(HttpMethod.PATCH, "/user/forget-password");
   }
 
   @Bean

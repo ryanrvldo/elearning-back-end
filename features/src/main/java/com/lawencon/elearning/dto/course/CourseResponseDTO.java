@@ -1,9 +1,9 @@
 package com.lawencon.elearning.dto.course;
 
-import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.model.CourseStatus;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
@@ -37,5 +37,11 @@ public class CourseResponseDTO {
   private String categoryCode;
 
   private TeacherForAvailableCourseDTO teacher;
+
+  private Integer totalModule;
+
+  private Integer moduleComplete;
+
+  private Double percentProgress;
 
 }

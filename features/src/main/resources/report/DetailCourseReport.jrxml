@@ -37,7 +37,7 @@
 	<field name="schedule.startTime" class="java.time.LocalTime"/>
 	<field name="schedule.endTime" class="java.time.LocalTime"/>
 	<field name="verifyStatus" class="java.lang.Boolean"/>
-	<field name="tittle" class="java.lang.String"/>
+	<field name="title" class="java.lang.String"/>
 	<field name="subjectName" class="java.lang.String"/>
 	<background>
 		<band height="555" splitType="Stretch"/>
@@ -45,7 +45,8 @@
 	<title>
 		<band height="220" splitType="Stretch">
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="0" width="842" height="208" forecolor="#006699" backcolor="#ADD8E6" uuid="e8bc167b-bf12-4977-b458-b029eaaafdfb"/>
+				<reportElement mode="Opaque" x="-20" y="0" width="842" height="208" forecolor="#006699"
+					backcolor="#ADD8E6" uuid="e8bc167b-bf12-4977-b458-b029eaaafdfb"/>
 				<image>
 					<reportElement x="10" y="65" width="109" height="125"
 						uuid="9d23c546-91a7-4b64-9fbc-493c160b90b9"/>
@@ -138,11 +139,12 @@
 				<textFieldExpression><![CDATA[$F{verifyStatus}!= false ?"Verified": "Not verified"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="160" y="40" width="420" height="30" uuid="d45066f1-8378-4962-b9dc-2d5959ea94b9"/>
+				<reportElement x="160" y="40" width="420" height="30"
+					uuid="d45066f1-8378-4962-b9dc-2d5959ea94b9"/>
 				<textElement>
 					<font size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{tittle} + " : " + $F{subjectName}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{title} + " : " + $F{subjectName}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="80" y="20" width="1" height="100" uuid="9eeb03cb-93f5-400a-b5b9-33b46521e977"/>

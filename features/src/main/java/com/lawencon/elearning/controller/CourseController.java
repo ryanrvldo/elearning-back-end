@@ -42,20 +42,14 @@ public class CourseController {
         HttpStatus.OK);
   }
 
-  @PostMapping("register")
+  @PostMapping("/register")
   public ResponseEntity<?> registerCourse(@RequestParam("studentId") String studentId,
       @RequestParam("courseId") String courseId) throws Exception {
     courseService.registerCourse(studentId, courseId);
     return WebResponseUtils.createWebResponse("Register Course Success", HttpStatus.OK);
   }
 
-  @GetMapping("{id}/student")
-  public ResponseEntity<?> getStudentCourse(@PathVariable("id") String id) throws Exception {
-    return WebResponseUtils.createWebResponse(courseService.getCourseByStudentId(id),
-        HttpStatus.OK);
-  }
-
-  @GetMapping("admin")
+  @GetMapping("/admin")
   public ResponseEntity<?> getListCourse() throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getCourseForAdmin(), HttpStatus.OK);
   }
