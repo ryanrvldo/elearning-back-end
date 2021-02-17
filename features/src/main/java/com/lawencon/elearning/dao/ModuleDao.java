@@ -39,4 +39,8 @@ public interface ModuleDao {
 
   List<Module> getModuleList(String courseId) throws Exception;
 
+  void deleteLesson(String fileId) throws Exception;
+
+  Integer checkLesson(String fileId) throws Exception;
+
 }

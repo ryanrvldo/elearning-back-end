@@ -13,4 +13,6 @@ public class ModuleListReponseDTO {
   private String title;
   private String description;
   private String subjectName;
+  private Boolean isActive;
+
 }

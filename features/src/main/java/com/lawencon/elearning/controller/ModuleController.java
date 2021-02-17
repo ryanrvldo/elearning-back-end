@@ -1,11 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.file.FileResponseDto;
-import com.lawencon.elearning.dto.module.ModuleRequestDTO;
-import com.lawencon.elearning.dto.module.UpdateModuleDTO;
-import com.lawencon.elearning.service.ModuleService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.dto.module.ModuleRequestDTO;
+import com.lawencon.elearning.dto.module.UpdateModuleDTO;
+import com.lawencon.elearning.service.ModuleService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author : Galih Dika Permana
@@ -71,6 +71,12 @@ public class ModuleController {
     return WebResponseUtils.createWebResponse("Insert lesson success", HttpStatus.OK);
   }
   
+  @DeleteMapping("lesson/{fileId}")
+  public ResponseEntity<?> deleteLesson(@PathVariable("fileId") String fileId) throws Exception {
+    moduleService.deleteLesson(fileId);
+    return WebResponseUtils.createWebResponse("Delete lesson success", HttpStatus.OK);
+  }
+
   @GetMapping("lesson/{idModule}")
   public ResponseEntity<?> getLesson(@PathVariable("idModule") String idModule) throws Exception {
     List<FileResponseDto> fileLesson = moduleService.getLessonFile(idModule);

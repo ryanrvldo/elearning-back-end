@@ -1,5 +1,11 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.file.FileResponseDto;
@@ -11,11 +17,6 @@ import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
-import java.sql.Date;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * 
@@ -181,7 +182,7 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
   @Override
   public List<Module> getModuleList(String courseId) throws Exception {
     String sql = buildQueryOf(
-        "SELECT  m.id as module_id, m.code, m.title, m.description, sc.subject_name ",
+        "SELECT  m.id as module_id, m.code, m.title, m.description, sc.subject_name, COALESCE(m.is_active, false) ",
         "FROM tb_m_modules m INNER JOIN tb_m_subject_categories AS sc ON sc.id = m.id_subject ",
         "WHERE m.id_course = ?1 ");
     List<Module> listResult = new ArrayList<>();
@@ -197,9 +198,23 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
       SubjectCategory subjectCategory = new SubjectCategory();
       subjectCategory.setSubjectName((String) objArr[4]);
       module.setSubject(subjectCategory);
+      module.setIsActive((Boolean) objArr[5]);
       listResult.add(module);
     });
     return listResult;
+  }
+
+  @Override
+  public void deleteLesson(String fileId) throws Exception {
+    createNativeQuery("DELETE FROM module_files WHERE id_file = ?1").setParameter(1, fileId)
+        .executeUpdate();
+  }
+
+  @Override
+  public Integer checkLesson(String fileId) throws Exception {
+    String sql = "SELECT COUNT(id_file) FROM module_files WHERE id_file = ?1";
+    return ((BigInteger) createNativeQuery(sql).setParameter(1, fileId).getSingleResult())
+        .intValue();
   }
 
 }

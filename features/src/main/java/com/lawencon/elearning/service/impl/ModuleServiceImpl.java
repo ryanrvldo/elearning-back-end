@@ -1,5 +1,14 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
@@ -28,15 +37,6 @@ import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -342,10 +342,22 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       moduleDTO.setTitle(listResult.get(i).getTitle());
       moduleDTO.setDescription(listResult.get(i).getDescription());
       moduleDTO.setSubjectName(listResult.get(i).getSubject().getSubjectName());
-
+      moduleDTO.setIsActive(listResult.get(i).getIsActive());
       listModuleDTO.add(moduleDTO);
     }
     return listModuleDTO;
+  }
+
+  @Override
+  public void deleteLesson(String fileId) throws Exception {
+    validationUtil.validateUUID(fileId);
+    if (moduleDao.checkLesson(fileId) == 0) {
+      throw new DataIsNotExistsException("Data is not exits with file id : " + fileId + ".");
+    }
+    begin();
+    moduleDao.deleteLesson(fileId);
+    commit();
+    fileService.deleteFile(fileId);
   }
 
 }

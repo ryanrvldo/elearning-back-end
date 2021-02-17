@@ -1,5 +1,7 @@
 package com.lawencon.elearning.service;
 
+import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.file.FileResponseDto;
 import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
@@ -7,8 +9,6 @@ import com.lawencon.elearning.dto.module.ModuleRequestDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.module.UpdateModuleDTO;
 import com.lawencon.elearning.model.Module;
-import java.util.List;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 
@@ -35,6 +35,8 @@ public interface ModuleService {
   void updateIsActiveTrue(UpdateIsActiveRequestDTO data) throws Exception;
 
   void saveLesson(MultipartFile multiPartFiles, String idUser, String body) throws Exception;
+
+  void deleteLesson(String fileId) throws Exception;
 
   List<FileResponseDto> getLessonFile(String idModule) throws Exception;
 
