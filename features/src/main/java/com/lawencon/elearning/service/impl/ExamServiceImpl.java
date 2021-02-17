@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,7 +85,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
     } catch (Exception e) {
       throw new IllegalRequestException("Invalid create exam request.");
     }
-
+    
+    Logger logger = LoggerFactory.getLogger(getClass());
+    logger.info(teacherExam.toString());
     validateUtil.validate(teacherExam);
     if (teacherExam.getStartTime().compareTo(teacherExam.getEndTime()) > 0) {
       throw new IllegalRequestException("End time cannot be greather than start Time");

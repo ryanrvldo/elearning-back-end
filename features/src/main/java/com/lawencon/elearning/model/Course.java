@@ -1,6 +1,7 @@
 package com.lawencon.elearning.model;
 
-import java.time.LocalDateTime;
+import com.lawencon.model.BaseMaster;
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import com.lawencon.model.BaseMaster;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -52,10 +52,10 @@ public class Course extends BaseMaster {
   private Integer capacity;
 
   @Column(name = "period_start", nullable = false)
-  private LocalDateTime periodStart;
+  private LocalDate periodStart;
 
   @Column(name = "period_end", nullable = false)
-  private LocalDateTime periodEnd;
+  private LocalDate periodEnd;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)

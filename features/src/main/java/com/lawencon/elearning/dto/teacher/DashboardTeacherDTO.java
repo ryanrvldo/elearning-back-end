@@ -1,7 +1,7 @@
 package com.lawencon.elearning.dto.teacher;
 
-import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDate;
 import lombok.Data;
 
 /**
@@ -17,8 +17,8 @@ public class DashboardTeacherDTO {
   private Integer capacity;
   private Integer totalStudent;
   private Integer totalModule;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime periodStart;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime periodEnd;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate periodStart;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate periodEnd;
 }

@@ -1,9 +1,9 @@
 package com.lawencon.elearning.dto.course;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -18,10 +18,10 @@ public class DetailCourseResponseDTO {
   private Integer capacity;
   private Integer totalStudent;
   private String description;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime periodStart;
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime periodEnd;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate periodStart;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate periodEnd;
   private List<ModuleResponseDTO> modules;
   private String teacherFirstName;
   private String teacherLastName;

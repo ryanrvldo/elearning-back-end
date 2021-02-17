@@ -1,13 +1,15 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Role;
 import com.lawencon.elearning.model.User;
+import java.util.ArrayList;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Rian Rivaldo
@@ -139,8 +141,9 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
     List<String> resultList = new ArrayList<>();
 
     listObj.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      resultList.add((String) objArr[0]);
+      Logger logger = LoggerFactory.getLogger(getClass());
+      logger.info(val.getClass().toString());
+      resultList.add((String) val);
     });
 
     return resultList.size() > 0 ? resultList : null;

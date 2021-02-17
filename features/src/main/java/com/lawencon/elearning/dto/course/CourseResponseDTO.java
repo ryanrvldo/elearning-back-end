@@ -3,7 +3,7 @@ package com.lawencon.elearning.dto.course;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lawencon.elearning.dto.teacher.TeacherForAvailableCourseDTO;
 import com.lawencon.elearning.model.CourseStatus;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Data;
 
 /**
@@ -26,11 +26,11 @@ public class CourseResponseDTO {
 
   private String courseDescription;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime periodStart;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate periodStart;
 
-  @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-  private LocalDateTime periodEnd;
+  @JsonFormat(pattern = "yyyy-MM-dd")
+  private LocalDate periodEnd;
 
   private String categoryName;
 

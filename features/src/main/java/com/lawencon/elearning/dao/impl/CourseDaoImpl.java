@@ -16,7 +16,6 @@ import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
 import java.math.BigInteger;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,7 +63,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<Course> getCurrentAvailableCourse() throws Exception {
     return getAndSetupListCourseByQuery(getCoursesSQL
-        + "WHERE current_timestamp < c.period_end AND current_timestamp < c.period_start");
+        + "WHERE CURRENT_DATE < c.period_end AND CURRENT_DATE <= c.period_start");
   }
 
   @Override
@@ -95,10 +94,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setCourseType(courseType);
 
       course.setCapacity((Integer) objArr[3]);
-      Timestamp inTime = (Timestamp) objArr[4];
-      course.setPeriodStart(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[5];
-      course.setPeriodEnd(inTime.toLocalDateTime());
+      Date inTime = (Date) objArr[4];
+      course.setPeriodStart(inTime.toLocalDate());
+      inTime = (Date) objArr[5];
+      course.setPeriodEnd(inTime.toLocalDate());
 
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[6]);
@@ -153,10 +152,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setStatus(CourseStatus.valueOf((String) objArr[4]));
       course.setDescription((String) objArr[5]);
 
-      Timestamp inTime = (Timestamp) objArr[6];
-      course.setPeriodStart(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[7];
-      course.setPeriodEnd(inTime.toLocalDateTime());
+      Date inTime = (Date) objArr[6];
+      course.setPeriodStart(inTime.toLocalDate());
+      inTime = (Date) objArr[7];
+      course.setPeriodEnd(inTime.toLocalDate());
 
       CourseCategory courseCategory = new CourseCategory();
       courseCategory.setName((String) objArr[8]);
@@ -180,6 +179,9 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
     createNativeQuery(sql).setParameter(1, student).setParameter(2, course).executeUpdate();
   }
 
+  /**
+   * Edited by Galih
+   */
   @Override
   public Course getCourseById(String id) throws Exception {
     return getById(id);
@@ -218,10 +220,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       bigInteger = (BigInteger) objArr[6];
       Integer totalModule = bigInteger.intValue();
 
-      Timestamp inTime = (Timestamp) objArr[7];
-      course.setPeriodStart(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[8];
-      course.setPeriodEnd(inTime.toLocalDateTime());
+      Date inTime = (Date) objArr[7];
+      course.setPeriodStart(inTime.toLocalDate());
+      inTime = (Date) objArr[8];
+      course.setPeriodEnd(inTime.toLocalDate());
 
       Integer[] value = {totalStudent, totalModule};
 
@@ -307,10 +309,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setCourseType(courseType);
 
       course.setCapacity((Integer) objArr[3]);
-      Timestamp inTime = (Timestamp) objArr[4];
-      course.setPeriodStart(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[5];
-      course.setPeriodEnd(inTime.toLocalDateTime());
+      Date inTime = (Date) objArr[4];
+      course.setPeriodStart(inTime.toLocalDate());
+      inTime = (Date) objArr[5];
+      course.setPeriodEnd(inTime.toLocalDate());
 
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[6]);
@@ -395,10 +397,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       CourseProgressResponseDTO courseProgress = new CourseProgressResponseDTO();
       courseProgress.setCourseId((String) objArr[0]);
       courseProgress.setCourseName((String) objArr[1]);
-      Timestamp inTime = (Timestamp) objArr[2];
-      courseProgress.setPeriodEnd(inTime.toLocalDateTime());
-      inTime = (Timestamp) objArr[3];
-      courseProgress.setPeriodStart(inTime.toLocalDateTime());
+      courseProgress.setPeriodEnd(((Date) objArr[2]).toLocalDate());
+      courseProgress.setPeriodStart(((Date) objArr[3]).toLocalDate());
       courseProgress.setTotalModule(((BigInteger) objArr[4]).intValue());
       listResult.add(courseProgress);
     });

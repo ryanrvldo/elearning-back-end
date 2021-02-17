@@ -1,14 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
@@ -50,6 +41,17 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -95,6 +97,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public void insertCourse(CourseCreateRequestDTO courseDTO) throws Exception {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+    logger.info(courseDTO.getPeriodStart().toString());
+    logger.info(courseDTO.getPeriodStart().toString());
     validateUtil.validate(courseDTO);
     Course course = new Course();
     course.setCapacity(courseDTO.getCapacity());
@@ -300,7 +305,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     if (course == null) {
       throw new DataIsNotExistsException("course id", courseId);
     }
-    if (LocalDateTime.now().isAfter(course.getPeriodStart())) {
+    if (LocalDate.now().isAfter(course.getPeriodStart())) {
       throw new IllegalRequestException("can't register to course when course already on going");
     }
     Integer count = courseDao.checkDataRegisterCourse(courseId, student.getId());

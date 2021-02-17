@@ -122,9 +122,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
           .ofNullable(courseService.getCourseById(moduleRequestDTO.getCourseId())).orElseThrow(
               () -> new DataIsNotExistsException("course id", moduleRequestDTO.getCourseId()));
       if (moduleRequestDTO.getSchedule().getDate()
-          .isBefore(courseDb.getPeriodStart().toLocalDate())
+          .isBefore(courseDb.getPeriodStart())
           || moduleRequestDTO.getSchedule().getDate()
-          .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+          .isAfter(courseDb.getPeriodEnd())) {
         throw new IllegalRequestException("You can't insert module outside course period");
       }
       Schedule schedule = new Schedule();
@@ -178,9 +178,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         .orElseThrow(() -> new DataIsNotExistsException("id user", data.getUpdatedBy()));
 
     if (data.getSchedule().getDate()
-        .isBefore(courseDb.getPeriodStart().toLocalDate())
+        .isBefore(courseDb.getPeriodStart())
         || data.getSchedule().getDate()
-        .isAfter(courseDb.getPeriodEnd().toLocalDate())) {
+        .isAfter(courseDb.getPeriodEnd())) {
       throw new IllegalRequestException("You can't insert module outside course period");
     }
 

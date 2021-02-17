@@ -1,6 +1,6 @@
 package com.lawencon.elearning.dto.course;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -40,10 +40,10 @@ public class CourseUpdateRequestDTO {
   private Integer capacity;
 
   @NotNull
-  private LocalDateTime periodStart;
+  private LocalDate periodStart;
 
   @NotNull
-  private LocalDateTime periodEnd;
+  private LocalDate periodEnd;
 
   @NotBlank
   @Size(min = 32, max = 36)
