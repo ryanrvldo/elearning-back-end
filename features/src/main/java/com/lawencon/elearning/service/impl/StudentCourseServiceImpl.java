@@ -91,13 +91,13 @@ public class StudentCourseServiceImpl extends BaseServiceImpl implements Student
   }
 
   @Override
-  public StudentCourse checkVerifiedCourse(String studentId) throws Exception {
+  public Boolean checkVerifiedCourse(String studentId, String courseId) throws Exception {
     validateUtil.validateUUID(studentId);
     Student student = studentService.getStudentById(studentId);
     if (student == null) {
       throw new DataIsNotExistsException("student id" + studentId);
     }
-    StudentCourse studentCourse = studentCoursDao.checkVerifiedCourse(studentId);
+    Boolean studentCourse = studentCoursDao.checkVerifiedCourse(studentId, courseId);
     if (studentCourse == null) {
       throw new DataIsNotExistsException("student id" + studentId);
     }

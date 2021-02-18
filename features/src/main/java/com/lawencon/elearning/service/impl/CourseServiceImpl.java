@@ -41,7 +41,6 @@ import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Student;
-import com.lawencon.elearning.model.StudentCourse;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
@@ -193,14 +192,21 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   public List<CourseResponseDTO> getCurrentAvailableCourse(String studentId) throws Exception {
     List<Course> listCourseAvailable = courseDao.getCurrentAvailableCourse();
     List<Course> listCourseByStudent = courseDao.getCourseByStudentId(studentId);
-    StudentCourse studentCourse = studentCourseService.checkVerifiedCourse(studentId);
+
     if (listCourseAvailable.isEmpty()) {
       return Collections.emptyList();
     }
     return getAndSetupCourseResponse(listCourseAvailable, (course, response) -> {
       response.setIsRegist(false);
       listCourseByStudent.forEach(c -> {
-        if (course.getId().equals(c.getId()) && studentCourse.getIsVerified() == true) {
+        Boolean studentCourse = false;
+        try {
+          studentCourse = studentCourseService.checkVerifiedCourse(studentId, c.getId());
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        System.out.println(studentCourse);
+        if (course.getId().equals(c.getId()) && studentCourse == true) {
           response.setIsRegist(true);
         }
       });
@@ -409,10 +415,11 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   private void setData(String courseId, DetailCourseResponseDTO detailDTO, String studentId)
       throws Exception {
     Course course = courseDao.getCourseById(courseId);
-    List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, "");
     if (course == null) {
       throw new DataIsNotExistsException("course id" + courseId);
     }
+
+    List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, "");
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
@@ -426,6 +433,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     detailDTO.setIdPhoto(course.getTeacher().getUser().getUserPhoto().getId());
     detailDTO.setModules(listModule);
     if (studentId != null) {
+      validateUtil.validateUUID(studentId);
+      studentService.getStudentById(studentId);
       setDataWithStudentId(courseId, detailDTO, studentId);
     }
   }

@@ -20,5 +20,5 @@ public interface StudentCourseDao {
 
   List<StudentListByCourseResponseDTO> getListStudentCourseById(String courseId) throws Exception;
 
-  StudentCourse checkVerifiedCourse(String studentId) throws Exception;
+  Boolean checkVerifiedCourse(String studentId, String courseId) throws Exception;
 }

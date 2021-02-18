@@ -1,5 +1,14 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -15,15 +24,6 @@ import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -72,7 +72,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   public List<Course> getCourseByStudentId(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.period_start",
-        " ,c.period_end ,t.id AS teacher_id ,t.code AS teacher_code,u.first_name ,u.last_name ,",
+        " ,c.period_end ,t.id AS teacher_id ,t.code AS teacher_code,u.first_name ,u.last_name,u.id_photo ,",
         "t.title_degree ,cc.code AS category_code,cc.category_name AS category_name ",
         "FROM tb_m_courses AS c ",
         "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
@@ -107,13 +107,16 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       User user = new User();
       user.setFirstName((String) objArr[8]);
       user.setLastName((String) objArr[9]);
+      File file = new File();
+      file.setId((String) objArr[10]);
+      user.setUserPhoto(file);
       teacher.setUser(user);
-      teacher.setTitleDegree((String) objArr[10]);
+      teacher.setTitleDegree((String) objArr[11]);
       course.setTeacher(teacher);
 
       CourseCategory courseCategory = new CourseCategory();
-      courseCategory.setCode((String) objArr[11]);
-      courseCategory.setName((String) objArr[12]);
+      courseCategory.setCode((String) objArr[12]);
+      courseCategory.setName((String) objArr[13]);
       course.setCategory(courseCategory);
 
       listResult.add(course);
@@ -130,10 +133,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<Course> getCourseForAdmin() throws Exception {
     String sql = buildQueryOf(
-        "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.status,c.description,c.period_start ,",
+        "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS typeName, c.capacity ,c.status,c.description,c.period_start , ",
         "c.period_end,cc.category_name AS category_name, ",
-        "c.id_course_type, c.id_category, c.id_teacher ",
-        "FROM tb_m_courses AS c ",
+        "c.id_course_type, c.id_category, c.id_teacher ,c.is_active ,u.first_name ,u.last_name ",
+        "FROM tb_m_courses AS c ", "INNER JOIN tb_m_teachers AS t ON t.id = c.id_teacher ",
+        "INNER JOIN tb_m_users AS u ON u.id = t.id_user ",
         "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
         "ORDER BY c.period_start ");
@@ -197,9 +201,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_teachers AS t ON t.id = c.id_teacher ",
         "INNER JOIN tb_m_users AS u ON u.id = t.id_user WHERE c.id = ?1 ");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
-    Course course = new Course();
+    List<Course> listResult = new ArrayList<>();
+
     listObj.forEach(val -> {
       Object[] arrObj = (Object[]) val;
+      Course course = new Course();
       course.setId((String) arrObj[0]);
 
       CourseType courseType = new CourseType();
@@ -254,8 +260,9 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       teacher.setUser(user);
 
       course.setTeacher(teacher);
+      listResult.add(course);
     });
-    return course;
+    return getResultModel(listResult);
   }
 
   @Override
@@ -484,7 +491,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
             "INNER JOIN tb_m_subject_categories AS sc ON sc.id = m.id_subject ",
             "LEFT JOIN tb_r_attendances AS a ON a.id_module = m.id ",
             "LEFT JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
-            "WHERE m.id_course = ?1 AND now() > s.schedule_date AND a.id_student = ?2 ");
+            "WHERE m.id_course = ?1 AND current_time > s.end_time  AND a.id_student = ?2 ");
     return ((BigInteger) createNativeQuery(sql).setParameter(1, courseId).setParameter(2, studentId)
         .getSingleResult()).intValue();
   }

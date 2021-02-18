@@ -58,16 +58,22 @@ public class StudentCourseDaoImpl extends CustomBaseDao<StudentCourse> implement
   }
 
   @Override
-  public StudentCourse checkVerifiedCourse(String studentId) throws Exception {
+  public Boolean checkVerifiedCourse(String studentId, String courseId) throws Exception {
     String sql =
-        buildQueryOf("SELECT is_verified FROM student_course WHERE id_student = ?1");
-    List<?> listObj = createNativeQuery(sql).setParameter(1, studentId).getResultList();
-    StudentCourse studentCourse = new StudentCourse();
-    listObj.forEach(val -> {
-      Object[] obj = (Object[]) val;
-      studentCourse.setIsVerified((Boolean) obj[0]);
-    });
-    return studentCourse;
+        buildQueryOf(
+            "SELECT is_verified FROM student_course WHERE id_student = ?1 AND id_course = ?2 ");
+    return (((Boolean) createNativeQuery(sql).setParameter(1, studentId).setParameter(2, courseId)
+        .getSingleResult()).booleanValue());
+
+    // List<?> listObj =
+    // createNativeQuery(sql).setParameter(1, studentId).setParameter(2, courseId).getResultList();
+    // List<StudentCourse> listResult = new ArrayList<>();
+    // StudentCourse studentCourse = new StudentCourse();
+    // listObj.forEach(val -> {
+    // Object[] obj = (Object[]) val;
+    // studentCourse.setId((String) obj[0]);
+    // studentCourse.setIsVerified((Boolean) obj[1]);
+    // });
   }
 
 }

@@ -21,6 +21,6 @@ public interface StudentCourseService {
 
   StudentCourse getStudentCourseById(String id) throws Exception;
 
-  StudentCourse checkVerifiedCourse(String studentId) throws Exception;
+  Boolean checkVerifiedCourse(String studentId, String courseId) throws Exception;
 
 }

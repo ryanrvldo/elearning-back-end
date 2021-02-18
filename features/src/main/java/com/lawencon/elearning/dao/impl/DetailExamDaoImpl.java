@@ -184,9 +184,11 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
         "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_files AS f ON f.id = de.id_file ",
         "WHERE de.id = ?1");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
-    DetailExam detail = new DetailExam();
+    List<DetailExam> listResult = new ArrayList<>();
+
     listObj.forEach(val -> {
       Object[] obj = (Object[]) val;
+      DetailExam detail = new DetailExam();
       detail.setId((String) obj[0]);
 
       Timestamp time = (Timestamp) obj[1];
@@ -214,8 +216,9 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       Student student = new Student();
       student.setId((String) obj[11]);
       detail.setStudent(student);
+      listResult.add(detail);
     });
-    return detail;
+    return getResultModel(listResult);
   }
 
   @Override
