@@ -72,13 +72,13 @@ public class ExamController {
     return WebResponseUtils.createWebResponse("Update Success", HttpStatus.OK);
   }
 
-  @DeleteMapping("/id/{id}")
+  @DeleteMapping(path = "{id}")
   public ResponseEntity<?> deleteExam(@PathVariable("id") String id) throws Exception {
     examService.deleteExam(id);
     return WebResponseUtils.createWebResponse("Update Success", HttpStatus.OK);
   }
 
-  @DeleteMapping("submission/id/{id}")
+  @DeleteMapping("submission/{id}")
   public ResponseEntity<?> deleteExamSubmission(@PathVariable("id") String id) throws Exception {
     examService.deleteExamSubmission(id);
     return WebResponseUtils.createWebResponse("Delete success", HttpStatus.OK);

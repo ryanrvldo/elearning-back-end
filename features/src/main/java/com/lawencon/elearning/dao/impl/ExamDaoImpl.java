@@ -1,13 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.ExamDao;
 import com.lawencon.elearning.dto.exam.ExamsModuleResponseDTO;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -85,7 +85,9 @@ public class ExamDaoImpl extends CustomBaseDao<Exam> implements ExamDao {
   @Override
   public String getIdFileById(String id) throws Exception {
     String sql = "SELECT id_file FROM tb_r_exams tre WHERE id = ?1";
-    return (String) createNativeQuery(sql).getSingleResult();
+    return (String) createNativeQuery(sql)
+        .setParameter(1, id)
+        .getSingleResult();
   }
 
 

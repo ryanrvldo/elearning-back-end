@@ -1,14 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -24,6 +15,15 @@ import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -40,12 +40,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       "LEFT JOIN tb_m_experiences AS e ON e.id_teacher = t.id ",
       "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
       "LEFT JOIN tb_r_files AS f ON u.id_photo = f.id ",
-      "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
-      "ORDER BY c.period_start ");
+      "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ");
 
   @Override
   public List<Course> findAll() throws Exception {
-    return getAndSetupListCourseByQuery(getCoursesSQL);
+    return getAndSetupListCourseByQuery(getCoursesSQL + "ORDER BY c.period_start ");
   }
 
   @Override
@@ -66,7 +65,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<Course> getCurrentAvailableCourse() throws Exception {
     return getAndSetupListCourseByQuery(getCoursesSQL
-        + "WHERE CURRENT_DATE < c.period_end AND CURRENT_DATE <= c.period_start");
+        + "WHERE CURRENT_DATE < c.period_end AND CURRENT_DATE <= c.period_start ORDER BY c.period_start ");
   }
 
   @Override
@@ -206,13 +205,12 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       CourseType courseType = new CourseType();
       courseType.setName((String) arrObj[1]);
 
-      BigInteger bigInteger = (BigInteger) arrObj[2];
-      course.setCapacity(bigInteger.intValue());
+      course.setCapacity((Integer) arrObj[2]);
 
       course.setCode((String) arrObj[3]);
 
       Timestamp time = (Timestamp) arrObj[4];
-      course.setCreatedAt(time.toLocalDateTime());
+      course.setCreatedAt(time != null ? time.toLocalDateTime() : null);
 
       course.setCreatedBy((String) arrObj[5]);
       course.setDescription((String) arrObj[6]);
@@ -236,11 +234,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setStatus(CourseStatus.valueOf((String) arrObj[13]));
 
       time = (Timestamp) arrObj[14];
-      course.setUpdatedAt(time.toLocalDateTime());
+      course.setUpdatedAt(time != null ? time.toLocalDateTime() : null);
       course.setUpdatedBy((String) arrObj[15]);
 
-      bigInteger = (BigInteger) arrObj[16];
-      course.setVersion(bigInteger.longValue());
+      course.setVersion(((BigInteger) arrObj[16]).longValue());
 
       User user = new User();
       user.setFirstName((String) arrObj[17]);

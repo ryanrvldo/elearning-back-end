@@ -59,7 +59,8 @@ public class ErrorController {
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
-  @ExceptionHandler(value = {NullPointerException.class, InternalServerErrorException.class})
+  @ExceptionHandler(value = {NullPointerException.class, InternalServerErrorException.class,
+      StackOverflowError.class})
   public ResponseEntity<?> internalServerHandler(Exception e) {
     e.printStackTrace();
     return WebResponseUtils.createWebResponse(
