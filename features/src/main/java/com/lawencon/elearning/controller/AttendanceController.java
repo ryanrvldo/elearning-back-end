@@ -1,8 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.AttendanceRequestDTO;
-import com.lawencon.elearning.service.AttendanceService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.AttendanceRequestDTO;
+import com.lawencon.elearning.dto.VerifyAttendanceRequestDTO;
+import com.lawencon.elearning.service.AttendanceService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author : Galih Dika Permana
@@ -46,9 +47,9 @@ public class AttendanceController {
   }
 
   @PatchMapping
-  public ResponseEntity<?> verifyAttendance(@RequestParam("id") String id,
-      @RequestParam("userId") String userId) throws Exception {
-    attendanceService.verifyAttendance(id, userId);
+  public ResponseEntity<?> verifyAttendance(@RequestBody VerifyAttendanceRequestDTO body)
+      throws Exception {
+    attendanceService.verifyAttendance(body);
     return WebResponseUtils.createWebResponse("Verify data success", HttpStatus.OK);
   }
 

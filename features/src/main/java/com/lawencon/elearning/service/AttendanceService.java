@@ -3,6 +3,7 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.dto.AttendanceResponseDTO;
+import com.lawencon.elearning.dto.VerifyAttendanceRequestDTO;
 import com.lawencon.elearning.model.Module;
 
 /**
@@ -16,7 +17,7 @@ public interface AttendanceService {
 
   void createAttendance(AttendanceRequestDTO data) throws Exception;
 
-  void verifyAttendance(String id, String userId) throws Exception;
+  void verifyAttendance(VerifyAttendanceRequestDTO data) throws Exception;
 
   String checkAttendanceStatus(String idModule, String idStudent) throws Exception;
 

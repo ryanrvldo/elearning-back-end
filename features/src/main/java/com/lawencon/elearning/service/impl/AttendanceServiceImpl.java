@@ -1,22 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import com.lawencon.base.BaseServiceImpl;
-import com.lawencon.elearning.dao.AttendanceDao;
-import com.lawencon.elearning.dto.AttendanceRequestDTO;
-import com.lawencon.elearning.dto.AttendanceResponseDTO;
-import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
-import com.lawencon.elearning.error.AttendanceErrorException;
-import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.model.Attendance;
-import com.lawencon.elearning.model.Module;
-import com.lawencon.elearning.model.Student;
-import com.lawencon.elearning.service.AttendanceService;
-import com.lawencon.elearning.service.CourseService;
-import com.lawencon.elearning.service.ModuleService;
-import com.lawencon.elearning.service.StudentService;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.TransactionNumberUtils;
-import com.lawencon.elearning.util.ValidationUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,6 +9,26 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.lawencon.base.BaseServiceImpl;
+import com.lawencon.elearning.dao.AttendanceDao;
+import com.lawencon.elearning.dto.AttendanceRequestDTO;
+import com.lawencon.elearning.dto.AttendanceResponseDTO;
+import com.lawencon.elearning.dto.VerifyAttendanceRequestDTO;
+import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
+import com.lawencon.elearning.error.AttendanceErrorException;
+import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.model.Attendance;
+import com.lawencon.elearning.model.Module;
+import com.lawencon.elearning.model.Roles;
+import com.lawencon.elearning.model.Student;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.AttendanceService;
+import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.ModuleService;
+import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.TransactionNumberUtils;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  * 
@@ -125,16 +128,33 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   }
 
   @Override
-  public void verifyAttendance(String id, String userId) throws Exception {
-    validationUtil.validateUUID(id, userId);
-    Attendance attendance = Optional.ofNullable(attendanceDao.getAttendanceById(id))
-        .orElseThrow(() -> new DataIsNotExistsException("attendance id", id));
-    Optional.ofNullable(userService.getById(userId))
-        .orElseThrow(() -> new DataIsNotExistsException("user id", userId));
-    attendance.setIsVerified(true);
-    attendance.setUpdatedBy(userId);
-    attendance.setUpdatedAt(LocalDateTime.now());
-    attendanceDao.verifyAttendance(attendance, null);
+  public void verifyAttendance(VerifyAttendanceRequestDTO data) throws Exception {
+    validationUtil.validate(data);
+    if (data.getIdAttendance().isEmpty()) {
+      throw new DataIsNotExistsException("No absent data");
+    }
+    User userDb = Optional.ofNullable(userService.getById(data.getUserId()))
+        .orElseThrow(() -> new DataIsNotExistsException("user id", data.getUserId()));
+    if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.TEACHER.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
+    Module moduleDb = moduleService.getModuleById(data.getModuleId());
+    if (LocalTime.now().isAfter(moduleDb.getSchedule().getEndTime())
+        && LocalDate.now().isAfter(moduleDb.getSchedule().getDate())) {
+      throw new AttendanceErrorException("You already late");
+    }
+    for (String idAttendance : data.getIdAttendance()) {
+      Attendance attendance = Optional.ofNullable(attendanceDao.getAttendanceById(idAttendance))
+          .orElseThrow(() -> new DataIsNotExistsException("attendance id", idAttendance));
+      if (attendance.getIsVerified()) {
+        throw new AttendanceErrorException(
+            "Attendance with id " + idAttendance + " already verified");
+      }
+      attendance.setIsVerified(true);
+      attendance.setUpdatedBy(data.getUserId());
+      attendance.setUpdatedAt(LocalDateTime.now());
+      attendanceDao.verifyAttendance(attendance, null);
+    }
   }
 
   @Override
