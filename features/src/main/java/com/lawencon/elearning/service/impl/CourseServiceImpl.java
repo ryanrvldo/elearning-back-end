@@ -293,6 +293,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       data.setTypeId(val.getCourseType().getId());
       data.setCategoryId(val.getCategory().getId());
       data.setTeacherId(val.getTeacher().getId());
+      data.setActive(val.getIsActive());
+      data.setFullName(val.getTeacher().getUser().getFirstName() + " "
+          + null == val.getTeacher().getUser().getLastName() ? ""
+              : val.getTeacher().getUser().getLastName());
       listResult.add(data);
     });
     return listResult;

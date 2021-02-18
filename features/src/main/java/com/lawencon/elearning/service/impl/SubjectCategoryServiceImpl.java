@@ -1,19 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import com.lawencon.base.BaseServiceImpl;
-import com.lawencon.elearning.dao.SubjectCategoryDao;
-import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
-import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
-import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
-import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
-import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.model.Roles;
-import com.lawencon.elearning.model.SubjectCategory;
-import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.service.SubjectCategoryService;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.ValidationUtil;
-import com.lawencon.util.Callback;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +7,21 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.lawencon.base.BaseServiceImpl;
+import com.lawencon.elearning.dao.SubjectCategoryDao;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
+import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
+import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
+import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
+import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.model.Roles;
+import com.lawencon.elearning.model.SubjectCategory;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.SubjectCategoryService;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.ValidationUtil;
+import com.lawencon.util.Callback;
 
 /**
  * 
@@ -53,6 +54,7 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
       subjectResponse.setCode(subject.getCode());
       subjectResponse.setName(subject.getSubjectName());
       subjectResponse.setDescription(subject.getDescription());
+      subjectResponse.setActive(subject.getIsActive());
       subjectResponses.add(subjectResponse);
     }
     return subjectResponses;
@@ -62,11 +64,11 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   public void updateSubject(UpdateSubjectCategoryRequestDTO data, Callback before)
       throws Exception {
     validationUtil.validate(data);
-    User userDb = Optional.ofNullable(userService.getById(data.getUpdatedBy()))
-        .orElseThrow(() -> new DataIsNotExistsException("user id", data.getUpdatedBy()));
+    User userDb = userService.getById(data.getUpdatedBy());
     if (!userDb.getRole().getCode().equals(Roles.ADMIN.getCode())) {
       throw new IllegalAccessException("You are unauthorized");
     }
+
     SubjectCategory subject = new SubjectCategory();
     subject.setId(data.getId());
     subject.setCode(data.getCode());
@@ -81,6 +83,11 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   @Override
   public void addSubject(CreateSubjectCategoryRequestDTO data, Callback before) throws Exception {
     validationUtil.validate(data);
+    User userDb = userService.getById(data.getCreatedBy());
+    if (!userDb.getRole().getCode().equals(Roles.ADMIN.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
+
     SubjectCategory subject = new SubjectCategory();
     subject.setCode(data.getCode());
     subject.setDescription(data.getDescription());
@@ -92,6 +99,14 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
 
   @Override
   public void deleteSubject(UpdateIsActiveRequestDTO data) throws Exception {
+    validationUtil.validate(data);
+    if (data.getStatus()) {
+      throw new IllegalRequestException("Status must be false to delete data");
+    }
+    User userDb = userService.getById(data.getUpdatedBy());
+    if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.ADMIN.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
     try {
       begin();
       subjectCategoryDao.deleteSubject(data.getId());

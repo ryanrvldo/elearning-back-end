@@ -99,7 +99,13 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
         moduleDTO.setSchedule(scheduleDTO);
         listModuleDTO.add(moduleDTO);
       }
-      listModuleDTO.sort(Comparator.comparing(module -> module.getSchedule().getDate()));
+
+      Comparator<ModuleResponseDTO> comparator =
+          Comparator.comparing(module -> module.getSchedule().getDate());
+      comparator = comparator
+          .thenComparing(Comparator.comparing(module -> module.getSchedule().getStartTime()));
+      listModuleDTO.sort(comparator);
+
       return listModuleDTO;
     } else {
       Optional.ofNullable(studentService.getStudentById(idStudent))
@@ -108,7 +114,13 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       if (listResult.isEmpty()) {
         return Collections.emptyList();
       }
-      listResult.sort(Comparator.comparing(module -> module.getSchedule().getDate()));
+
+      Comparator<ModuleResponseDTO> comparator =
+          Comparator.comparing(module -> module.getSchedule().getDate());
+      comparator = comparator
+          .thenComparing(Comparator.comparing(module -> module.getSchedule().getStartTime()));
+      listResult.sort(comparator);
+
       return listResult;
     }
   }

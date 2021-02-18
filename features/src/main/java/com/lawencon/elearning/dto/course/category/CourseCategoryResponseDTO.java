@@ -17,5 +17,6 @@ public class CourseCategoryResponseDTO {
   private String code;
   private String name;
   private Long version;
+  private Boolean active;
 
 }

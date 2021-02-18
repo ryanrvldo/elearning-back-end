@@ -1,7 +1,7 @@
 package com.lawencon.elearning.dto.course;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -24,4 +24,7 @@ public class CourseAdminResponseDTO {
   private String typeId;
   private String categoryId;
   private String teacherId;
+  private Boolean active;
+  private String fullName;
+
 }

@@ -1,5 +1,10 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseCategoryDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
@@ -13,11 +18,6 @@ import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseCategoryService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -48,6 +48,7 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
       response.setCode(courseCategory.getCode());
       response.setName(courseCategory.getName());
       response.setVersion(courseCategory.getVersion());
+      response.setActive(courseCategory.getIsActive());
       courseCategoryResponse.add(response);
     }
 
