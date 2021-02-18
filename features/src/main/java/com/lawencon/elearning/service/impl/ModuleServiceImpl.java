@@ -1,5 +1,14 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.ModuleDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
@@ -27,15 +36,6 @@ import com.lawencon.elearning.service.ScheduleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author WILLIAM
@@ -127,6 +127,11 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
           .isAfter(courseDb.getPeriodEnd())) {
         throw new IllegalRequestException("You can't insert module outside course period");
       }
+      User userDb = userService.getById(moduleRequestDTO.getCreatedBy());
+      if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.ADMIN.getCode())) {
+        throw new IllegalAccessException("You are unauthorized");
+      }
+
       Schedule schedule = new Schedule();
       schedule.setCreatedBy(moduleRequestDTO.getSchedule().getCreatedBy());
       schedule.setDate(moduleRequestDTO.getSchedule().getDate());
@@ -217,27 +222,49 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
     subject.setId(data.getSubjectId());
     module.setSubject(subject);
 
-    begin();
-    scheduleService.updateSchedule(schedule);
-    setupUpdatedValue(module, () -> moduleDb);
-    moduleDao.updateModule(module, null);
-    commit();
+    try {
+      begin();
+      scheduleService.updateSchedule(schedule);
+      setupUpdatedValue(module, () -> moduleDb);
+      moduleDao.updateModule(module, null);
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
 
   }
 
   @Override
   public void deleteModule(UpdateIsActiveRequestDTO data) throws Exception {
     validationUtil.validate(data);
+    if (data.getStatus()) {
+      throw new IllegalRequestException("Status must be false to delete data");
+    }
+    User userDb = userService.getById(data.getUpdatedBy());
+    if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.ADMIN.getCode())) {
+      throw new IllegalAccessException("You are unauthorized");
+    }
+    Module moduleDb = Optional.ofNullable(moduleDao.getModuleById(data.getId()))
+        .orElseThrow(() -> new DataIsNotExistsException("id module", data.getId()));
+    Schedule scheduleDb = scheduleService.findScheduleById(moduleDb.getSchedule().getId());
     try {
       begin();
       moduleDao.deleteModule(data.getId());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException(e.getMessage());
-      }
       updateIsActiveFalse(data.getId(), data.getUpdatedBy());
+    }
+    data.setId(scheduleDb.getId());
+    try {
+      begin();
+      scheduleService.deleteSchedule(data.getId());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      scheduleService.updateIsActive(data);
     }
   }
 
