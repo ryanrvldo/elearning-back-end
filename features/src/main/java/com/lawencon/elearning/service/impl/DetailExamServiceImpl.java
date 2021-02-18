@@ -1,5 +1,14 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.DetailExamDao;
 import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
@@ -23,15 +32,6 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 import com.lawencon.util.Callback;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author : Galih Dika Permana
@@ -125,13 +125,14 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     if (detailExam == null) {
       throw new DataIsNotExistsException(id);
     }
-    if (detailExam.getGrade() == null
+    if (detailExam.getVersion().equals(0L)
         && LocalDateTime.now().isBefore(detailExam.getExam().getEndTime())) {
       begin();
       dtlExamDao.deleteDetailExam(id);
+      fileService.deleteFile(detailExam.getFile().getId());
       commit();
     } else {
-      throw new IllegalRequestException("id" + id);
+      throw new IllegalRequestException("id", id);
     }
   }
 

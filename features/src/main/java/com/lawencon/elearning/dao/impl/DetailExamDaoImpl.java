@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -14,7 +15,9 @@ import com.lawencon.elearning.model.CourseType;
 import com.lawencon.elearning.model.DetailExam;
 import com.lawencon.elearning.model.Exam;
 import com.lawencon.elearning.model.ExamType;
+import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Module;
+import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
@@ -175,7 +178,44 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
   @Override
   public DetailExam getDetailById(String id) throws Exception {
-    return getById(id);
+    String sql = buildQueryOf(
+        "SELECT de.id ,de.created_at ,de.created_by ,de.updated_at ,de.updated_by , ",
+        "de.\"version\" ,de.trx_date ,de.trx_number ,de.grade ,de.id_exam ,de.id_file ,de.id_student ",
+        "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_files AS f ON f.id = de.id_file ",
+        "WHERE de.id = ?1");
+    List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
+    DetailExam detail = new DetailExam();
+    listObj.forEach(val -> {
+      Object[] obj = (Object[]) val;
+      detail.setId((String) obj[0]);
+
+      Timestamp time = (Timestamp) obj[1];
+      detail.setCreatedAt(time != null ? time.toLocalDateTime() : null);
+      detail.setCreatedBy((String) obj[2]);
+
+      time = (Timestamp) obj[3];
+      detail.setUpdatedAt(time != null ? time.toLocalDateTime() : null);
+      detail.setUpdatedBy((String) obj[4]);
+      detail.setVersion(((BigInteger) obj[5]).longValue());
+
+      Date date = (Date) obj[6];
+      detail.setTrxDate(date != null ? date.toLocalDate() : null);
+      detail.setTrxNumber((String) obj[7]);
+      detail.setGrade(((BigInteger) obj[8]).doubleValue());
+
+      Exam exam = new Exam();
+      exam.setId((String) obj[9]);
+      detail.setExam(exam);
+
+      File file = new File();
+      file.setId((String) obj[10]);
+      detail.setFile(file);
+
+      Student student = new Student();
+      student.setId((String) obj[11]);
+      detail.setStudent(student);
+    });
+    return detail;
   }
 
   @Override

@@ -90,4 +90,18 @@ public class StudentCourseServiceImpl extends BaseServiceImpl implements Student
     return studentCourse;
   }
 
+  @Override
+  public StudentCourse checkVerifiedCourse(String studentId) throws Exception {
+    validateUtil.validateUUID(studentId);
+    Student student = studentService.getStudentById(studentId);
+    if (student == null) {
+      throw new DataIsNotExistsException("student id" + studentId);
+    }
+    StudentCourse studentCourse = studentCoursDao.checkVerifiedCourse(studentId);
+    if (studentCourse == null) {
+      throw new DataIsNotExistsException("student id" + studentId);
+    }
+    return studentCourse;
+  }
+
 }
