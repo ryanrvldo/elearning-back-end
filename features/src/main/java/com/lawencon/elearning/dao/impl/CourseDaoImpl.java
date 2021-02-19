@@ -82,7 +82,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ",
         "INNER JOIN student_course AS sc ON c.id = sc.id_course ",
         "INNER JOIN tb_m_students AS s ON sc.id_student = s.id WHERE sc.id_student = ?1 ",
-        "ORDER BY c.period_start");
+        "AND sc.is_verified  = true ORDER BY c.period_start");
     List<Course> listResult = new ArrayList<>();
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
 

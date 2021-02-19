@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class TeacherReportResponseDTO {
 
-  private String studentCode;
   private String studentFirstName;
   private String studentLastName;
   private Integer totalExam;

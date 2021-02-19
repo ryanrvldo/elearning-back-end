@@ -287,7 +287,8 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     Integer totalExam = teacherDao.getTotalExamByModuleId(moduleId);
     listResult.forEach(val -> {
       Double scoreTemp = val.getAvgScore();
-      val.setStudentFirstName(val.getStudentFirstName() + " " + val.getStudentLastName());
+      String studentName = val.getStudentFirstName() + " " + val.getStudentLastName();
+      val.setStudentFirstName(studentName);
       val.setStudentLastName("");
       if (val.getAvgScore() == null) {
         val.setAvgScore(0.0);

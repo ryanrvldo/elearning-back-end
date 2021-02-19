@@ -217,7 +217,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
       throws Exception {
     String sql = buildQueryOf(
-        "SELECT s.code , u.first_name , u.last_name ,count(de.id) ,sum(de.grade) ",
+        "SELECT u.first_name , u.last_name ,count(de.id) ,sum(de.grade) ",
         "FROM tb_r_dtl_exams AS de RIGHT JOIN tb_r_exams AS e ON de.id_exam = e.id ",
         "LEFT JOIN tb_m_students AS s ON s.id = de.id_student ",
         "LEFT JOIN tb_m_users AS u ON u.id = s.id_user WHERE e.id_module = ?1 ",
@@ -228,12 +228,11 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     listObj.forEach(val -> {
       Object[] arrObj = (Object[]) val;
       TeacherReportResponseDTO responseDTO = new TeacherReportResponseDTO();
-      responseDTO.setStudentCode((String) arrObj[0]);
-      responseDTO.setStudentFirstName((String) arrObj[1]);
-      responseDTO.setStudentLastName((String) arrObj[2]);
-      BigInteger bigInteger = (BigInteger) arrObj[3];
+      responseDTO.setStudentFirstName((String) arrObj[0]);
+      responseDTO.setStudentLastName((String) arrObj[1]);
+      BigInteger bigInteger = (BigInteger) arrObj[2];
       responseDTO.setTotalAssignment(bigInteger.intValue());
-      responseDTO.setAvgScore((Double) arrObj[4]);
+      responseDTO.setAvgScore((Double) arrObj[3]);
       listResult.add(responseDTO);
     });
     return listResult;

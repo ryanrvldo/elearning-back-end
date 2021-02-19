@@ -9,9 +9,7 @@
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
-	<field name="studentCode" class="java.lang.String"/>
 	<field name="studentFirstName" class="java.lang.String"/>
-	<field name="studentLastName" class="java.lang.String"/>
 	<field name="totalExam" class="java.lang.Integer"/>
 	<field name="totalAssignment" class="java.lang.Integer"/>
 	<field name="notAssignment" class="java.lang.Integer"/>
@@ -96,14 +94,7 @@
 	<columnHeader>
 		<band height="56" splitType="Stretch">
 			<staticText>
-				<reportElement x="-8" y="9" width="82" height="38" uuid="43375157-eada-4829-b20e-8b0217eee48f"/>
-				<textElement>
-					<font size="14"/>
-				</textElement>
-				<text><![CDATA[Student Code]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="86" y="9" width="76" height="38" uuid="5515c512-55ce-4858-8234-f1578fe77c42"/>
+				<reportElement x="2" y="9" width="128" height="38" uuid="5515c512-55ce-4858-8234-f1578fe77c42"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
@@ -117,40 +108,37 @@
 				<text><![CDATA[Avg Grade]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="185" y="12" width="90" height="27" uuid="c8172f6e-5cdb-4e00-9f57-fdc057170432"/>
+				<reportElement x="163" y="12" width="90" height="27" uuid="c8172f6e-5cdb-4e00-9f57-fdc057170432"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Total Exam]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="299" y="12" width="74" height="27" uuid="baa9a6f6-abd6-4f11-95d7-e2eb8ec97f48"/>
+				<reportElement x="277" y="12" width="74" height="27" uuid="baa9a6f6-abd6-4f11-95d7-e2eb8ec97f48"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
-				<text><![CDATA[Complited]]></text>
+				<text><![CDATA[Completed]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="396" y="12" width="79" height="26" uuid="d2ebac30-78ad-4734-881a-814f5aedf81c"/>
+				<reportElement x="380" y="12" width="95" height="26" uuid="d2ebac30-78ad-4734-881a-814f5aedf81c"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
-				<text><![CDATA[Uncomplited]]></text>
+				<text><![CDATA[Uncompleted]]></text>
 			</staticText>
 			<line>
 				<reportElement x="-14" y="3" width="1" height="53" uuid="326b2d14-c4f6-4f26-93ec-9e918bb1a01c"/>
 			</line>
 			<line>
-				<reportElement x="80" y="3" width="1" height="51" uuid="27a42ea3-e3db-4053-a78c-125fb8f4b4ac"/>
+				<reportElement x="148" y="3" width="1" height="52" uuid="7cffafe5-f5a8-417e-af8e-106bdece9bcd"/>
 			</line>
 			<line>
-				<reportElement x="170" y="3" width="1" height="52" uuid="7cffafe5-f5a8-417e-af8e-106bdece9bcd"/>
+				<reportElement x="260" y="4" width="1" height="52" uuid="486fbafd-f07e-4507-a0e7-acf462515564"/>
 			</line>
 			<line>
-				<reportElement x="282" y="4" width="1" height="52" uuid="486fbafd-f07e-4507-a0e7-acf462515564"/>
-			</line>
-			<line>
-				<reportElement x="389" y="3" width="1" height="52" uuid="11cf8dc5-5479-4be3-83ec-253061e9f0c1"/>
+				<reportElement x="367" y="3" width="1" height="52" uuid="11cf8dc5-5479-4be3-83ec-253061e9f0c1"/>
 			</line>
 			<line>
 				<reportElement x="480" y="4" width="1" height="52" uuid="3594a540-04f1-4e79-9b3f-0dc43de07464"/>
@@ -172,16 +160,13 @@
 				<reportElement x="-14" y="0" width="1" height="63" uuid="64a34906-b0f7-493b-8c2c-e78abc261f12"/>
 			</line>
 			<line>
-				<reportElement x="80" y="-1" width="1" height="63" uuid="5166f954-c8eb-4f94-b656-08af9f785202"/>
+				<reportElement x="148" y="0" width="1" height="62" uuid="1a595811-911b-49a2-aa52-1b3b38909c53"/>
 			</line>
 			<line>
-				<reportElement x="170" y="0" width="1" height="62" uuid="1a595811-911b-49a2-aa52-1b3b38909c53"/>
+				<reportElement x="260" y="0" width="1" height="62" uuid="87035c02-1f05-4bac-8cce-3e7182cfd052"/>
 			</line>
 			<line>
-				<reportElement x="282" y="0" width="1" height="62" uuid="87035c02-1f05-4bac-8cce-3e7182cfd052"/>
-			</line>
-			<line>
-				<reportElement x="389" y="-1" width="1" height="63" uuid="35769b03-deb1-4c47-baaf-0658ac86a48c"/>
+				<reportElement x="367" y="-1" width="1" height="63" uuid="35769b03-deb1-4c47-baaf-0658ac86a48c"/>
 			</line>
 			<line>
 				<reportElement x="480" y="0" width="1" height="62" uuid="a957389f-f5a0-4930-a52e-433baaf04c14"/>
@@ -193,31 +178,19 @@
 				<reportElement x="-14" y="62" width="584" height="1" uuid="9260a3fb-5e24-4bda-a58a-133e2e0811f8"/>
 			</line>
 			<textField>
-				<reportElement x="-8" y="2" width="84" height="40" uuid="adda8a39-f3e8-4c0f-9c32-b4ed885f66f2">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="a21b33e9-5127-4412-8ac0-404139eb209b"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{studentCode}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="86" y="0" width="76" height="30" uuid="d248c4dd-956f-4e18-a43a-7a291561f2ca">
+				<reportElement x="0" y="8" width="130" height="30" uuid="d248c4dd-956f-4e18-a43a-7a291561f2ca">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="c9abb409-598f-4e2e-9591-a687232bd9c4"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{studentFirstName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="86" y="30" width="76" height="30" uuid="e4bf88dc-bb1f-4b99-9397-90f3d4731518">
-					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="61514435-f58f-4260-8388-acec087cc570"/>
-				</reportElement>
-				<textFieldExpression><![CDATA[$F{studentLastName}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="299" y="7" width="72" height="30" uuid="55d44b5f-26a5-4f93-99a0-0e8b26bc8f32">
+				<reportElement x="277" y="7" width="74" height="30" uuid="55d44b5f-26a5-4f93-99a0-0e8b26bc8f32">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="f2955405-54d0-47a6-bc09-72127b6d57a6"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{totalAssignment}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="396" y="8" width="78" height="30" uuid="3aba9f1c-0ffa-4c55-ad2a-93a4df69aae7">
+				<reportElement x="380" y="8" width="94" height="30" uuid="3aba9f1c-0ffa-4c55-ad2a-93a4df69aae7">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4e6be319-a501-4445-bdb5-12971acb9a23"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{notAssignment}]]></textFieldExpression>
@@ -229,7 +202,7 @@
 				<textFieldExpression><![CDATA[$F{avgScore}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="175" y="8" width="100" height="30" uuid="87d9604a-d144-4586-ad4b-c0c1fa9db88d">
+				<reportElement x="153" y="8" width="100" height="30" uuid="87d9604a-d144-4586-ad4b-c0c1fa9db88d">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="ce16aa98-ad3a-45c1-af67-e74a7cd67da5"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{totalExam}]]></textFieldExpression>
