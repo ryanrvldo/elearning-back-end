@@ -79,6 +79,7 @@ public class ReportController {
       e.printStackTrace();
       return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     return ResponseEntity.ok()
         .headers(httpHeaders -> httpHeaders.setContentType(MediaType.APPLICATION_PDF))
         .body(new ByteArrayResource(Objects.requireNonNull(out, "Byte is empty")));
@@ -108,7 +109,8 @@ public class ReportController {
     }
     HttpHeaders header = new HttpHeaders();
     header.setContentType(MediaType.APPLICATION_PDF);
-    return ResponseEntity.ok().headers(header).body(new ByteArrayResource(out));
+    return ResponseEntity.ok().headers(header)
+        .body(new ByteArrayResource(Objects.requireNonNull(out, "Byte is empty")));
   }
 
   /**

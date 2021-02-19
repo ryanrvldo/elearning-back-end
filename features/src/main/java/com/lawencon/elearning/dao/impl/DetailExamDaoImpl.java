@@ -180,8 +180,10 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
   public DetailExam getDetailById(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT de.id ,de.created_at ,de.created_by ,de.updated_at ,de.updated_by , ",
-        "de.\"version\" ,de.trx_date ,de.trx_number ,de.grade ,de.id_exam ,de.id_file ,de.id_student ",
+        "de.\"version\" ,de.trx_date ,de.trx_number ,de.grade ,de.id_exam ,de.id_file ,de.id_student,e.end_time ",
         "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_files AS f ON f.id = de.id_file ",
+        "INNER JOIN tb_r_exams AS e ON e.id = de.id_exam ",
+        "INNER JOIN tb_m_students AS s ON s.id = de.id_student ",
         "WHERE de.id = ?1");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
     List<DetailExam> listResult = new ArrayList<>();
@@ -203,11 +205,11 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
       Date date = (Date) obj[6];
       detail.setTrxDate(date != null ? date.toLocalDate() : null);
       detail.setTrxNumber((String) obj[7]);
-      detail.setGrade(((BigInteger) obj[8]).doubleValue());
+      detail.setGrade((Double) obj[8]);
 
       Exam exam = new Exam();
       exam.setId((String) obj[9]);
-      detail.setExam(exam);
+
 
       File file = new File();
       file.setId((String) obj[10]);
@@ -215,7 +217,12 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
 
       Student student = new Student();
       student.setId((String) obj[11]);
+
+      time = (Timestamp) obj[12];
+      exam.setEndTime(time != null ? time.toLocalDateTime() : null);
+
       detail.setStudent(student);
+      detail.setExam(exam);
       listResult.add(detail);
     });
     return getResultModel(listResult);

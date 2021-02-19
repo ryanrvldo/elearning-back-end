@@ -80,7 +80,7 @@
 				<textFieldExpression><![CDATA[$P{teacherLName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="185" y="77" width="134" height="13" uuid="7489e775-8fb6-49b0-9f94-0b5d39a81a14"/>
+				<reportElement x="185" y="77" width="165" height="33" uuid="7489e775-8fb6-49b0-9f94-0b5d39a81a14"/>
 				<textFieldExpression><![CDATA[$P{teacherEmail}]]></textFieldExpression>
 			</textField>
 			<textField>

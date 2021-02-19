@@ -1,5 +1,11 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.admin.DashboardTeacherResponseDto;
@@ -12,12 +18,6 @@ import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -218,10 +218,10 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
       throws Exception {
     String sql = buildQueryOf(
-        "SELECT s.code , u.first_name , u.last_name ,count(de.id) ,sum(de.grade) "
-        , "FROM tb_r_dtl_exams AS de INNER JOIN tb_r_exams AS e ON de.id_exam = e.id ",
-        "INNER JOIN tb_m_students AS s ON s.id  = de.id_student ",
-        "INNER JOIN tb_m_users AS u ON u.id = s.id_user WHERE e.id_module = ?1 ",
+        "SELECT s.code , u.first_name , u.last_name ,count(de.id) ,sum(de.grade) ",
+        "FROM tb_r_dtl_exams AS de RIGHT JOIN tb_r_exams AS e ON de.id_exam = e.id ",
+        "LEFT JOIN tb_m_students AS s ON s.id = de.id_student ",
+        "LEFT JOIN tb_m_users AS u ON u.id = s.id_user WHERE e.id_module = ?1 ",
         "GROUP BY s.code , u.first_name , u.last_name");
 
     List<TeacherReportResponseDTO> listResult = new ArrayList<>();

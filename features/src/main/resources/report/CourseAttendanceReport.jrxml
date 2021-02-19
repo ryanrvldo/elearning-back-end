@@ -20,8 +20,7 @@
 	<title>
 		<band height="114" splitType="Stretch">
 			<image>
-				<reportElement x="2" y="1" width="100" height="90"
-					uuid="a40e9888-49e2-48ef-8328-fc7004d3fb2a"/>
+				<reportElement x="2" y="1" width="100" height="90" uuid="a40e9888-49e2-48ef-8328-fc7004d3fb2a"/>
 				<imageExpression><![CDATA["report/logo.png"]]></imageExpression>
 			</image>
 			<staticText>
@@ -79,7 +78,7 @@
 				<textFieldExpression><![CDATA[$P{teacherLName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="180" y="77" width="160" height="13" uuid="11539748-1567-492b-8b7f-52fec801b0d3"/>
+				<reportElement x="180" y="77" width="180" height="33" uuid="11539748-1567-492b-8b7f-52fec801b0d3"/>
 				<textFieldExpression><![CDATA[$P{teacherEmail}]]></textFieldExpression>
 			</textField>
 			<textField>

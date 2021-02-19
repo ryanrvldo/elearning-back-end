@@ -1,5 +1,13 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.TeacherDao;
 import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
@@ -27,14 +35,6 @@ import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -280,15 +280,16 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       throw new DataIsNotExistsException("module id", moduleId);
     }
     List<TeacherReportResponseDTO> listResult = teacherDao.getTeacherDetailCourseReport(moduleId);
-    if (listResult.isEmpty()) {
-      return Collections.emptyList();
-    }
     Integer totalExam = teacherDao.getTotalExamByModuleId(moduleId);
     listResult.forEach(val -> {
       Double scoreTemp = val.getAvgScore();
       val.setStudentFirstName(val.getStudentFirstName() + " " + val.getStudentLastName());
       val.setStudentLastName("");
-      val.setAvgScore(scoreTemp / totalExam);
+      if (val.getAvgScore() == null) {
+        val.setAvgScore(0.0);
+      } else {
+        val.setAvgScore(scoreTemp / totalExam);
+      }
       val.setNotAssignment(totalExam - val.getTotalAssignment());
       val.setTotalExam(totalExam);
     });
