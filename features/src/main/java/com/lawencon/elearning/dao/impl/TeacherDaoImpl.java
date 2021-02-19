@@ -33,7 +33,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         "u.username, u.firstName, u.lastName, u.email, f.id ",
         "FROM Teacher AS t INNER JOIN t.user AS u ",
         "LEFT JOIN u.userPhoto AS f ",
-        "WHERE t.isActive = TRUE ORDER BY t.createdAt");
+        "ORDER BY t.createdAt");
     List<Object[]> objList = createQuery(sql, Object[].class)
         .getResultList();
     if (objList.isEmpty()) {

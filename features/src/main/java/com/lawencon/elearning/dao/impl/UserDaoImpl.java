@@ -30,12 +30,13 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   @Override
   public User findById(String id) throws Exception {
-    return getAndSetupUser(singleUserQuery + "WHERE u.id = ?1", id);
+    return getAndSetupUser(singleUserQuery + "WHERE u.id = ?1 AND u.isActive = TRUE", id);
   }
 
   @Override
   public User findByUsername(String username) throws Exception {
-    return getAndSetupUser(singleUserQuery + "WHERE u.username = ?1 ", username);
+    return getAndSetupUser(singleUserQuery + "WHERE u.username = ?1 AND u.isActive = TRUE",
+        username);
   }
 
   @Override

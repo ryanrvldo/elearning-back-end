@@ -1,14 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -25,6 +16,15 @@ import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -173,6 +173,11 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[11]);
       course.setTeacher(teacher);
+      course.setIsActive((Boolean) objArr[12]);
+      User user = new User();
+      user.setFirstName((String) objArr[13]);
+      user.setLastName((String) objArr[14]);
+      teacher.setUser(user);
 
       listResult.add(course);
     });

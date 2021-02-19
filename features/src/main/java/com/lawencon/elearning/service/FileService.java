@@ -18,7 +18,7 @@ public interface FileService {
 
   File getFileById(String id) throws Exception;
 
-  void updateFile(MultipartFile file, String content) throws Exception;
+  void updateFile(MultipartFile file, FileRequestDto fileRequest) throws Exception;
 
   void deleteFile(String id) throws Exception;
 

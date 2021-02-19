@@ -21,12 +21,14 @@ import com.lawencon.elearning.util.SecurityUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import javax.persistence.NoResultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -187,11 +189,17 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
       throw new IllegalRequestException("Invalid file content.");
     }
 
+    String contentType = Objects.requireNonNull(file.getContentType());
+    if (!contentType.equalsIgnoreCase(MediaType.IMAGE_PNG_VALUE) && !contentType
+        .equalsIgnoreCase(MediaType.IMAGE_JPEG_VALUE)) {
+      throw new IllegalRequestException("content type", file.getContentType());
+    }
+
     User user = getById(fileRequest.getUserId());
     logger.info(user.toString());
     if (user.getUserPhoto().getId() != null) {
       validationUtil.validateUUID(fileRequest.getId(), fileRequest.getUserId());
-      fileService.updateFile(file, content);
+      fileService.updateFile(file, fileRequest);
       user.getUserPhoto().setId(fileRequest.getId());
     } else {
       validationUtil.validateUUID(fileRequest.getUserId());

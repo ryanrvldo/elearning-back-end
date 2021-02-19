@@ -1,6 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.FileDao;
@@ -67,31 +66,24 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
       commit();
       return file;
     } catch (NoResultException e) {
-      clear();
       throw new DataIsNotExistsException("file id", id);
     }
   }
 
   @Override
-  public void updateFile(MultipartFile file, String content) throws Exception {
+  public void updateFile(MultipartFile file, FileRequestDto fileRequest) throws Exception {
     if (file == null) {
       throw new IllegalRequestException("File is not inputted!");
     }
-    FileRequestDto requestContent;
-    try {
-      requestContent = objectMapper.readValue(content, FileRequestDto.class);
-    } catch (JsonProcessingException e) {
-      throw new IllegalRequestException("Invalid file content.");
-    }
 
-    File prevFile = getFileById(requestContent.getId());
+    File prevFile = getFileById(fileRequest.getId());
     begin();
     File newFile = new File();
     newFile.setId(prevFile.getId());
     newFile.setCreatedAt(prevFile.getCreatedAt());
     newFile.setCreatedBy(prevFile.getCreatedBy());
     newFile.setUpdatedAt(LocalDateTime.now());
-    newFile.setUpdatedBy(requestContent.getUserId());
+    newFile.setUpdatedBy(fileRequest.getUserId());
     newFile.setVersion(prevFile.getVersion());
     newFile.setTrxNumber(prevFile.getTrxNumber());
     newFile.setTrxDate(prevFile.getTrxDate());

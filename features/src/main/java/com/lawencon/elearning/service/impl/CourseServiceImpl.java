@@ -1,16 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
@@ -53,6 +42,15 @@ import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -98,9 +96,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Override
   public void insertCourse(CourseCreateRequestDTO courseDTO) throws Exception {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-    logger.info(courseDTO.getPeriodStart().toString());
-    logger.info(courseDTO.getPeriodStart().toString());
     validateUtil.validate(courseDTO);
     Course course = new Course();
     course.setCapacity(courseDTO.getCapacity());
@@ -207,7 +202,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
           e.printStackTrace();
         }
         System.out.println(studentCourse);
-        if (course.getId().equals(c.getId()) && studentCourse == true) {
+        if (course.getId().equals(c.getId()) && studentCourse) {
           response.setIsRegist(true);
         }
       });
@@ -301,9 +296,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       data.setCategoryId(val.getCategory().getId());
       data.setTeacherId(val.getTeacher().getId());
       data.setActive(val.getIsActive());
-      data.setFullName(val.getTeacher().getUser().getFirstName() + " "
-          + null == val.getTeacher().getUser().getLastName() ? ""
-              : val.getTeacher().getUser().getLastName());
+      data.setFirstName(val.getTeacher().getUser().getFirstName());
+      data.setLastName(val.getTeacher().getUser().getLastName());
+
       listResult.add(data);
     });
     return listResult;
@@ -420,7 +415,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throw new DataIsNotExistsException("course id" + courseId);
     }
 
-    List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, "");
+    List<ModuleResponseDTO> listModule = moduleService.getModuleListByIdCourse(courseId, studentId);
     detailDTO.setId(course.getId());
     detailDTO.setCode(course.getCode());
     detailDTO.setName(course.getCourseType().getName());
@@ -433,6 +428,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     detailDTO.setTeacherLastName(course.getTeacher().getUser().getLastName());
     detailDTO.setIdPhoto(course.getTeacher().getUser().getUserPhoto().getId());
     detailDTO.setModules(listModule);
+
     if (studentId != null) {
       validateUtil.validateUUID(studentId);
       studentService.getStudentById(studentId);

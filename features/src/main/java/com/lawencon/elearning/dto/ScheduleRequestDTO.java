@@ -20,11 +20,11 @@ public class ScheduleRequestDTO {
   private LocalDate date;
 
   @NotNull
-  @JsonFormat(pattern = "hh:mm:ss a")
+  @JsonFormat(pattern = "hh:mm a")
   private LocalTime startTime;
 
   @NotNull
-  @JsonFormat(pattern = "hh:mm:ss a")
+  @JsonFormat(pattern = "hh:mm a")
   private LocalTime endTime;
 
   @NotBlank

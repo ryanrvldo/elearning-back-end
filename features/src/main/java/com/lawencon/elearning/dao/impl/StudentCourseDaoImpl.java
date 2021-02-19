@@ -1,13 +1,13 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.StudentCourseDao;
 import com.lawencon.elearning.dto.StudentListByCourseResponseDTO;
 import com.lawencon.elearning.model.StudentCourse;
 import com.lawencon.util.Callback;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -62,18 +62,8 @@ public class StudentCourseDaoImpl extends CustomBaseDao<StudentCourse> implement
     String sql =
         buildQueryOf(
             "SELECT is_verified FROM student_course WHERE id_student = ?1 AND id_course = ?2 ");
-    return (((Boolean) createNativeQuery(sql).setParameter(1, studentId).setParameter(2, courseId)
-        .getSingleResult()).booleanValue());
-
-    // List<?> listObj =
-    // createNativeQuery(sql).setParameter(1, studentId).setParameter(2, courseId).getResultList();
-    // List<StudentCourse> listResult = new ArrayList<>();
-    // StudentCourse studentCourse = new StudentCourse();
-    // listObj.forEach(val -> {
-    // Object[] obj = (Object[]) val;
-    // studentCourse.setId((String) obj[0]);
-    // studentCourse.setIsVerified((Boolean) obj[1]);
-    // });
+    return ((Boolean) createNativeQuery(sql).setParameter(1, studentId).setParameter(2, courseId)
+        .getSingleResult());
   }
 
 }
