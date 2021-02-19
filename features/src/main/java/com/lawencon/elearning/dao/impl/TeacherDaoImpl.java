@@ -73,7 +73,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         "tmt.phone , tmt.gender , tmu.username , tmt.is_active , tmu.email, tmt.title_degree, tmu.id_photo ",
         "FROM tb_m_teachers tmt ",
         "INNER JOIN tb_m_users tmu ON tmt.id_user = tmu.id ",
-        "WHERE tmt.is_active = TRUE ORDER BY tmt.created_at");
+        "ORDER BY tmt.created_at");
 
     List<?> listObj = createNativeQuery(sql).getResultList();
 
@@ -89,7 +89,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       teacher.setPhone((String) objArr[4]);
       teacher.setGender(Gender.valueOf((String) objArr[5]));
       teacher.setUsername((String) objArr[6]);
-      teacher.setActive((boolean) objArr[7]);
+      teacher.setActive((Boolean) objArr[7]);
       teacher.setEmail((String) objArr[8]);
       teacher.setTitleDegree((String) objArr[9]);
       teacher.setPhotoId((String) objArr[10]);
@@ -206,11 +206,12 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public String getUserId(String teacherId) throws Exception {
     String sql = "SELECT id_user FROM tb_m_teachers WHERE id = ?1";
     List<?> objList = createNativeQuery(sql).setParameter(1, teacherId).getResultList();
+
     List<String> resultList = new ArrayList<>();
     objList.forEach(val -> {
       resultList.add((String) val);
     });
-    return (resultList.size() != 0 ? resultList.get(0) : null);
+    return (resultList.size() > 0 ? resultList.get(0) : null);
   }
 
   @Override

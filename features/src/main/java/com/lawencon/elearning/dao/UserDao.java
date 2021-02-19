@@ -16,7 +16,7 @@ public interface UserDao {
 
   void updateUser(User user) throws Exception;
 
-  void updateActivateStatus(String id, boolean status, String updatedBy) throws Exception;
+  void updateActivateStatus(String id, Boolean status, String updatedBy) throws Exception;
 
   void updateUserPhoto(User user) throws Exception;
 

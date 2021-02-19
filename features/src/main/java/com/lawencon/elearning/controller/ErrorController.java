@@ -1,12 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.WebResponseDTO;
-import com.lawencon.elearning.error.AttendanceErrorException;
-import com.lawencon.elearning.error.DataAlreadyExistException;
-import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
-import com.lawencon.elearning.error.InternalServerErrorException;
-import com.lawencon.elearning.util.WebResponseUtils;
 import javax.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.ServerErrorMessage;
@@ -16,6 +9,13 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import com.lawencon.elearning.dto.WebResponseDTO;
+import com.lawencon.elearning.error.AttendanceErrorException;
+import com.lawencon.elearning.error.DataAlreadyExistException;
+import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.error.InternalServerErrorException;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author Rian Rivaldo

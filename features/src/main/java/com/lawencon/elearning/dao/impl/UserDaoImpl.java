@@ -1,6 +1,5 @@
 package com.lawencon.elearning.dao.impl;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -51,12 +50,11 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
   }
 
   @Override
-  public void updateActivateStatus(String id, boolean status, String updatedBy) throws Exception {
-    createQuery("UPDATE User SET isActive = ?1, updatedBy = ?3, updatedAt = ?4 WHERE id = ?2 ",
-        clazz)
-        .setParameter(1, status)
-        .setParameter(2, id)
-        .setParameter(3, updatedBy).setParameter(4, LocalDateTime.now())
+  public void updateActivateStatus(String id, Boolean status, String updatedBy) throws Exception {
+    String query =
+        "UPDATE tb_m_users SET is_active = ?1, updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3";
+
+    createNativeQuery(query).setParameter(1, status).setParameter(2, updatedBy).setParameter(3, id)
         .executeUpdate();
   }
 

@@ -33,6 +33,6 @@ public class TeacherForAdminDTO {
 
   private String photoId;
 
-  private boolean isActive;
+  private Boolean active;
 
 }

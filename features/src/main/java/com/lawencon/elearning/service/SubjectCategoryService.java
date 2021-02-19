@@ -20,7 +20,7 @@ public interface SubjectCategoryService {
 
   void addSubject(CreateSubjectCategoryRequestDTO data, Callback before) throws Exception;
 
-  void deleteSubject(UpdateIsActiveRequestDTO data) throws Exception;
+  void deleteSubject(String id) throws Exception;
 
   SubjectCategoryResponseDTO getById(String id) throws Exception;
 

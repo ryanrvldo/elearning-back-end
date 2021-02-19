@@ -3,6 +3,7 @@ package com.lawencon.elearning.service.impl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import com.lawencon.elearning.dto.subject.CreateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.dto.subject.SubjectCategoryResponseDTO;
 import com.lawencon.elearning.dto.subject.UpdateSubjectCategoryRequestDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.User;
@@ -57,6 +57,8 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
       subjectResponse.setActive(subject.getIsActive());
       subjectResponses.add(subjectResponse);
     }
+
+    subjectResponses.sort(Comparator.comparing(val -> val.getCode()));
     return subjectResponses;
   }
 
@@ -98,25 +100,16 @@ public class SubjectCategoryServiceImpl extends BaseServiceImpl implements Subje
   }
 
   @Override
-  public void deleteSubject(UpdateIsActiveRequestDTO data) throws Exception {
-    validationUtil.validate(data);
-    if (data.getStatus()) {
-      throw new IllegalRequestException("Status must be false to delete data");
-    }
-    User userDb = userService.getById(data.getUpdatedBy());
-    if (!userDb.getRole().getCode().equalsIgnoreCase(Roles.ADMIN.getCode())) {
-      throw new IllegalAccessException("You are unauthorized");
-    }
+  public void deleteSubject(String id) throws Exception {
+    validationUtil.validateUUID(id);
     try {
       begin();
-      subjectCategoryDao.deleteSubject(data.getId());
+      subjectCategoryDao.deleteSubject(id);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException(e.getMessage());
-      }
-      updateIsActive(data);
+      rollback();
+      throw e;
     }
   }
 

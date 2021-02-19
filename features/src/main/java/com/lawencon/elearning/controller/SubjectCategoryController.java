@@ -63,10 +63,10 @@ public class SubjectCategoryController {
         HttpStatus.OK);
   }
 
-  @DeleteMapping
-  public ResponseEntity<?> deleteSubjectCategory(@RequestBody UpdateIsActiveRequestDTO data)
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteSubjectCategory(@PathVariable("id") String id)
       throws Exception {
-    subjectCategoryService.deleteSubject(data);
+    subjectCategoryService.deleteSubject(id);
     return WebResponseUtils.createWebResponse("Delete Subject Success", HttpStatus.OK);
   }
 

@@ -222,6 +222,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     } catch (Exception e) {
       e.printStackTrace();
       rollback();
+      if (e.getMessage().contains("referenced")) {
+        throw new IllegalRequestException("Teacher already used");
+      }
       throw e;
     }
   }
@@ -229,19 +232,23 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   @Override
   public void updateIsActive(UpdateIsActiveRequestDTO deleteReq) throws Exception {
     validUtil.validate(deleteReq);
+
     try {
       begin();
       teacherDao.updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy(), deleteReq.getStatus());
       String idUser = teacherDao.getUserId(deleteReq.getId());
       if (idUser != null) {
         userService.updateActivateStatus(idUser, deleteReq.getStatus(), deleteReq.getUpdatedBy());
+        System.out.println("update user " + idUser);
       }
       commit();
+
     } catch (Exception e) {
       e.printStackTrace();
       rollback();
       throw e;
-    }
+      }
+
   }
 
   @Override

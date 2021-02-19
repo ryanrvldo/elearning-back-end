@@ -99,7 +99,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   }
 
   @Override
-  public void updateActivateStatus(String id, boolean status, String updatedBy) throws Exception {
+  public void updateActivateStatus(String id, Boolean status, String updatedBy) throws Exception {
     userDao.updateActivateStatus(id, status, updatedBy);
   }
 

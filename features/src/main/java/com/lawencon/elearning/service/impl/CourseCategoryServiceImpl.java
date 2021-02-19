@@ -2,6 +2,7 @@ package com.lawencon.elearning.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
       courseCategoryResponse.add(response);
     }
 
+    courseCategoryResponse.sort(Comparator.comparing(val -> val.getCode()));
     return courseCategoryResponse;
   }
 
@@ -91,10 +93,6 @@ public class CourseCategoryServiceImpl extends BaseServiceImpl implements Course
   public void deleteCourseCategory(String id)
       throws Exception {
     validateUtil.validateUUID(id);
-    CourseCategory courseCategory = courseCategoryDao.getCategoryById(id);
-    if (courseCategory == null) {
-      throw new DataIsNotExistsException("course category id", id);
-    }
     try {
       begin();
       courseCategoryDao.deleteCourseCategory(id);
