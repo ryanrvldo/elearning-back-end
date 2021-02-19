@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.model.Attendance;
 import com.lawencon.elearning.util.HibernateUtils;
 import com.lawencon.util.Callback;
@@ -60,6 +61,19 @@ public class AttendanceDaoImpl extends CustomBaseDao<Attendance> implements Atte
       listResult.add(att);
     });
     return getResultModel(listResult);
+  }
+
+  @Override
+  public void getAttendanceForDetailCourse(String studentId, ModuleResponseDTO data) throws Exception {
+    String sql = buildQueryOf("SELECT a.id, COALESCE(a.is_verified, FALSE) ",
+        "FROM tb_r_attendances a ", "WHERE a.id_student = ?1 ", "AND a.id_module = ?2");
+    List<?> listObj = createNativeQuery(sql).setParameter(1, studentId)
+        .setParameter(2, data.getId()).getResultList();
+    listObj.forEach(val -> {
+      Object[] objArr = (Object[]) val;
+      data.setAttendanceId((String) objArr[0]);
+      data.setVerifyStatus((Boolean) objArr[1]);
+    });
   }
 
 }

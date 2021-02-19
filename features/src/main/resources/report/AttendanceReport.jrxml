@@ -52,9 +52,9 @@
 					<imageExpression><![CDATA["report/logo.png"]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement x="251" y="4" width="340" height="57" uuid="6c33418b-4dda-4eb3-b463-0532a8872330"/>
+					<reportElement x="302" y="4" width="378" height="59" uuid="6c33418b-4dda-4eb3-b463-0532a8872330"/>
 					<textElement>
-						<font size="40"/>
+						<font size="28"/>
 					</textElement>
 					<text><![CDATA[Attendance Report]]></text>
 				</staticText>

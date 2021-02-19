@@ -41,63 +41,63 @@
 				<staticText>
 					<reportElement x="130" y="80" width="101" height="30" uuid="a35751bf-5c3f-46cb-8ac5-fe1c54f5b229"/>
 					<textElement>
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<text><![CDATA[Name:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="129" y="130" width="131" height="30" uuid="36e105dc-1c28-4c32-a450-dc69b8615aab"/>
 					<textElement>
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<text><![CDATA[Description:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="530" y="80" width="130" height="30" uuid="7ebb0a86-4c74-4b34-be28-af33fa23a9e2"/>
 					<textElement>
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<text><![CDATA[Capacity:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="529" y="130" width="131" height="30" uuid="cacd69de-8bc2-43f2-a4ff-1174b015af02"/>
 					<textElement>
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<text><![CDATA[Total Student:]]></text>
 				</staticText>
 				<textField>
 					<reportElement x="270" y="80" width="231" height="30" uuid="c4ce6c9b-2177-47fe-9f96-c73b88026add"/>
 					<textElement textAlignment="Left">
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{name}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="269" y="130" width="231" height="70" uuid="f69139f7-e038-4ca3-b8ac-a5b7243d1932"/>
 					<textElement textAlignment="Left">
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{description}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="674" y="80" width="160" height="30" uuid="8f1ba926-44da-47f3-815f-e09d4eccd1d0"/>
 					<textElement textAlignment="Left">
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{capacity}]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="673" y="130" width="160" height="30" uuid="ecfd6304-d051-4d59-b0f2-c0f3162e7196"/>
 					<textElement textAlignment="Left">
-						<font size="18"/>
+						<font size="14"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="286" y="0" width="362" height="65" isPrintWhenDetailOverflows="true" uuid="ebb2bfed-17c8-4c30-9300-81224afcef97"/>
+					<reportElement x="334" y="0" width="316" height="40" isPrintWhenDetailOverflows="true" uuid="ebb2bfed-17c8-4c30-9300-81224afcef97"/>
 					<textElement>
-						<font size="40"/>
+						<font size="28"/>
 					</textElement>
 					<text><![CDATA[Detail Course]]></text>
 				</staticText>

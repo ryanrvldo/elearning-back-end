@@ -29,6 +29,7 @@ import com.lawencon.elearning.model.Schedule;
 import com.lawencon.elearning.model.SubjectCategory;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.AttendanceService;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.ModuleService;
@@ -63,6 +64,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private AttendanceService attendanceService;
 
   @Override
   public Module getModuleById(String id) throws Exception {
@@ -114,7 +118,9 @@ public class ModuleServiceImpl extends BaseServiceImpl implements ModuleService 
       if (listResult.isEmpty()) {
         return Collections.emptyList();
       }
-
+      for (ModuleResponseDTO moduleDTO : listResult) {
+        attendanceService.getAttendanceForDetailCourse(idStudent, moduleDTO);;
+      }
       Comparator<ModuleResponseDTO> comparator =
           Comparator.comparing(module -> module.getSchedule().getDate());
       comparator = comparator

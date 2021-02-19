@@ -72,14 +72,14 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
     String query = buildQueryOf(
         "SELECT DISTINCT ON(m.id) m.id as module_id, m.code, m.title, m.description, sc.subject_name, ",
         "s.id as schedule_id, ",
-        "s.schedule_date, s.start_time, s.end_time, a.id as attendance_id, COALESCE(a.is_verified, FALSE) ",
+        "s.schedule_date, s.start_time, s.end_time ",
         "FROM tb_m_modules m ",
         "INNER JOIN tb_m_subject_categories sc ON sc.id = m.id_subject ",
         "INNER JOIN tb_m_schedules s ON s.id = m.id_schedule ",
         "INNER JOIN student_course sco ON sco.id_course = m.id_course ",
         "INNER JOIN tb_m_students std ON std.id = sco.id_student ",
-        "LEFT JOIN tb_r_attendances a ON a.id_module = m.id ", "WHERE m.id_course = ? ",
-        "AND std.id = ?");
+        "WHERE m.id_course = ? ",
+        "AND std.id = ? ", "AND sco.is_verified = TRUE");
     List<?> listObj = createNativeQuery(query).setParameter(1, idCourse).setParameter(2, idStudent)
         .getResultList();
     List<ModuleResponseDTO> listResult = new ArrayList<>();
@@ -91,8 +91,6 @@ public class ModuleDaoImpl extends CustomBaseDao<Module> implements ModuleDao {
       module.setTitle((String) objArr[2]);
       module.setDescription((String) objArr[3]);
       module.setSubjectName((String) objArr[4]);
-      module.setAttendanceId((String) objArr[9]);
-      module.setVerifyStatus((boolean) objArr[10]);
 
       ScheduleResponseDTO schedule = new ScheduleResponseDTO();
       schedule.setId((String) objArr[5]);

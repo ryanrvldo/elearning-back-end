@@ -14,6 +14,7 @@ import com.lawencon.elearning.dao.AttendanceDao;
 import com.lawencon.elearning.dto.AttendanceRequestDTO;
 import com.lawencon.elearning.dto.AttendanceResponseDTO;
 import com.lawencon.elearning.dto.VerifyAttendanceRequestDTO;
+import com.lawencon.elearning.dto.module.ModuleResponseDTO;
 import com.lawencon.elearning.dto.student.StudentByCourseResponseDTO;
 import com.lawencon.elearning.error.AttendanceErrorException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
@@ -181,6 +182,12 @@ public class AttendanceServiceImpl extends BaseServiceImpl implements Attendance
   @Override
   public Module getModuleForAttendanceReport(String idModule) throws Exception {
     return moduleService.getModuleByIdCustom(idModule);
+  }
+
+  @Override
+  public void getAttendanceForDetailCourse(String studentId, ModuleResponseDTO data)
+      throws Exception {
+    attendanceDao.getAttendanceForDetailCourse(studentId, data);
   }
 
 }
