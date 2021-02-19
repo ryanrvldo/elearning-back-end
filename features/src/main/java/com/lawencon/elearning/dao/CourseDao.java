@@ -1,13 +1,13 @@
 package com.lawencon.elearning.dao;
 
-import java.util.List;
-import java.util.Map;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author : Galih Dika Permana
@@ -54,5 +54,7 @@ public interface CourseDao {
   Integer getModuleCompleteByStudentId(String courseId, String studentId) throws Exception;
 
   void updateCoursesStatus(UpdateStatusRequestDTO data) throws Exception;
+
+  Integer getStudentPresentOnModule(String moduleId);
 
 }

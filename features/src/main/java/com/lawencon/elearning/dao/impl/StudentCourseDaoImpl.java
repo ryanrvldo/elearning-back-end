@@ -36,7 +36,8 @@ public class StudentCourseDaoImpl extends CustomBaseDao<StudentCourse> implement
     String sql = buildQueryOf(
         "SELECT s.id as student, s.code, u.first_name, u.last_name, u.email, s.phone, s.gender,sc.is_verified,sc.id as student_course ",
         "FROM student_course sc ", "INNER JOIN tb_m_students s ON s.id = sc.id_student ",
-        "INNER JOIN tb_m_users u ON u.id = s.id_user ", "WHERE sc.id_course = ?");
+        "INNER JOIN tb_m_users u ON u.id = s.id_user ",
+        "WHERE sc.id_course = ? ");
     List<?> listObj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
     List<StudentListByCourseResponseDTO> listResult = new ArrayList<>();
     listObj.forEach(val -> {

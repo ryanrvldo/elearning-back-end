@@ -2,6 +2,7 @@ package com.lawencon.elearning.controller;
 
 import com.lawencon.elearning.dto.WebResponseDTO;
 import com.lawencon.elearning.error.AttendanceErrorException;
+import com.lawencon.elearning.error.DataAlreadyExistException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.error.InternalServerErrorException;
@@ -23,7 +24,8 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 public class ErrorController {
 
   @ExceptionHandler(value = {ConstraintViolationException.class, DataIsNotExistsException.class,
-      IllegalRequestException.class, AttendanceErrorException.class})
+      IllegalRequestException.class, AttendanceErrorException.class,
+      DataAlreadyExistException.class})
   public ResponseEntity<WebResponseDTO<String>> validationHandler(Exception e) {
     e.printStackTrace();
     return WebResponseUtils.createWebResponse(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -345,7 +345,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
         throw new IllegalRequestException("capacity already full");
       }
     } else {
-      throw new DataAlreadyExistException("student id", studentId);
+      throw new DataAlreadyExistException(
+          "You have been registered, but not verified yet. Please wait a moment");
     }
 
 
@@ -504,10 +505,17 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     listData.forEach(val -> {
       try {
+        Integer studentPresent = courseDao.getStudentPresentOnModule(val.getModuleId());
+//        System.out.println(studentPresent);
+//        System.out.println(val.getModuleId());
+        val.setPresent(studentPresent);
         Integer totalStudent = courseDao.getTotalStudentByIdCourse(courseId);
         val.setTotalStudent(totalStudent);
-        val.setAbsent(totalStudent - val.getPresent());
-
+        if (totalStudent == 0) {
+          val.setAbsent(0);
+        } else {
+          val.setAbsent(totalStudent - val.getPresent());
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }

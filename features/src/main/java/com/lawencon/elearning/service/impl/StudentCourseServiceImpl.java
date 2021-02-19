@@ -1,9 +1,5 @@
 package com.lawencon.elearning.service.impl;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentCourseDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
@@ -20,6 +16,10 @@ import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : Galih Dika Permana
@@ -96,12 +96,7 @@ public class StudentCourseServiceImpl extends BaseServiceImpl implements Student
     if (course == null) {
       throw new DataIsNotExistsException("course id" + courseId);
     }
-    List<StudentListByCourseResponseDTO> listResult =
-        studentCoursDao.getListStudentCourseById(courseId);
-    if (listResult.isEmpty()) {
-      throw new DataIsNotExistsException("course id" + courseId);
-    }
-    return listResult;
+    return studentCoursDao.getListStudentCourseById(courseId);
   }
 
   @Override

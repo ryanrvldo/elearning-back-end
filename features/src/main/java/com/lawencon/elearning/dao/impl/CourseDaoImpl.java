@@ -275,7 +275,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS type_name, c.capacity ,c.description, ",
-        "(SELECT count(*) FROM student_course sc WHERE sc.id_course = c.id) AS student ,",
+        "(SELECT count(*) FROM student_course sc WHERE sc.id_course = c.id AND sc.is_verified = TRUE) AS student ,",
         "(SELECT count(*) FROM tb_m_modules m WHERE m.id_course = c.id) AS modul ,c.period_start ,c.period_end ",
         "FROM tb_m_courses AS c ",
         "INNER JOIN tb_m_course_types AS ct ON ct.id = c.id_course_type ",
@@ -320,7 +320,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public Integer getTotalStudentByIdCourse(String id) throws Exception {
     String sql =
-        buildQueryOf("SELECT count(*) FROM student_course sc WHERE sc.id_course = ?1");
+        buildQueryOf(
+            "SELECT count(*) FROM student_course sc WHERE sc.id_course = ?1 and is_verified = true");
     BigInteger bigInteger =
         (BigInteger) createNativeQuery(sql).setParameter(1, id).getSingleResult();
     return bigInteger.intValue();
@@ -439,12 +440,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   @Override
   public List<CourseAttendanceReportByTeacher> getCourseAttendanceReport(String courseId)
       throws Exception {
-    String sql = buildQueryOf("SELECT m.title , s.schedule_date, ",
-        "count(a.id_student) AS student_present ", "FROM tb_r_attendances AS a ",
-        "RIGHT JOIN tb_m_modules AS m ON m.id = a.id_module ",
-        "RIGHT JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
-        "RIGHT JOIN tb_m_courses AS c ON c.id = m.id_course ", "WHERE c.id = ?1 ",
-        "GROUP BY m.title ,s.schedule_date,c.capacity");
+    String sql = buildQueryOf("SELECT m.title,s.schedule_date, m.id "
+        , "FROM tb_m_modules AS m "
+        , "INNER JOIN tb_m_schedules AS s ON s.id = m.id_schedule "
+        , "WHERE m.id_course = ?1 ");
     List<?> listObj = createNativeQuery(sql).setParameter(1, courseId).getResultList();
 
     List<CourseAttendanceReportByTeacher> listResult = new ArrayList<>();
@@ -455,13 +454,12 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
       Date date = (Date) arrObj[1];
       object.setDate(date != null ? date.toLocalDate().toString() : null);
-
-      BigInteger bigInteger = (BigInteger) arrObj[2];
-      object.setPresent(bigInteger.intValue());
+      object.setModuleId((String) arrObj[2]);
       listResult.add(object);
     });
     return listResult;
   }
+
 
   @Override
   public List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId)
@@ -510,6 +508,15 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
     createNativeQuery(sql).setParameter(1, data.getStatus()).setParameter(2, data.getUpdatedBy())
         .setParameter(3, data.getId()).executeUpdate();
+  }
+
+  @Override
+  public Integer getStudentPresentOnModule(String moduleId) {
+    String sql = buildQueryOf("SELECT count(a.id_student) "
+        , "FROM tb_r_attendances AS a "
+        , "WHERE a.id_module = ?1 AND a.is_verified = TRUE ");
+    return ((BigInteger) createNativeQuery(sql).setParameter(1, moduleId).getSingleResult())
+        .intValue();
   }
 
 }
