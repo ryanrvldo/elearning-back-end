@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
+import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
@@ -51,5 +52,7 @@ public interface CourseDao {
   List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId) throws Exception;
 
   Integer getModuleCompleteByStudentId(String courseId, String studentId) throws Exception;
+
+  void updateCoursesStatus(UpdateStatusRequestDTO data) throws Exception;
 
 }

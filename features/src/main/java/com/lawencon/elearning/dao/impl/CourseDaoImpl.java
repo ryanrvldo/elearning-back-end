@@ -13,6 +13,7 @@ import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
+import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
@@ -494,6 +495,15 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
             "WHERE m.id_course = ?1 AND now() > s.schedule_date + s.end_time AND a.id_student = ?2 ");
     return ((BigInteger) createNativeQuery(sql).setParameter(1, courseId).setParameter(2, studentId)
         .getSingleResult()).intValue();
+  }
+
+  @Override
+  public void updateCoursesStatus(UpdateStatusRequestDTO data) throws Exception {
+    String sql = buildQueryOf("UPDATE tb_m_courses SET status = ?1 ",
+        ", updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3").toString();
+
+    createNativeQuery(sql).setParameter(1, data.getStatus()).setParameter(2, data.getUpdatedBy())
+        .setParameter(3, data.getId()).executeUpdate();
   }
 
 }

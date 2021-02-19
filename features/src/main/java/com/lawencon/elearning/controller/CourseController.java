@@ -1,10 +1,12 @@
 package com.lawencon.elearning.controller;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
 import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
+import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.util.WebResponseUtils;
 
@@ -90,6 +93,13 @@ public class CourseController {
       throws Exception {
     return WebResponseUtils.createWebResponse(courseService.getCourseProgressByStudentId(studentId),
         HttpStatus.OK);
+  }
+
+  @PatchMapping("/status")
+  public ResponseEntity<?> updateCoursesStatus(@RequestBody List<UpdateStatusRequestDTO> request)
+      throws Exception {
+    courseService.updateCoursesStatus(request);
+    return WebResponseUtils.createWebResponse("Update courses status success!", HttpStatus.OK);
   }
 
 }

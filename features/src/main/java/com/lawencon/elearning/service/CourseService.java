@@ -12,6 +12,7 @@ import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DashboardCourseResponseDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
+import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 
@@ -57,4 +58,6 @@ public interface CourseService {
 
   List<CourseProgressResponseDTO> getCourseProgressByStudentId(String studentId) throws Exception;
   
+  void updateCoursesStatus(List<UpdateStatusRequestDTO> data) throws Exception;
+
 }

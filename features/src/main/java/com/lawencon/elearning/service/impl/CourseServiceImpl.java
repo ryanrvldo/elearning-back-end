@@ -25,6 +25,7 @@ import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.DashboardCourseResponseDTO;
 import com.lawencon.elearning.dto.course.DetailCourseResponseDTO;
+import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
 import com.lawencon.elearning.dto.module.ModuleListReponseDTO;
 import com.lawencon.elearning.dto.module.ModuleResponseDTO;
@@ -549,6 +550,17 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
           Math.floor(((double) val.getModuleComplete() / (double) val.getTotalModule()) * 100));
     });
     return listCourse;
+  }
+
+  @Override
+  public void updateCoursesStatus(List<UpdateStatusRequestDTO> data) throws Exception {
+    begin();
+    for (UpdateStatusRequestDTO request : data) {
+      validateUtil.validate(request);
+      courseDao.updateCoursesStatus(request);
+    }
+    commit();
+
   }
 
 }
