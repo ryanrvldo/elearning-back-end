@@ -491,7 +491,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
             "INNER JOIN tb_m_subject_categories AS sc ON sc.id = m.id_subject ",
             "LEFT JOIN tb_r_attendances AS a ON a.id_module = m.id ",
             "LEFT JOIN tb_m_schedules AS s ON s.id = m.id_schedule ",
-            "WHERE m.id_course = ?1 AND current_time > s.end_time  AND a.id_student = ?2 ");
+            "WHERE m.id_course = ?1 AND now() > s.schedule_date + s.end_time AND a.id_student = ?2 ");
     return ((BigInteger) createNativeQuery(sql).setParameter(1, courseId).setParameter(2, studentId)
         .getSingleResult()).intValue();
   }
