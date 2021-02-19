@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentCourseDao;
+import com.lawencon.elearning.dto.EmailSetupDTO;
 import com.lawencon.elearning.dto.StudentCourseRegisterRequestDTO;
 import com.lawencon.elearning.dto.StudentListByCourseResponseDTO;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.model.Course;
+import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.StudentCourse;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -35,6 +39,12 @@ public class StudentCourseServiceImpl extends BaseServiceImpl implements Student
   @Autowired
   private CourseService courseService;
 
+  @Autowired
+  private MailUtils mailUtils;
+
+  @Autowired
+  private GeneralService generalService;
+
   @Override
   public void registerCourse(StudentCourseRegisterRequestDTO studentCourseRegister)
       throws Exception {
@@ -51,7 +61,7 @@ public class StudentCourseServiceImpl extends BaseServiceImpl implements Student
   }
 
   @Override
-  public void verifyRegisterCourse(String studentCourseId, String userId)
+  public void verifyRegisterCourse(String studentCourseId, String userId, String email)
       throws Exception {
     validateUtil.validateUUID(studentCourseId, userId);
     StudentCourse studentCourse = studentCoursDao.getStudentCourseById(studentCourseId);
@@ -62,7 +72,21 @@ public class StudentCourseServiceImpl extends BaseServiceImpl implements Student
     studentCourse.setVerifiedAt(LocalDateTime.now());
     studentCourse.setUpdatedBy(userId);
     studentCoursDao.verifyRegisterCourse(studentCourse, null);
+
+    String[] emailTo = {email};
+    setupEmail(emailTo, GeneralCode.REGISTER_COURSE.getCode());
+
   }
+
+  private void setupEmail(String emailTo[], String generalCode) throws Exception {
+    String template = generalService.getTemplateHTML(generalCode);
+    EmailSetupDTO email = new EmailSetupDTO();
+    email.setTo(emailTo);
+    email.setSubject("You Have Been Verified!");
+    email.setBody(template);
+    new EmailServiceImpl(mailUtils, email).start();
+  }
+
 
   @Override
   public List<StudentListByCourseResponseDTO> getListStudentCourseById(String courseId)

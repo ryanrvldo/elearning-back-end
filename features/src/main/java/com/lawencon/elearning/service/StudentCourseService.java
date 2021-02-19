@@ -15,7 +15,7 @@ public interface StudentCourseService {
       StudentCourseRegisterRequestDTO studentCourseRegister)
       throws Exception;
 
-  void verifyRegisterCourse(String studentCourseId, String userId) throws Exception;
+  void verifyRegisterCourse(String studentCourseId, String userId, String email) throws Exception;
 
   List<StudentListByCourseResponseDTO> getListStudentCourseById(String courseId) throws Exception;
 

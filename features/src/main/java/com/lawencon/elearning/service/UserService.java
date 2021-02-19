@@ -1,9 +1,9 @@
 package com.lawencon.elearning.service;
 
-import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
-import com.lawencon.elearning.model.User;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
+import com.lawencon.elearning.model.User;
 
 /**
  * @author Rian Rivaldo
@@ -18,7 +18,7 @@ public interface UserService {
 
   void updateUser(User user) throws Exception;
 
-  void updateActivateStatus(String id, boolean status) throws Exception;
+  void updateActivateStatus(String id, boolean status, String updatedBy) throws Exception;
 
   String getUserRoleId(String userId) throws Exception;
 

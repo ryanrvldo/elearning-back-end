@@ -208,8 +208,7 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
     List<?> objList = createNativeQuery(sql).setParameter(1, teacherId).getResultList();
     List<String> resultList = new ArrayList<>();
     objList.forEach(val -> {
-      Object[] objArr = (Object[]) val;
-      resultList.add((String) objArr[0]);
+      resultList.add((String) val);
     });
     return (resultList.size() != 0 ? resultList.get(0) : null);
   }

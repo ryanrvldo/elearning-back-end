@@ -85,8 +85,9 @@ public class TeacherController {
   @PutMapping("verify/student")
   public ResponseEntity<?> verifyStudentRegisterCourse(
       @RequestParam("studentCourseId") String studentCourseId,
-      @RequestParam("teacherId") String teacherId) throws Exception {
-    teacherService.verifyRegisterStudentCourse(studentCourseId, teacherId);
+      @RequestParam("teacherId") String teacherId, @RequestParam("email") String email)
+      throws Exception {
+    teacherService.verifyRegisterStudentCourse(studentCourseId, teacherId, email);
     return WebResponseUtils.createWebResponse("Register Success", HttpStatus.OK);
   }
 }

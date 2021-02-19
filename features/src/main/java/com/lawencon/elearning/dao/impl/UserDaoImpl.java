@@ -1,15 +1,16 @@
 package com.lawencon.elearning.dao.impl;
 
-import com.lawencon.elearning.dao.CustomBaseDao;
-import com.lawencon.elearning.dao.UserDao;
-import com.lawencon.elearning.model.File;
-import com.lawencon.elearning.model.Role;
-import com.lawencon.elearning.model.User;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import com.lawencon.elearning.dao.CustomBaseDao;
+import com.lawencon.elearning.dao.UserDao;
+import com.lawencon.elearning.model.File;
+import com.lawencon.elearning.model.Role;
+import com.lawencon.elearning.model.User;
 
 /**
  * @author Rian Rivaldo
@@ -50,10 +51,12 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
   }
 
   @Override
-  public void updateActivateStatus(String id, boolean status) throws Exception {
-    createQuery("UPDATE User SET isActive = ?1 WHERE id = ?2 ", clazz)
+  public void updateActivateStatus(String id, boolean status, String updatedBy) throws Exception {
+    createQuery("UPDATE User SET isActive = ?1, updatedBy = ?3, updatedAt = ?4 WHERE id = ?2 ",
+        clazz)
         .setParameter(1, status)
         .setParameter(2, id)
+        .setParameter(3, updatedBy).setParameter(4, LocalDateTime.now())
         .executeUpdate();
   }
 

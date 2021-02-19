@@ -1,5 +1,15 @@
 package com.lawencon.elearning.service.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.lawencon.base.BaseServiceImpl;
@@ -29,16 +39,6 @@ import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -139,14 +139,10 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   }
 
   private void setupEmail(String emailTo[], String subject, String generalCode) throws Exception {
-    // SENGAJA DI COMMENT!
-    // String[] emailTo = {"ryanrumapea@gmail.com", "muhammadapry14@gmail.com",
-    // "williamgolden54@gmail.com", "galihdikapermana98@gmail.com",
-    // "farrelyudapraditya96@gmail.com", "dzakyfadhl@gmail.com"};
     String template = generalService.getTemplateHTML(generalCode);
     EmailSetupDTO email = new EmailSetupDTO();
     email.setTo(emailTo);
-    email.setSubject("New Exam posted");
+    email.setSubject(subject);
     email.setBody(template);
     new EmailServiceImpl(mailUtils, email).start();
   }

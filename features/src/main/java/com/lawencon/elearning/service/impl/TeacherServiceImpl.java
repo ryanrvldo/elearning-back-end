@@ -232,6 +232,10 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     try {
       begin();
       teacherDao.updateIsActive(deleteReq.getId(), deleteReq.getUpdatedBy(), deleteReq.getStatus());
+      String idUser = teacherDao.getUserId(deleteReq.getId());
+      if (idUser != null) {
+        userService.updateActivateStatus(idUser, deleteReq.getStatus(), deleteReq.getUpdatedBy());
+      }
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -308,7 +312,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public void verifyRegisterStudentCourse(String studentCourseId, String teacherId)
+  public void verifyRegisterStudentCourse(String studentCourseId, String teacherId, String email)
       throws Exception {
     validUtil.validateUUID(studentCourseId, teacherId);
     Teacher teacher = teacherDao.findTeacherById(teacherId);
@@ -316,7 +320,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
     if (teacher == null) {
       throw new DataIsNotExistsException("teacher id" + teacherId);
     }
-    studentCourseService.verifyRegisterCourse(studentCourseId, teacher.getUser().getId());
+    studentCourseService.verifyRegisterCourse(studentCourseId, teacher.getUser().getId(), email);
   }
 
 }
