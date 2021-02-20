@@ -1,8 +1,5 @@
 package com.lawencon.elearning.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -14,6 +11,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.SecurityUtils;
 
 /**
  * @author Rian Rivaldo
@@ -55,7 +55,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Override
-  public void configure(WebSecurity web) throws Exception {
+  public void configure(WebSecurity web) {
     web.ignoring()
         .antMatchers(HttpMethod.GET, "/file/**")
         .antMatchers(HttpMethod.GET, "/report/**")
@@ -70,7 +70,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
       @Override
       public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:4200")
+            .allowedOrigins("http://localhost:4200", "http://127.0.0.1:8887")
             .allowedMethods(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),

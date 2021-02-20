@@ -1,6 +1,13 @@
 package com.lawencon.elearning.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.FileDao;
 import com.lawencon.elearning.dto.file.FileRequestDto;
@@ -12,14 +19,6 @@ import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.NoResultException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Rian Rivaldo
@@ -32,9 +31,6 @@ public class FileServiceImpl extends BaseServiceImpl implements FileService {
 
   @Autowired
   private ValidationUtil validationUtil;
-
-  @Autowired
-  private ObjectMapper objectMapper;
 
   @Override
   public FileResponseDto createFile(MultipartFile file, FileRequestDto fileRequest)

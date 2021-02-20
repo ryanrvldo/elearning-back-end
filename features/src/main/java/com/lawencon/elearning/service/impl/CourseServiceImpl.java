@@ -301,7 +301,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
       listResult.add(data);
     });
-    // listResult.sort(Comparator.comparing(val -> val.getCode()));
     return listResult;
   }
 
@@ -507,8 +506,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     listData.forEach(val -> {
       try {
         Integer studentPresent = courseDao.getStudentPresentOnModule(val.getModuleId());
-//        System.out.println(studentPresent);
-//        System.out.println(val.getModuleId());
         val.setPresent(studentPresent);
         Integer totalStudent = courseDao.getTotalStudentByIdCourse(courseId);
         val.setTotalStudent(totalStudent);
