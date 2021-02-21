@@ -1,5 +1,7 @@
 package com.lawencon.elearning.service;
 
+import java.util.List;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
 import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
@@ -9,12 +11,9 @@ import com.lawencon.elearning.dto.student.StudentDashboardDTO;
 import com.lawencon.elearning.dto.student.StudentReportDTO;
 import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
 import com.lawencon.elearning.model.Student;
-import java.util.List;
 
 /**
- * 
  * @author WILLIAM
- *
  */
 public interface StudentService {
 
@@ -22,11 +21,13 @@ public interface StudentService {
 
   Student getStudentById(String id) throws Exception;
 
+  Student getStudentProfile(String id) throws Exception;
+
   void updateStudentProfile(StudentUpdateRequestDto request) throws Exception;
 
   void deleteStudent(String studentId, String updatedBy) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void updateIsActive(UpdateIsActiveRequestDTO updateRequest) throws Exception;
 
   Student getStudentByIdUser(String id) throws Exception;
 

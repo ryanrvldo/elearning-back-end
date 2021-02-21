@@ -25,11 +25,11 @@ public class StudentCourse extends BaseMaster {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_student", nullable = false, foreignKey = @ForeignKey(name = "fk_student"))
-  private Student studentId;
+  private Student student;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_course", nullable = false, foreignKey = @ForeignKey(name = "fk_course"))
-  private Course courseId;
+  private Course course;
 
   @Column(name = "is_verified", nullable = false)
   private Boolean isVerified = false;

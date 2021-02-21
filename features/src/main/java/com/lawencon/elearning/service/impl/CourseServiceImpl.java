@@ -43,13 +43,13 @@ import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.EmailService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
 /**
@@ -77,7 +77,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   private UserService userService;
 
   @Autowired
-  private MailUtils mailUtils;
+  private EmailService emailService;
 
   @Autowired
   private GeneralService generalService;
@@ -308,7 +308,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   @Override
   public void registerCourse(String studentId, String courseId) throws Exception {
     validateUtil.validateUUID(studentId, courseId);
-    Student student = studentService.getStudentById(studentId);
+    Student student = studentService.getStudentProfile(studentId);
     Course course = courseDao.getCourseById(courseId);
     if (course == null) {
       throw new DataIsNotExistsException("course id", courseId);
@@ -318,8 +318,8 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     Integer count = courseDao.checkDataRegisterCourse(courseId, student.getId());
     if (count == 0) {
-      Integer capacityRegist = courseDao.getCapacityCourse(courseId);
-      if (capacityRegist < course.getCapacity()) {
+      Integer registeredCapacity = courseDao.getCapacityCourse(courseId);
+      if (registeredCapacity < course.getCapacity()) {
         try {
           StudentCourseRegisterRequestDTO registerDTO = new StudentCourseRegisterRequestDTO();
           registerDTO.setCourseId(courseId);
@@ -328,14 +328,12 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
           studentCourseService.registerCourse(registerDTO);
 
           String template = generalService.getTemplateHTML(GeneralCode.REGISTER_COURSE.getCode());
-
-          String[] emailTo = {"lawerning.acc@gmail.com"};
           EmailSetupDTO email = new EmailSetupDTO();
-          email.setTo(emailTo);
-          email.setSubject("Register Course Success!");
+          email.setReceiver(student.getUser().getEmail());
+          email.setSubject("Course Registration");
+          email.setHeading("Congratulation!");
           email.setBody(template);
-          new EmailServiceImpl(mailUtils, email).start();
-
+          emailService.send(email);
         } catch (Exception e) {
           e.printStackTrace();
           rollback();
@@ -348,8 +346,6 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
       throw new DataAlreadyExistException(
           "You have been registered, but not verified yet. Please wait a moment");
     }
-
-
   }
 
   @Override

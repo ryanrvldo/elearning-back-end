@@ -135,7 +135,10 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
         "UPDATE tb_m_teachers SET is_active = ?1 ",
         ", updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3");
 
-    createNativeQuery(sql).setParameter(1, status).setParameter(2, userId).setParameter(3, id)
+    createNativeQuery(sql)
+        .setParameter(1, status)
+        .setParameter(2, userId)
+        .setParameter(3, id)
         .executeUpdate();
   }
 
@@ -148,16 +151,15 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   @Override
   public Teacher findByUserId(String userId) throws Exception {
     String sql = buildQueryOf(
-        "SELECT tmt.phone , tmt.gender ",
-        "FROM tb_m_teachers tmt ",
+        "SELECT id, code, phone, gender, id_user ",
+        "FROM tb_m_teachers ",
         "WHERE id_user = ?1 ");
+    List<?> listObj = createNativeQuery(sql)
+        .setParameter(1, userId)
+        .getResultList();
 
-
-    List<?> listObj = createNativeQuery(sql).setParameter(1, userId).getResultList();
-
-    List<Teacher> listResult =
-        HibernateUtils.bMapperList(listObj, Teacher.class, "phone", "gender");
-
+    List<Teacher> listResult = HibernateUtils.bMapperList(listObj, Teacher.class,
+        "id", "code", "phone", "gender", "user.id");
     return getResultModel(listResult);
   }
 

@@ -31,7 +31,7 @@ public interface TeacherService {
 
   void updateTeacher(UpdateTeacherRequestDTO data) throws Exception;
 
-  Teacher getFullNameByUserId(String userId) throws Exception;
+  Teacher getByUserId(String userId) throws Exception;
 
   void deleteTeacherById(String teacherId) throws Exception;
 

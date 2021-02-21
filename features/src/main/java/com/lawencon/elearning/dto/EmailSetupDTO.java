@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmailSetupDTO {
 
-  private String from;
-  private String[] to;
+  private String receiver;
   private String subject;
+  private String heading;
   private String body;
 
 }

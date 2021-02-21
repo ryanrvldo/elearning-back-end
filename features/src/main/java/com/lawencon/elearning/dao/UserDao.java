@@ -14,6 +14,10 @@ public interface UserDao {
 
   User findByUsername(String username) throws Exception;
 
+  User findByEmail(String email) throws Exception;
+
+  String findSuperAdminId() throws Exception;
+
   void updateUser(User user) throws Exception;
 
   void updateActivateStatus(String id, Boolean status, String updatedBy) throws Exception;

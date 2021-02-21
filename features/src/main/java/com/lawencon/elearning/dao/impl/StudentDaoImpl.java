@@ -43,12 +43,13 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
 
   @Override
   public Student getStudentProfile(String id) throws Exception {
-    String query =
-        buildQueryOf("SELECT u.first_name, u.last_name, s.gender, s.created_at, u.email ",
-            "FROM tb_m_students s INNER JOIN tb_m_users u ON u.id = s.id_user ", "WHERE s.id = ?");
+    String query = buildQueryOf(
+        "SELECT s.id, s.id_user, u.first_name, u.last_name, s.gender, s.created_at, u.email ",
+        "FROM tb_m_students s INNER JOIN tb_m_users u ON u.id = s.id_user ", "WHERE s.id = ?");
     List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
-    List<Student> listResult = HibernateUtils.bMapperList(listObj, Student.class, "user.firstName",
-        "user.lastName", "gender", "createdAt", "user.email");
+    List<Student> listResult = HibernateUtils
+        .bMapperList(listObj, Student.class, "id", "user.id", "user.firstName", "user.lastName",
+            "gender", "createdAt", "user.email");
     return getResultModel(listResult);
   }
 
@@ -63,16 +64,26 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    String query = "UPDATE tb_m_students SET is_active = false";
-    updateNativeSQL(query, id, userId);
+  public void updateIsActive(String id, String userId, boolean status) throws Exception {
+    String sql = buildQueryOf(
+        "UPDATE tb_m_students SET is_active = ?1 ",
+        ", updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3");
+    createNativeQuery(sql)
+        .setParameter(1, status)
+        .setParameter(2, userId)
+        .setParameter(3, id)
+        .executeUpdate();
   }
 
   @Override
   public Student getStudentByIdUser(String id) throws Exception {
-    String query = buildQueryOf("SELECT s.id, u.first_name, u.last_name ",
-        "FROM tb_m_students AS s ", "INNER JOIN tb_m_users as u", "WHERE id_user=?1 ");
-    List<?> listObj = createNativeQuery(query).setParameter(1, id).getResultList();
+    String query = buildQueryOf(
+        "SELECT s.id, u.first_name, u.last_name ",
+        "FROM tb_m_students AS s INNER JOIN tb_m_users AS u ON u.id = s.id_user ",
+        "WHERE s.id_user = ?1 ");
+    List<?> listObj = createNativeQuery(query)
+        .setParameter(1, id)
+        .getResultList();
     List<Student> listResult = new ArrayList<>();
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;

@@ -1,11 +1,10 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
-import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
+import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author Dzaky Fadhilla Guci
@@ -37,13 +39,24 @@ public class UserController {
     return WebResponseUtils.createWebResponse("Reset Password Success", HttpStatus.OK);
   }
 
-  @PutMapping(value = {"/user/photo"})
+  @PutMapping(value = "/user/photo")
   public ResponseEntity<?> saveUserPhoto(@RequestPart("file") MultipartFile file,
       @RequestPart("content") String content)
       throws Exception {
     userService.saveUserPhoto(file, content);
     return WebResponseUtils
         .createWebResponse("User photo has been saved successfully.", HttpStatus.OK);
+  }
+
+  @GetMapping(value = "/user/registration/confirm", produces = MediaType.TEXT_HTML_VALUE)
+  public String confirmRegistration(@RequestParam("token") String token)
+      throws Exception {
+    return userService.confirmUserRegistration(token);
+  }
+
+  @GetMapping(value = "/user/registration/resend", produces = MediaType.TEXT_HTML_VALUE)
+  public String generateNewUserToken(@RequestParam("e") String email) throws Exception {
+    return userService.sendNewToken(email);
   }
 
 }

@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,11 +30,11 @@ import com.lawencon.elearning.model.FileType;
 import com.lawencon.elearning.model.GeneralCode;
 import com.lawencon.elearning.model.Module;
 import com.lawencon.elearning.service.DetailExamService;
+import com.lawencon.elearning.service.EmailService;
 import com.lawencon.elearning.service.ExamService;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.MailUtils;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -60,22 +58,22 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
   private GeneralService generalService;
 
   @Autowired
-  private ValidationUtil validateUtil;
-
-  @Autowired
-  private MailUtils mailUtils;
-
-  @Autowired
-  private ObjectMapper objectMapper;
+  private EmailService emailService;
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private ValidationUtil validateUtil;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Override
   public void saveExam(MultipartFile multiPartFile, String body) throws Exception {
 
     if (body == null && multiPartFile == null) {
-      throw new IllegalRequestException("Teacher Exam data cannot be empty!");
+      throw new IllegalRequestException("Exam data cannot be empty!");
     }
     objectMapper.registerModule(new JavaTimeModule());
 
@@ -86,11 +84,9 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       throw new IllegalRequestException("Invalid create exam request.");
     }
     
-    Logger logger = LoggerFactory.getLogger(getClass());
-    logger.info(teacherExam.toString());
     validateUtil.validate(teacherExam);
     if (teacherExam.getStartTime().compareTo(teacherExam.getEndTime()) > 0) {
-      throw new IllegalRequestException("End time cannot be greather than start Time");
+      throw new IllegalRequestException("End time cannot be greater than start time");
     }
 
     FileRequestDto fileRequest = new FileRequestDto();
@@ -119,7 +115,7 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       begin();
       FileResponseDto fileResponseDTO =
           Optional.ofNullable(fileService.createFile(multiPartFile, fileRequest))
-              .orElseThrow(() -> new DataIsNotExistsException("Wrong file submission"));
+              .orElseThrow(() -> new DataIsNotExistsException("Failed to upload exam file."));
       file.setId(fileResponseDTO.getId());
       examDao.saveExam(exam, null);
       commit();
@@ -129,22 +125,15 @@ public class ExamServiceImpl extends BaseServiceImpl implements ExamService {
       throw e;
     }
     List<String> emailList = userService.getEmailUsersPerModule(teacherExam.getModuleId());
-    String[] emailTo = new String[emailList.size()];
-    
-    if (!emailList.isEmpty()) {
-      emailTo = emailList.toArray(emailTo);
+    String template = generalService.getTemplateHTML(GeneralCode.TEACHER_EXAM.getCode());
+    EmailSetupDTO emailSetup = new EmailSetupDTO();
+    emailSetup.setSubject("New Exam Posted");
+    emailSetup.setHeading("A new exam have been posted.");
+    emailSetup.setBody(template);
+    for (String email : emailList) {
+      emailSetup.setReceiver(email);
+      emailService.send(emailSetup);
     }
-    
-    setupEmail(emailTo, "New Exam Posted", GeneralCode.TEACHER_EXAM.getCode());
-  }
-
-  private void setupEmail(String emailTo[], String subject, String generalCode) throws Exception {
-    String template = generalService.getTemplateHTML(generalCode);
-    EmailSetupDTO email = new EmailSetupDTO();
-    email.setTo(emailTo);
-    email.setSubject(subject);
-    email.setBody(template);
-    new EmailServiceImpl(mailUtils, email).start();
   }
 
   @Override

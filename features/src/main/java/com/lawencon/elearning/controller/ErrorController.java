@@ -1,5 +1,6 @@
 package com.lawencon.elearning.controller;
 
+import java.util.Objects;
 import javax.validation.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
 import org.postgresql.util.ServerErrorMessage;
@@ -52,10 +53,11 @@ public class ErrorController {
     e.printStackTrace();
     ServerErrorMessage serverErrorMessage = e.getServerErrorMessage();
     if (serverErrorMessage != null) {
-      String detailMessage = serverErrorMessage.getDetail();
-      if (detailMessage != null) {
-        return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
-      }
+      String detailMessage = Objects.requireNonNull(serverErrorMessage.getDetail())
+          .replace('=', ' ')
+          .replaceAll("\\p{P}", "")
+          .replaceAll("Key", "");
+      return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
     }
     return WebResponseUtils.createWebResponse("There is something error in internal server.",
         HttpStatus.INTERNAL_SERVER_ERROR);

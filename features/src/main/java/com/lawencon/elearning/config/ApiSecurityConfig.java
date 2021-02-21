@@ -61,7 +61,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(HttpMethod.GET, "/report/**")
         .antMatchers(HttpMethod.GET, "/public/**")
         .antMatchers(HttpMethod.POST, "/student/register")
-        .antMatchers(HttpMethod.PATCH, "/user/forget-password");
+        .antMatchers(HttpMethod.PATCH, "/user/forget-password")
+        .antMatchers(HttpMethod.GET, "/user/registration/**");
   }
 
   @Bean

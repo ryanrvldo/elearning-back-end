@@ -1,7 +1,15 @@
 package com.lawencon.elearning.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.StudentDao;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.admin.DashboardStudentResponseDto;
 import com.lawencon.elearning.dto.admin.RegisteredStudentMonthlyDto;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
@@ -20,24 +28,17 @@ import com.lawencon.elearning.model.Student;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
 import com.lawencon.elearning.service.DetailExamService;
+import com.lawencon.elearning.service.EmailService;
+import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.RoleService;
 import com.lawencon.elearning.service.StudentService;
 import com.lawencon.elearning.service.UserService;
+import com.lawencon.elearning.service.UserTokenService;
 import com.lawencon.elearning.util.TransactionNumberUtils;
 import com.lawencon.elearning.util.ValidationUtil;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
- * 
  * @author WILLIAM
- *
  */
 @Service
 public class StudentServiceImpl extends BaseServiceImpl implements StudentService {
@@ -52,13 +53,22 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   private UserService userService;
 
   @Autowired
-  private ValidationUtil validationUtil;
-
-  @Autowired
   private RoleService roleService;
 
   @Autowired
   private DetailExamService detailExamService;
+
+  @Autowired
+  private UserTokenService userTokenService;
+
+  @Autowired
+  private EmailService emailService;
+
+  @Autowired
+  private GeneralService generalService;
+
+  @Autowired
+  private ValidationUtil validationUtil;
 
   @Override
   public void insertStudent(RegisterStudentDTO data) throws Exception {
@@ -67,6 +77,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     student.setCode(TransactionNumberUtils.generateStudentCode());
     student.setPhone(data.getPhone());
     student.setGender(Gender.valueOf(data.getGender()));
+    student.setIsActive(false);
 
     User user = new User();
     user.setFirstName(data.getFirstName());
@@ -74,7 +85,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     user.setEmail(data.getEmail());
     user.setUsername(data.getUsername());
     user.setPassword(data.getPassword());
-    user.setCreatedAt(LocalDateTime.now());
+    user.setIsActive(false);
 
     Role role = roleService.findByCode(Roles.STUDENT.getCode());
     user.setRole(role);
@@ -84,6 +95,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       begin();
       userService.addUser(user);
       studentDao.insertStudent(student, null);
+      userTokenService.sendUserTokenToEmail(data.getEmail());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -97,6 +109,13 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   public Student getStudentById(String id) throws Exception {
     validationUtil.validateUUID(id);
     return Optional.ofNullable(studentDao.getStudentById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+  }
+
+  @Override
+  public Student getStudentProfile(String id) throws Exception {
+    validationUtil.validateUUID(id);
+    return Optional.ofNullable(studentDao.getStudentProfile(id))
         .orElseThrow(() -> new DataIsNotExistsException("id", id));
   }
 
@@ -159,17 +178,31 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     } catch (Exception e) {
       e.printStackTrace();
       if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException(e.getMessage());
+        throw new DataIsNotExistsException("student id", studentId);
       }
-      updateIsActive(studentId, updatedBy);
+      UpdateIsActiveRequestDTO updateRequest = new UpdateIsActiveRequestDTO();
+      updateRequest.setId(studentId);
+      updateRequest.setUpdatedBy(updatedBy);
+      updateRequest.setStatus(false);
+      updateIsActive(updateRequest);
     }
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    begin();
-    studentDao.updateIsActive(id, userId);
-    commit();
+  public void updateIsActive(UpdateIsActiveRequestDTO updateRequest) throws Exception {
+    validationUtil.validate(updateRequest);
+    Student student = getStudentById(updateRequest.getId());
+    try {
+      begin();
+      studentDao.updateIsActive(student.getId(), updateRequest.getUpdatedBy(),
+          updateRequest.getStatus());
+      userService.updateActivateStatus(student.getUser().getId(), updateRequest.getStatus(),
+          updateRequest.getUpdatedBy());
+      commit();
+    } catch (Exception e) {
+      rollback();
+      throw e;
+    }
   }
 
   @Override

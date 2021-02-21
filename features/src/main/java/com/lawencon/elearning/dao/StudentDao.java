@@ -26,7 +26,7 @@ public interface StudentDao {
 
   void deleteStudentById(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void updateIsActive(String id, String userId, boolean status) throws Exception;
 
   Student getStudentDashboard(String id) throws Exception;
 

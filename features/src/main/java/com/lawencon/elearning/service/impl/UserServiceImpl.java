@@ -17,18 +17,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lawencon.base.BaseServiceImpl;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.UpdatePasswordRequestDTO;
 import com.lawencon.elearning.dto.file.FileRequestDto;
 import com.lawencon.elearning.dto.file.FileResponseDto;
+import com.lawencon.elearning.error.DataAlreadyExistException;
 import com.lawencon.elearning.error.DataIsNotExistsException;
 import com.lawencon.elearning.error.IllegalRequestException;
 import com.lawencon.elearning.error.InternalServerErrorException;
 import com.lawencon.elearning.model.GeneralCode;
+import com.lawencon.elearning.model.Roles;
+import com.lawencon.elearning.model.Student;
+import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.model.UserToken;
+import com.lawencon.elearning.service.EmailService;
 import com.lawencon.elearning.service.FileService;
 import com.lawencon.elearning.service.GeneralService;
+import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
-import com.lawencon.elearning.util.MailUtils;
+import com.lawencon.elearning.service.UserTokenService;
 import com.lawencon.elearning.util.SecurityUtils;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -38,10 +47,10 @@ import com.lawencon.elearning.util.ValidationUtil;
 @Service
 public class UserServiceImpl extends BaseServiceImpl implements UserService {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
   @Autowired
   private UserDao userDao;
-
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   @Autowired
   private GeneralService generalService;
@@ -50,13 +59,22 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
   private FileService fileService;
 
   @Autowired
+  private EmailService emailService;
+
+  @Autowired
+  private UserTokenService userTokenService;
+
+  @Autowired
+  private StudentService studentService;
+
+  @Autowired
+  private TeacherService teacherService;
+
+  @Autowired
   private SecurityUtils encoderUtils;
 
   @Autowired
   private ValidationUtil validationUtil;
-
-  @Autowired
-  private MailUtils mailUtils;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -66,7 +84,72 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     user.setCreatedAt(LocalDateTime.now());
     String hash = encoderUtils.getHashPassword(user.getPassword());
     user.setPassword(hash);
-    userDao.createUser(user);
+    try {
+      String id = userDao.getIdByEmail(user.getEmail());
+      if (id != null) {
+        throw new DataAlreadyExistException("email", user.getEmail());
+      }
+    } catch (NoResultException e) {
+      userDao.createUser(user);
+    }
+  }
+
+  @Override
+  public String confirmUserRegistration(String token) throws Exception {
+    validationUtil.validateUUID(token);
+
+    UserToken userToken = Optional.ofNullable(userTokenService.findByToken(token))
+        .orElseThrow(() -> new DataIsNotExistsException("token", token));
+    User user = userToken.getUser();
+
+    if (user.getIsActive() || userToken.getConfirmedAt() != null) {
+      String body = generalService.getTemplateHTML(GeneralCode.USER_REGISTER_CONFIRMATION_FAILED
+          .getCode());
+      return emailService.buildHtmlContent("Registration has been confirmed.", body);
+    } else if (userToken.getExpiredAt().isBefore(LocalDateTime.now())) {
+      String generateTokenLink = String
+          .format("http://localhost:8080/lawerning/user/registration/resend?e=%s",
+              userToken.getUser().getEmail());
+      String body = generalService.getTemplateHTML(GeneralCode.TOKEN_EXPIRED.getCode())
+          .replace("?1", generateTokenLink);
+      return emailService.buildHtmlContent("Your token already expired.", body);
+    }
+
+    String superAdminUserId = userDao.findSuperAdminId();
+    UpdateIsActiveRequestDTO updateRequest = new UpdateIsActiveRequestDTO();
+    updateRequest.setUpdatedBy(superAdminUserId);
+    updateRequest.setStatus(true);
+    if (user.getRole().getCode().equals(Roles.STUDENT.getCode())) {
+      Student student = studentService.getStudentByIdUser(user.getId());
+      updateRequest.setId(student.getId());
+      studentService.updateIsActive(updateRequest);
+    } else if (user.getRole().getCode().equals(Roles.TEACHER.getCode())) {
+      Teacher teacher = teacherService.getByUserId(user.getId());
+      updateRequest.setId(teacher.getId());
+      teacherService.updateIsActive(updateRequest);
+    }
+    userToken.setUpdatedBy(superAdminUserId);
+    userTokenService.updateConfirmedAt(userToken);
+
+    String body = generalService
+        .getTemplateHTML(GeneralCode.USER_REGISTER_CONFIRMATION_SUCCESS.getCode());
+    return emailService.buildHtmlContent("Register Confirmation", body);
+  }
+
+  @Override
+  public String sendNewToken(String email) throws Exception {
+    String body;
+    try {
+      begin();
+      userTokenService.sendUserTokenToEmail(email);
+      commit();
+      body = generalService.getTemplateHTML(GeneralCode.TOKEN_GENERATED.getCode());
+      return emailService.buildHtmlContent("Success.", body);
+    } catch (IllegalRequestException e) {
+      body = generalService
+          .getTemplateHTML(GeneralCode.USER_REGISTER_CONFIRMATION_FAILED.getCode());
+      return emailService.buildHtmlContent("You are already activated.", body);
+    }
   }
 
   @Override
@@ -89,6 +172,23 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     } catch (NoResultException e) {
       throw new DataIsNotExistsException("username", username);
     }
+  }
+
+  @Override
+  public User getByEmail(String email) throws Exception {
+    if (email == null || email.trim().isEmpty()) {
+      throw new IllegalRequestException("email", email);
+    }
+    try {
+      return userDao.findByEmail(email);
+    } catch (NoResultException e) {
+      throw new DataIsNotExistsException("email", email);
+    }
+  }
+
+  @Override
+  public String getSuperAdminId() throws Exception {
+    return userDao.findSuperAdminId();
   }
 
   @Override
@@ -151,23 +251,23 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     String userId = Optional.ofNullable(userDao.getIdByEmail(email))
         .orElseThrow(() -> new DataIsNotExistsException("email", email));
 
-    String superAdminId = "62615b14-a30a-4ec7-9ded-0b2d09012a5d";
     String generatePass = generatePassString();
 
-    String template = generalService.getTemplateHTML(GeneralCode.RESET_PASSWORD.getCode());
-    template = template.replace("?1", generatePass);
+    String template = generalService.getTemplateHTML(GeneralCode.RESET_PASSWORD.getCode())
+        .replace("?1", generatePass);
 
-    String[] emailTo = {email};
-    EmailSetupDTO emailSent = new EmailSetupDTO();
-    emailSent.setTo(emailTo);
-    emailSent.setSubject("Reset Password");
-    emailSent.setBody(template);
+    EmailSetupDTO emailSent = new EmailSetupDTO(
+        email,
+        "Reset Password",
+        "Reset Password",
+        template);
     String savePassword = encoderUtils.getHashPassword(generatePass);
 
     try {
       begin();
-      userDao.updatePasswordUser(userId, savePassword, superAdminId);
-      new EmailServiceImpl(mailUtils, emailSent).start();
+      String superAdminUserId = userDao.findSuperAdminId();
+      userDao.updatePasswordUser(userId, savePassword, superAdminUserId);
+      emailService.send(emailSent);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -194,7 +294,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
     }
 
     User user = getById(fileRequest.getUserId());
-    logger.info(user.toString());
+    LOGGER.info(user.toString());
     if (user.getUserPhoto().getId() != null) {
       validationUtil.validateUUID(fileRequest.getId(), fileRequest.getUserId());
       fileService.updateFile(file, fileRequest);

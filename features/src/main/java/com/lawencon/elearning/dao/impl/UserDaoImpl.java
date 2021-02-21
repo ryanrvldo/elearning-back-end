@@ -9,6 +9,7 @@ import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dao.UserDao;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Role;
+import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.User;
 
 /**
@@ -37,6 +38,19 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
   public User findByUsername(String username) throws Exception {
     return getAndSetupUser(singleUserQuery + "WHERE u.username = ?1 AND u.isActive = TRUE",
         username);
+  }
+
+  @Override
+  public User findByEmail(String email) throws Exception {
+    return getAndSetupUser(singleUserQuery + "WHERE u.email = ?1", email);
+  }
+
+  @Override
+  public String findSuperAdminId() throws Exception {
+    return createQuery("SELECT u.id FROM User AS u INNER JOIN u.role AS r WHERE r.code = ?1",
+        String.class)
+        .setParameter(1, Roles.SUPER_ADMIN.getCode())
+        .getSingleResult();
   }
 
   @Override
@@ -73,7 +87,7 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
         "FROM tb_m_users tmu ",
         "LEFT JOIN tb_m_students tms ON tms.id_user = tmu.id ",
         "LEFT JOIN tb_m_teachers tmt ON tmt.id_user = tmu.id ",
-        "WHERE tmu.id = ?1");
+        "WHERE tmu.id = ?1 AND tmu.is_active = TRUE");
     Object objResult = createNativeQuery(query)
         .setParameter(1, userId)
         .getSingleResult();
@@ -87,7 +101,7 @@ public class UserDaoImpl extends CustomBaseDao<User> implements UserDao {
 
   @Override
   public String getIdByEmail(String email) throws Exception {
-    String query = buildQueryOf("SELECT id from tb_m_users WHERE email = ?1");
+    String query = buildQueryOf("SELECT id from tb_m_users WHERE email = ?1 AND is_active = TRUE");
     Object objResult = createNativeQuery(query).setParameter(1, email).getSingleResult();
     return (String) objResult;
   }

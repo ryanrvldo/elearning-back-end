@@ -168,7 +168,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
     if (!(userValidate.getRole().getCode().equals(Roles.ADMIN.getCode())
         || (userValidate.getRole().getCode().equals(Roles.TEACHER.getCode())
-            && teacherDao.validateTeacherUpdatedBy(data.getId(), data.getUpdatedBy()) == 1))) {
+        && teacherDao.validateTeacherUpdatedBy(data.getId(), data.getUpdatedBy()) == 1))) {
       throw new IllegalAccessException("Role not match");
     }
 
@@ -201,7 +201,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
   }
 
   @Override
-  public Teacher getFullNameByUserId(String userId) throws Exception {
+  public Teacher getByUserId(String userId) throws Exception {
     validUtil.validateUUID(userId);
     return Optional.ofNullable(teacherDao.findByUserId(userId))
         .orElseThrow(() -> new DataIsNotExistsException("User Id", userId));
@@ -239,7 +239,6 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       String idUser = teacherDao.getUserId(deleteReq.getId());
       if (idUser != null) {
         userService.updateActivateStatus(idUser, deleteReq.getStatus(), deleteReq.getUpdatedBy());
-        System.out.println("update user " + idUser);
       }
       commit();
 
@@ -247,8 +246,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       e.printStackTrace();
       rollback();
       throw e;
-      }
-
+    }
   }
 
   @Override

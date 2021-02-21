@@ -1,13 +1,13 @@
 package com.lawencon.elearning.config;
 
-import com.lawencon.elearning.model.User;
-import com.lawencon.elearning.service.UserService;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import com.lawencon.elearning.model.User;
+import com.lawencon.elearning.service.UserService;
 
 /**
  * @author Rian Rivaldo
@@ -29,6 +29,6 @@ public class ApiSecurityServiceImpl implements UserDetailsService {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    return null;
+    throw new UsernameNotFoundException("Username is not found.");
   }
 }
