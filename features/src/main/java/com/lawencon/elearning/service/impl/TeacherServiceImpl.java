@@ -293,15 +293,24 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       throw new DataIsNotExistsException("module id", moduleId);
     }
     List<TeacherReportResponseDTO> listResult = teacherDao.getTeacherDetailCourseReport(moduleId);
+    if (listResult.isEmpty()) {
+      TeacherReportResponseDTO teacherDTO = new TeacherReportResponseDTO();
+      teacherDTO.setStudentFirstName(null);
+      teacherDTO.setStudentLastName(null);
+      listResult.add(teacherDTO);
+    }
 
     listResult.forEach(val -> {
       Integer totalAssignment = 0;
       Double avgScore = 0.0;
+      Integer totalExam = 0;
       try {
+        totalExam = teacherDao.getTotalExamByModuleId(moduleId);
          totalAssignment =
             detailExamService.getTotalAssignmentStudent(moduleId, val.getStudentId());
          avgScore =
             detailExamService.getAvgScoreAssignmentStudent(moduleId, val.getStudentId());
+        val.setTotalExam(totalExam);
         val.setAvgScore(avgScore);
         val.setTotalAssignment(totalAssignment);
       } catch (Exception e) {
@@ -314,10 +323,10 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       if (val.getAvgScore() == null) {
         val.setAvgScore(0.0);
       } else {
-        val.setAvgScore(avgScore / (double) val.getTotalExam());
+        val.setAvgScore(avgScore / (double) totalExam);
       }
 
-      val.setNotAssignment(val.getTotalExam() - totalAssignment);
+      val.setNotAssignment(totalExam - totalAssignment);
     });
 
     return listResult;

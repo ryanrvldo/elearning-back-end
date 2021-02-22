@@ -220,13 +220,12 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
   public List<TeacherReportResponseDTO> getTeacherDetailCourseReport(String moduleId)
       throws Exception {
     String sql = buildQueryOf(
-        "SELECT DISTINCT s.id ,u.first_name , u.last_name , count(e.id) ",
+        "SELECT DISTINCT s.id ,u.first_name , u.last_name ",
         "FROM student_course AS sc ", "LEFT JOIN tb_m_students AS s ON s.id = sc.id_student ",
         "LEFT JOIN tb_m_users AS u ON u.id = s.id_user ",
         "INNER JOIN tb_m_courses AS c ON c.id = sc.id_course ",
-        "INNER JOIN tb_m_modules AS m ON m.id_course = c.id ",
-        "INNER JOIN tb_r_exams AS e ON e.id_module = m.id ", "WHERE m.id  = ?1 ",
-        "AND sc.is_verified = TRUE ", "GROUP BY s.id,u.first_name ,u.last_name");
+        "INNER JOIN tb_m_modules AS m ON m.id_course = c.id ", "WHERE m.id  = ?1 ",
+        "AND sc.is_verified = TRUE ");
 
     List<TeacherReportResponseDTO> listResult = new ArrayList<>();
     List<?> listObj = createNativeQuery(sql).setParameter(1, moduleId).getResultList();
@@ -236,8 +235,6 @@ public class TeacherDaoImpl extends CustomBaseDao<Teacher> implements TeacherDao
       responseDTO.setStudentId((String) arrObj[0]);
       responseDTO.setStudentFirstName((String) arrObj[1]);
       responseDTO.setStudentLastName((String) arrObj[2]);
-      BigInteger bigInteger = (BigInteger) arrObj[3];
-      responseDTO.setTotalExam(bigInteger.intValue());
       listResult.add(responseDTO);
     });
     return listResult;

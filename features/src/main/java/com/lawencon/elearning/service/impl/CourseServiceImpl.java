@@ -497,7 +497,10 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     }
     List<CourseAttendanceReportByTeacher> listData = courseDao.getCourseAttendanceReport(courseId);
     if (listData.isEmpty()) {
-      return Collections.emptyList();
+      CourseAttendanceReportByTeacher attendanceReport = new CourseAttendanceReportByTeacher();
+      attendanceReport.setModuleName(null);
+      attendanceReport.setDate(null);
+      listData.add(attendanceReport);
     }
     listData.forEach(val -> {
       try {
