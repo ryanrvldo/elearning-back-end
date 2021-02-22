@@ -34,5 +34,9 @@ public interface DetailExamDao {
 
   DetailExam getDetailById(String id) throws Exception;
 
+  Integer getTotalAssignmentStudent(String moduleId, String studentId) throws Exception;
+
+  Double getAvgScoreAssignmentStudent(String moduleId, String studentId) throws Exception;
+
   List<DetailExam> getStudentExamReport(String studentId) throws Exception;
 }

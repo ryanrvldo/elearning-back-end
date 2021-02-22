@@ -28,6 +28,7 @@ import com.lawencon.elearning.model.Roles;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.elearning.service.CourseService;
+import com.lawencon.elearning.service.DetailExamService;
 import com.lawencon.elearning.service.ExperienceService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.RoleService;
@@ -66,6 +67,9 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Autowired
   private StudentCourseService studentCourseService;
+
+  @Autowired
+  private DetailExamService detailExamService;
 
   @Override
   public List<TeacherForAdminDTO> getAllTeachers() throws Exception {
@@ -289,20 +293,33 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       throw new DataIsNotExistsException("module id", moduleId);
     }
     List<TeacherReportResponseDTO> listResult = teacherDao.getTeacherDetailCourseReport(moduleId);
-    Integer totalExam = teacherDao.getTotalExamByModuleId(moduleId);
+
     listResult.forEach(val -> {
-      Double scoreTemp = val.getAvgScore();
+      Integer totalAssignment = 0;
+      Double avgScore = 0.0;
+      try {
+         totalAssignment =
+            detailExamService.getTotalAssignmentStudent(moduleId, val.getStudentId());
+         avgScore =
+            detailExamService.getAvgScoreAssignmentStudent(moduleId, val.getStudentId());
+        val.setAvgScore(avgScore);
+        val.setTotalAssignment(totalAssignment);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      
       String studentName = val.getStudentFirstName() + " " + val.getStudentLastName();
       val.setStudentFirstName(studentName);
       val.setStudentLastName("");
       if (val.getAvgScore() == null) {
         val.setAvgScore(0.0);
       } else {
-        val.setAvgScore(scoreTemp / totalExam);
+        val.setAvgScore(avgScore / (double) val.getTotalExam());
       }
-      val.setNotAssignment(totalExam - val.getTotalAssignment());
-      val.setTotalExam(totalExam);
+
+      val.setNotAssignment(val.getTotalExam() - totalAssignment);
     });
+
     return listResult;
   }
 

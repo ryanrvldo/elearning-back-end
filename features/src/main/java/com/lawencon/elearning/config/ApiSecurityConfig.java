@@ -71,7 +71,8 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
       @Override
       public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:4200", "http://127.0.0.1:8887")
+            // .allowedOrigins("http://localhost:4200", "http://127.0.0.1:8887")
+            .allowedOriginPatterns("*")
             .allowedMethods(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),

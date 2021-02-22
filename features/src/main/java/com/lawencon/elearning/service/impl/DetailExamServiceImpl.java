@@ -213,4 +213,14 @@ public class DetailExamServiceImpl extends BaseServiceImpl implements DetailExam
     return dtlExamDao.getStudentExamReport(studentId);
   }
 
+  @Override
+  public Integer getTotalAssignmentStudent(String moduleId, String studentId) throws Exception {
+    return dtlExamDao.getTotalAssignmentStudent(moduleId, studentId);
+  }
+
+  @Override
+  public Double getAvgScoreAssignmentStudent(String moduleId, String studentId) throws Exception {
+    return dtlExamDao.getAvgScoreAssignmentStudent(moduleId, studentId);
+  }
+
 }

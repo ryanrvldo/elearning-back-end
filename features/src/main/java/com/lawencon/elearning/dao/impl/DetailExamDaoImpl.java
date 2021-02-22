@@ -264,4 +264,26 @@ public class DetailExamDaoImpl extends CustomBaseDao<DetailExam> implements Deta
     return listResult;
   }
 
+  @Override
+  public Integer getTotalAssignmentStudent(String moduleId, String studentId) throws Exception {
+    String sql = buildQueryOf("SELECT count(de.id) FROM tb_r_dtl_exams AS de ",
+        "INNER JOIN tb_r_exams AS e ON e.id = de.id_exam ",
+        "INNER JOIN tb_m_students AS s ON s.id = de.id_student ", "WHERE e.id_module = ?1 ",
+        "AND s.id = ?2 ");
+    return ((BigInteger) createNativeQuery(sql).setParameter(1, moduleId).setParameter(2, studentId)
+        .getSingleResult()).intValue();
+  }
+
+  @Override
+  public Double getAvgScoreAssignmentStudent(String moduleId, String studentId) throws Exception {
+    String sql = buildQueryOf("SELECT sum(de.grade) FROM tb_r_dtl_exams AS de ",
+        "INNER JOIN tb_r_exams AS e ON e.id = de.id_exam ",
+        "INNER JOIN tb_m_students AS s ON s.id = de.id_student ", "WHERE e.id_module = ?1 ",
+        "AND s.id = ?2 ");
+    Double result =
+        (Double) createNativeQuery(sql).setParameter(1, moduleId).setParameter(2, studentId)
+        .getSingleResult();
+    return result != null ? result : 0.0;
+  }
+
 }

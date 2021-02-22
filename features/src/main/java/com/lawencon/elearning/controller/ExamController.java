@@ -1,8 +1,5 @@
 package com.lawencon.elearning.controller;
 
-import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
-import com.lawencon.elearning.service.ExamService;
-import com.lawencon.elearning.util.WebResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.lawencon.elearning.dto.exam.UpdateScoreRequestDTO;
+import com.lawencon.elearning.service.ExamService;
+import com.lawencon.elearning.util.WebResponseUtils;
 
 /**
  * @author William
@@ -56,14 +56,14 @@ public class ExamController {
       @RequestParam("examId") String examId, @RequestParam("studentId") String studentId)
       throws Exception {
     examService.submitAssignment(multiPartFile, examId, studentId);
-    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Insert Success", HttpStatus.CREATED);
   }
 
   @PostMapping("/module")
   public ResponseEntity<?> sendTeacherExam(@RequestPart("file") MultipartFile multiPartFile,
       @RequestPart("body") String body) throws Exception {
     examService.saveExam(multiPartFile, body);
-    return WebResponseUtils.createWebResponse("Insert Exam Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Insert Exam Success", HttpStatus.CREATED);
   }
 
   @PutMapping("/submission")

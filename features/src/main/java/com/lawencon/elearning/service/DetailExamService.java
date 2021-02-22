@@ -39,4 +39,8 @@ public interface DetailExamService {
       throws Exception;
 
   List<DetailExam> getStudentExamReport(String studentId) throws Exception;
+
+  Integer getTotalAssignmentStudent(String moduleId, String studentId) throws Exception;
+
+  Double getAvgScoreAssignmentStudent(String moduleId, String studentId) throws Exception;
 }
