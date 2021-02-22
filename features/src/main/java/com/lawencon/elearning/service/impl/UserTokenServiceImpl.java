@@ -72,7 +72,8 @@ public class UserTokenServiceImpl extends BaseServiceImpl implements UserTokenSe
     userTokenDao.save(userToken);
 
     String link = String
-        .format("http://localhost:8080/lawerning/user/registration/confirm?token=%s", userToken.getToken());
+        .format("http://192.168.1.100:8181/lawerning/user/registration/confirm?token=%s",
+            userToken.getToken());
     String template = generalService.getTemplateHTML(GeneralCode.USER_REGISTRATION.getCode())
         .replace("?1", link)
         .replace("?2",

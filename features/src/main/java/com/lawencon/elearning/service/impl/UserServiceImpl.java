@@ -108,7 +108,7 @@ public class UserServiceImpl extends BaseServiceImpl implements UserService {
       return emailService.buildHtmlContent("Registration has been confirmed.", body);
     } else if (userToken.getExpiredAt().isBefore(LocalDateTime.now())) {
       String generateTokenLink = String
-          .format("http://localhost:8080/lawerning/user/registration/resend?e=%s",
+          .format("http://192.168.1.100:8181/lawerning/user/registration/resend?e=%s",
               userToken.getUser().getEmail());
       String body = generalService.getTemplateHTML(GeneralCode.TOKEN_EXPIRED.getCode())
           .replace("?1", generateTokenLink);

@@ -58,6 +58,11 @@ public class ErrorController {
           .replace('=', ' ')
           .replaceAll("\\p{P}", "")
           .replaceAll("Key", "");
+      if (detailMessage.contains("referenced")) {
+        return WebResponseUtils.createWebResponse(
+            "You can't delete this data because is still referenced to the another data.",
+            HttpStatus.BAD_REQUEST);
+      }
       return WebResponseUtils.createWebResponse(detailMessage, HttpStatus.BAD_REQUEST);
     }
     return WebResponseUtils.createWebResponse("There is something error in internal server.",
