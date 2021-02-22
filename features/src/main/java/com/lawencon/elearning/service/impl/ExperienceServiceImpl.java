@@ -1,21 +1,22 @@
 package com.lawencon.elearning.service.impl;
 
-import com.lawencon.base.BaseServiceImpl;
-import com.lawencon.elearning.dao.ExperienceDao;
-import com.lawencon.elearning.dto.experience.ExperienceCreateRequestDTO;
-import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
-import com.lawencon.elearning.dto.experience.ExperienceUpdateRequestDto;
-import com.lawencon.elearning.error.DataIsNotExistsException;
-import com.lawencon.elearning.model.Experience;
-import com.lawencon.elearning.model.Teacher;
-import com.lawencon.elearning.service.ExperienceService;
-import com.lawencon.elearning.util.ValidationUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.lawencon.base.BaseServiceImpl;
+import com.lawencon.elearning.dao.ExperienceDao;
+import com.lawencon.elearning.dto.experience.ExperienceCreateRequestDTO;
+import com.lawencon.elearning.dto.experience.ExperienceResponseDto;
+import com.lawencon.elearning.dto.experience.ExperienceUpdateRequestDto;
+import com.lawencon.elearning.error.DataIsNotExistsException;
+import com.lawencon.elearning.error.IllegalRequestException;
+import com.lawencon.elearning.model.Experience;
+import com.lawencon.elearning.model.Teacher;
+import com.lawencon.elearning.service.ExperienceService;
+import com.lawencon.elearning.util.ValidationUtil;
 
 /**
  * @author Rian Rivaldo
@@ -33,6 +34,10 @@ public class ExperienceServiceImpl extends BaseServiceImpl implements Experience
   public ExperienceResponseDto createExperience(ExperienceCreateRequestDTO experienceRequest)
       throws Exception {
     validationUtil.validate(experienceRequest);
+
+    if (experienceRequest.getEndDate().isBefore(experienceRequest.getStartDate())) {
+      throw new IllegalRequestException("The end date must be later than the start date.");
+    }
 
     Experience experience = new Experience();
     experience.setTitle(experienceRequest.getTitle());

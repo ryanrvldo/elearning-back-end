@@ -1,5 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -278,6 +280,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
     }
 
     List<StudentReportDTO> listResult = new ArrayList<>();
+    NumberFormat numberFormat = new DecimalFormat("#0.00");
     for (DetailExam detailExam : listDetail) {
       StudentReportDTO studentDTO = new StudentReportDTO();
       studentDTO.setCourseName(
@@ -287,7 +290,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
       studentDTO.setExamType(detailExam.getExam().getExamType().toString());
       studentDTO.setExamTitle(detailExam.getExam().getTitle());
       studentDTO.setDateExam(detailExam.getExam().getTrxDate().toString());
-      studentDTO.setGrade(detailExam.getGrade());
+      studentDTO.setGrade(Double.valueOf(numberFormat.format(detailExam.getGrade().doubleValue())));
       listResult.add(studentDTO);
     }
 

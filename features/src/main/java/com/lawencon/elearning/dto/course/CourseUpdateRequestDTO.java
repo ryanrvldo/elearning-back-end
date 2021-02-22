@@ -5,6 +5,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -39,9 +40,11 @@ public class CourseUpdateRequestDTO {
   @Min(0)
   private Integer capacity;
 
+  @JsonFormat(pattern = "yyyy-MM-dd")
   @NotNull
   private LocalDate periodStart;
 
+  @JsonFormat(pattern = "yyyy-MM-dd")
   @NotNull
   private LocalDate periodEnd;
 

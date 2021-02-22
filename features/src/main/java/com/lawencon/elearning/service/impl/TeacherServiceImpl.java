@@ -1,5 +1,7 @@
 package com.lawencon.elearning.service.impl;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -300,6 +302,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       listResult.add(teacherDTO);
     }
 
+    NumberFormat numberFormat = new DecimalFormat("#.00");
     listResult.forEach(val -> {
       Integer totalAssignment = 0;
       Double avgScore = 0.0;
@@ -327,6 +330,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
       }
 
       val.setNotAssignment(totalExam - totalAssignment);
+      val.setAvgScore(Double.valueOf(numberFormat.format(val.getAvgScore().doubleValue())));
     });
 
     return listResult;

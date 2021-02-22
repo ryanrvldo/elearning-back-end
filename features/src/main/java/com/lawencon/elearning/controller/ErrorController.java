@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import com.lawencon.elearning.dto.WebResponseDTO;
 import com.lawencon.elearning.error.AttendanceErrorException;
@@ -33,15 +34,15 @@ public class ErrorController {
   }
 
   @ExceptionHandler(value = {MissingServletRequestPartException.class,
-      MissingServletRequestParameterException.class})
+      MissingServletRequestParameterException.class, MultipartException.class})
   public ResponseEntity<WebResponseDTO<String>> missingRequestPartHandler(
       Exception e) {
     e.printStackTrace();
-    String message;
+    String message = e.getMessage();
     if (e instanceof MissingServletRequestPartException) {
       message = ((MissingServletRequestPartException) e).getRequestPartName()
           + " is not present in request form.";
-    } else {
+    } else if (e instanceof MissingServletRequestParameterException) {
       message = ((MissingServletRequestParameterException) e).getParameterName()
           + " is not present in query parameter.";
     }
