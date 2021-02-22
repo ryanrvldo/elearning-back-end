@@ -35,3 +35,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+/features/src/main/resources/app.deploy.properties
