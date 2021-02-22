@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
 import java.util.function.BiConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -399,7 +399,7 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
+  public SortedMap<Course, Integer[]> getTeacherCourse(String id) throws Exception {
     validateUtil.validateUUID(id);
     return courseDao.getTeacherCourse(id);
   }

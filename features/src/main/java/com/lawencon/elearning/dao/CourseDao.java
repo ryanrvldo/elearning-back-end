@@ -1,13 +1,13 @@
 package com.lawencon.elearning.dao;
 
+import java.util.List;
+import java.util.SortedMap;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.dto.teacher.CourseAttendanceReportByTeacher;
 import com.lawencon.elearning.model.Course;
 import com.lawencon.util.Callback;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author : Galih Dika Permana
@@ -29,7 +29,7 @@ public interface CourseDao {
 
   List<Course> getCourseForAdmin() throws Exception;
 
-  Map<Course, Integer[]> getTeacherCourse(String id) throws Exception;
+  SortedMap<Course, Integer[]> getTeacherCourse(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 

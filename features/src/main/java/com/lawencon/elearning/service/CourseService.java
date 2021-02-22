@@ -1,7 +1,7 @@
 package com.lawencon.elearning.service;
 
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
 import com.lawencon.elearning.dto.StudentListByCourseResponseDTO;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
@@ -36,7 +36,7 @@ public interface CourseService {
 
   List<CourseAdminResponseDTO> getCourseForAdmin() throws Exception;
 
-  Map<Course, Integer[]> getTeacherCourse(String id) throws Exception;
+  SortedMap<Course, Integer[]> getTeacherCourse(String id) throws Exception;
 
   void updateIsActive(String id, String userId) throws Exception;
 

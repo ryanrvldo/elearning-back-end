@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.SortedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.lawencon.base.BaseServiceImpl;
@@ -264,7 +264,7 @@ public class TeacherServiceImpl extends BaseServiceImpl implements TeacherServic
 
   @Override
   public List<DashboardTeacherDTO> getTeacherDashboard(String id) throws Exception {
-    Map<Course, Integer[]> resultMap = courseService.getTeacherCourse(id);
+    SortedMap<Course, Integer[]> resultMap = courseService.getTeacherCourse(id);
     if (resultMap.isEmpty()) {
       return Collections.emptyList();
     }

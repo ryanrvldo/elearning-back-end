@@ -5,9 +5,10 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
@@ -270,7 +271,7 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public Map<Course, Integer[]> getTeacherCourse(String id) throws Exception {
+  public SortedMap<Course, Integer[]> getTeacherCourse(String id) throws Exception {
     String sql = buildQueryOf(
         "SELECT c.id AS course_id,c.code AS course_code, ct.type_name AS type_name, c.capacity ,c.description, ",
         "(SELECT count(*) FROM student_course sc WHERE sc.id_course = c.id AND sc.is_verified = TRUE) AS student ,",
@@ -283,7 +284,8 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
         "group by course_id , course_code ,type_name , c.capacity  , c.description, c.period_start , c.period_end ",
         "ORDER BY c.period_start");
     List<?> listObj = createNativeQuery(sql).setParameter(1, id).getResultList();
-    Map<Course, Integer[]> courseMap = new HashMap<>();
+    SortedMap<Course, Integer[]> courseMap =
+        new TreeMap<>(Comparator.comparing(Course::getPeriodStart));
     listObj.forEach(val -> {
       Object[] objArr = (Object[]) val;
       Course course = new Course();
