@@ -135,7 +135,7 @@ public class StudentDaoImpl extends CustomBaseDao<Student> implements StudentDao
         "FROM Student AS s ",
         "INNER JOIN User AS u ON u.id = s.user.id ",
         "LEFT JOIN File AS f ON f.id = u.userPhoto.id ",
-        "WHERE s.isActive = TRUE ORDER BY s.createdAt");
+        "ORDER BY s.createdAt");
     List<Student> studentList = new ArrayList<>();
     List<Object[]> objList = createQuery(query, Object[].class).getResultList();
     objList.forEach(objArr -> {

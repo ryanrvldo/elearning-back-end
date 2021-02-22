@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.student.RegisterStudentDTO;
 import com.lawencon.elearning.dto.student.StudentUpdateRequestDto;
 import com.lawencon.elearning.service.StudentService;
@@ -74,6 +76,13 @@ public class StudentController {
   @GetMapping(value = "/all", produces = {MediaType.APPLICATION_JSON_VALUE})
   public ResponseEntity<?> getAllStudent() throws Exception {
     return WebResponseUtils.createWebResponse(studentService.getAll(), HttpStatus.OK);
+  }
+
+  @PatchMapping
+  public ResponseEntity<?> updateActive(@RequestBody UpdateIsActiveRequestDTO request)
+      throws Exception {
+    studentService.updateIsActive(request);
+    return WebResponseUtils.createWebResponse("Update active student success", HttpStatus.OK);
   }
 
 }
