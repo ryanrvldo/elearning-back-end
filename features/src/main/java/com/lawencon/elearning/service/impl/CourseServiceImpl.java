@@ -49,6 +49,7 @@ import com.lawencon.elearning.service.GeneralService;
 import com.lawencon.elearning.service.ModuleService;
 import com.lawencon.elearning.service.StudentCourseService;
 import com.lawencon.elearning.service.StudentService;
+import com.lawencon.elearning.service.TeacherService;
 import com.lawencon.elearning.service.UserService;
 import com.lawencon.elearning.util.ValidationUtil;
 
@@ -84,6 +85,9 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
 
   @Autowired
   private StudentCourseService studentCourseService;
+
+  @Autowired
+  private TeacherService teacherService;
 
   @Override
   public List<CourseResponseDTO> getAllCourse() throws Exception {
@@ -195,13 +199,18 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
     return getAndSetupCourseResponse(listCourseAvailable, (course, response) -> {
       response.setIsRegist(false);
       listCourseByStudent.forEach(c -> {
+        Teacher teacher;
         Boolean studentCourse = false;
         try {
+          teacher = teacherService.findTeacherById(c.getTeacher().getId());
           studentCourse = studentCourseService.checkVerifiedCourse(studentId, c.getId());
+          TeacherForAvailableCourseDTO teacherDTO = new TeacherForAvailableCourseDTO();
+          teacherDTO = response.getTeacher();
+          teacherDTO.setTitle(teacher.getTitleDegree());
+          response.setTeacher(teacherDTO);
         } catch (Exception e) {
           e.printStackTrace();
         }
-        System.out.println(studentCourse);
         if (course.getId().equals(c.getId()) && studentCourse) {
           response.setIsRegist(true);
         }

@@ -1,5 +1,14 @@
 package com.lawencon.elearning.dao.impl;
 
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.stereotype.Repository;
 import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dao.CustomBaseDao;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -10,21 +19,11 @@ import com.lawencon.elearning.model.Course;
 import com.lawencon.elearning.model.CourseCategory;
 import com.lawencon.elearning.model.CourseStatus;
 import com.lawencon.elearning.model.CourseType;
-import com.lawencon.elearning.model.Experience;
 import com.lawencon.elearning.model.File;
 import com.lawencon.elearning.model.Gender;
 import com.lawencon.elearning.model.Teacher;
 import com.lawencon.elearning.model.User;
 import com.lawencon.util.Callback;
-import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Repository;
 
 /**
  * @author : Galih Dika Permana
@@ -34,11 +33,10 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
 
   private final String getCoursesSQL = buildQueryOf(
       "SELECT c.id AS course_id, c.code AS course_code, ct.type_name AS typeName, c.capacity, c.period_start, c.period_end, ",
-      "t.id AS teacher_id, t.code AS teacher_code, e.title, u.first_name, u.last_name, t.title_degree, u.id_photo, ",
+      "t.id AS teacher_id, t.code AS teacher_code, u.first_name, u.last_name, t.title_degree, u.id_photo, ",
       "cc.code AS category_code, cc.category_name AS category_name, c.status, c.description FROM tb_m_courses AS c ",
       "INNER JOIN tb_m_course_types AS ct ON c.id_course_type = ct.id ",
       "INNER JOIN tb_m_teachers AS t ON c.id_teacher = t.id ",
-      "LEFT JOIN tb_m_experiences AS e ON e.id_teacher = t.id ",
       "INNER JOIN tb_m_users AS u ON t.id_user = u.id ",
       "LEFT JOIN tb_r_files AS f ON u.id_photo = f.id ",
       "INNER JOIN tb_m_course_categories AS cc ON c.id_category = cc.id ");
@@ -403,15 +401,15 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       Teacher teacher = new Teacher();
       teacher.setId((String) objArr[6]);
       teacher.setCode((String) objArr[7]);
-      Experience experience = new Experience();
-      experience.setTitle((String) objArr[8]);
+      // Experience experience = new Experience();
+      // experience.setTitle((String) objArr[8]);
       User user = new User();
-      user.setFirstName((String) objArr[9]);
-      user.setLastName((String) objArr[10]);
-      teacher.setTitleDegree((String) objArr[11]);
+      user.setFirstName((String) objArr[8]);
+      user.setLastName((String) objArr[9]);
+      teacher.setTitleDegree((String) objArr[10]);
 
       File file = new File();
-      file.setId((String) objArr[12]);
+      file.setId((String) objArr[11]);
       user.setUserPhoto(file);
 
       teacher.setUser(user);
@@ -419,12 +417,12 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
       course.setTeacher(teacher);
 
       CourseCategory courseCategory = new CourseCategory();
-      courseCategory.setCode((String) objArr[13]);
-      courseCategory.setName((String) objArr[14]);
+      courseCategory.setCode((String) objArr[12]);
+      courseCategory.setName((String) objArr[13]);
       course.setCategory(courseCategory);
 
-      course.setStatus(CourseStatus.valueOf((String) objArr[15]));
-      course.setDescription((String) objArr[16]);
+      course.setStatus(CourseStatus.valueOf((String) objArr[14]));
+      course.setDescription((String) objArr[15]);
 
       listResult.add(course);
     });
