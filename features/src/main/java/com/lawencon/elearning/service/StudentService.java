@@ -25,7 +25,7 @@ public interface StudentService {
 
   void updateStudentProfile(StudentUpdateRequestDto request) throws Exception;
 
-  void deleteStudent(String studentId, String updatedBy) throws Exception;
+  void deleteStudent(String id) throws Exception;
 
   void updateIsActive(UpdateIsActiveRequestDTO updateRequest) throws Exception;
 

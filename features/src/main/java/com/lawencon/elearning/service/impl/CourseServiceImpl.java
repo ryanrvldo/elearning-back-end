@@ -14,10 +14,10 @@ import com.lawencon.elearning.dao.CourseDao;
 import com.lawencon.elearning.dto.EmailSetupDTO;
 import com.lawencon.elearning.dto.StudentCourseRegisterRequestDTO;
 import com.lawencon.elearning.dto.StudentListByCourseResponseDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
-import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
@@ -165,27 +165,33 @@ public class CourseServiceImpl extends BaseServiceImpl implements CourseService 
   }
 
   @Override
-  public void deleteCourse(CourseDeleteRequestDTO courseDTO) throws Exception {
-    validateUtil.validate(courseDTO);
+  public void deleteCourse(String id) throws Exception {
+    validateUtil.validateUUID(id);
     try {
       begin();
-      courseDao.deleteCourse(courseDTO.getId());
+      courseDao.deleteCourse(id);
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException("Id" + courseDTO.getId());
-      }
-      begin();
-      updateIsActive(courseDTO.getId(), courseDTO.getUpdateBy());
-      commit();
+      rollback();
+      throw e;
     }
 
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    courseDao.updateIsActive(id, userId);
+  public void updateIsActive(UpdateIsActiveRequestDTO request) throws Exception {
+    validateUtil.validate(request);
+    try {
+      begin();
+      courseDao.updateIsActive(request.getId(), request.getUpdatedBy(), request.getStatus());
+      commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+      rollback();
+      throw e;
+    }
+
   }
 
   @Override

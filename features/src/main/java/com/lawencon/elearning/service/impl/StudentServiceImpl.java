@@ -169,24 +169,20 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
   }
 
   @Override
-  public void deleteStudent(String studentId, String updatedBy) throws Exception {
-    validationUtil.validateUUID(studentId, updatedBy);
+  public void deleteStudent(String id) throws Exception {
+    validationUtil.validateUUID(id);
+    Student student = Optional.ofNullable(getStudentById(id))
+        .orElseThrow(() -> new DataIsNotExistsException("id", id));
+
     try {
       begin();
-      Student student = getStudentById(studentId);
-      userService.deleteById(student.getUser().getId());
       studentDao.deleteStudentById(student.getId());
+      userService.deleteById(student.getUser().getId());
       commit();
     } catch (Exception e) {
       e.printStackTrace();
-      if (e.getMessage().equals("ID Not Found")) {
-        throw new DataIsNotExistsException("student id", studentId);
-      }
-      UpdateIsActiveRequestDTO updateRequest = new UpdateIsActiveRequestDTO();
-      updateRequest.setId(studentId);
-      updateRequest.setUpdatedBy(updatedBy);
-      updateRequest.setStatus(false);
-      updateIsActive(updateRequest);
+      rollback();
+      throw e;
     }
   }
 
@@ -202,6 +198,7 @@ public class StudentServiceImpl extends BaseServiceImpl implements StudentServic
           updateRequest.getUpdatedBy());
       commit();
     } catch (Exception e) {
+      e.printStackTrace();
       rollback();
       throw e;
     }

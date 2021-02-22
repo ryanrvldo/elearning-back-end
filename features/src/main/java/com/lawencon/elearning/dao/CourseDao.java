@@ -1,5 +1,6 @@
 package com.lawencon.elearning.dao;
 
+
 import java.util.List;
 import java.util.SortedMap;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
@@ -31,7 +32,7 @@ public interface CourseDao {
 
   SortedMap<Course, Integer[]> getTeacherCourse(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void updateIsActive(String id, String userId, boolean status) throws Exception;
 
   void registerCourse(String course, String student) throws Exception;
 

@@ -125,9 +125,12 @@ public class CourseDaoImpl extends CustomBaseDao<Course> implements CourseDao {
   }
 
   @Override
-  public void updateIsActive(String id, String userId) throws Exception {
-    String sql = buildQueryOf("UPDATE tb_m_courses SET is_active = FALSE");
-    updateNativeSQL(sql, id, userId);
+  public void updateIsActive(String id, String userId, boolean status) throws Exception {
+    String sql = buildQueryOf("UPDATE tb_m_courses SET is_active = ?1 ",
+        ", updated_at = now(), updated_by = ?2 , version = (version + 1) WHERE id = ?3").toString();
+
+    createNativeQuery(sql).setParameter(1, status).setParameter(2, userId).setParameter(3, id)
+        .executeUpdate();
   }
 
   @Override

@@ -52,18 +52,17 @@ public class StudentController {
         HttpStatus.OK);
   }
 
-  @DeleteMapping
-  public ResponseEntity<?> deleteStudent(@RequestParam("id") String studentId,
-      @RequestParam("updatedBy") String updatedBy)
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteStudent(@PathVariable("id") String id)
       throws Exception {
-    studentService.deleteStudent(studentId, updatedBy);
+    studentService.deleteStudent(id);
     return WebResponseUtils.createWebResponse("Delete Success", HttpStatus.OK);
   }
 
   @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<?> registerStudent(@RequestBody RegisterStudentDTO body) throws Exception {
     studentService.insertStudent(body);
-    return WebResponseUtils.createWebResponse("Register Success", HttpStatus.OK);
+    return WebResponseUtils.createWebResponse("Register Success", HttpStatus.CREATED);
   }
   
   @GetMapping("report")

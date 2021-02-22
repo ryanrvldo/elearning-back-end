@@ -3,10 +3,10 @@ package com.lawencon.elearning.service;
 import java.util.List;
 import java.util.SortedMap;
 import com.lawencon.elearning.dto.StudentListByCourseResponseDTO;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.admin.DashboardCourseResponseDto;
 import com.lawencon.elearning.dto.course.CourseAdminResponseDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
-import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseProgressResponseDTO;
 import com.lawencon.elearning.dto.course.CourseResponseDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
@@ -28,7 +28,7 @@ public interface CourseService {
 
   void updateCourse(CourseUpdateRequestDTO courseDTO) throws Exception;
 
-  void deleteCourse(CourseDeleteRequestDTO courseDTO) throws Exception;
+  void deleteCourse(String id) throws Exception;
 
   List<CourseResponseDTO> getCurrentAvailableCourse(String studentId) throws Exception;
 
@@ -38,7 +38,7 @@ public interface CourseService {
 
   SortedMap<Course, Integer[]> getTeacherCourse(String id) throws Exception;
 
-  void updateIsActive(String id, String userId) throws Exception;
+  void updateIsActive(UpdateIsActiveRequestDTO request) throws Exception;
 
   void registerCourse(String student, String course) throws Exception;
 

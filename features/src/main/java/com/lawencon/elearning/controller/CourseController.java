@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.lawencon.elearning.dto.UpdateIsActiveRequestDTO;
 import com.lawencon.elearning.dto.course.CourseCreateRequestDTO;
-import com.lawencon.elearning.dto.course.CourseDeleteRequestDTO;
 import com.lawencon.elearning.dto.course.CourseUpdateRequestDTO;
 import com.lawencon.elearning.dto.course.UpdateStatusRequestDTO;
 import com.lawencon.elearning.service.CourseService;
@@ -75,10 +75,17 @@ public class CourseController {
     return WebResponseUtils.createWebResponse("Update data success", HttpStatus.OK);
   }
 
-  @DeleteMapping
-  public ResponseEntity<?> deleteCourse(@RequestBody CourseDeleteRequestDTO data) throws Exception {
-    courseService.deleteCourse(data);
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteCourse(@PathVariable("id") String id) throws Exception {
+    courseService.deleteCourse(id);
     return WebResponseUtils.createWebResponse("Delete data success", HttpStatus.OK);
+  }
+
+  @PatchMapping
+  public ResponseEntity<?> updateActive(@RequestBody UpdateIsActiveRequestDTO request)
+      throws Exception {
+    courseService.updateIsActive(request);
+    return WebResponseUtils.createWebResponse("Update active success", HttpStatus.OK);
   }
 
   @GetMapping("attendance/reports/{id}")
